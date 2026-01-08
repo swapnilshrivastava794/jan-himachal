@@ -1,0 +1,255 @@
+{% load static %}
+
+<div class="container m-auto">
+  <div class="row">
+    <!-- LEFT SECTION (Main News) -->
+     <div class="col-lg-3 col-md-3 col-sm-12 mb-3 text-left ">
+      <div class="d-lg-block sticky-sidebar card-background p-3">
+        
+      <div class="mb-3">
+        <div class="section-title">लोकप्रिय वीडियो</div>
+        <div class="double-underline"></div>
+      </div>
+       {% include 'popular-videos.html' %}
+       <div class="text-center my-0">
+
+      <!-- <img src="{% static 'assets/img/ads4.jpg' %}" alt="Advertisement" class="img-fluid"> -->
+      
+          <video autoplay loop muted="false" id="promoVideo" class="w-100 h-100 object-fit-cover">
+          <source src="{% static 'assets/img/jan-himachal.mp4' %}">
+          </video>
+
+    </div>
+    </div>
+    
+    </div>
+
+    <div class="col-lg-6 col-md-6 col-sm-12 mb-3 text-left">
+     
+       
+      {% for category, subcat_data in grouped_postsdata2.items %}
+        {% with subcat_data.posts as posts %}
+          {% if posts|length >= 6 %}
+            <!-- Main Row -->
+            <div class="row card-background p-3">
+              <!-- Left Featured Post -->
+              {% with posts.0 as post %}
+              <div class="mb-3">
+                  <div class="section-title">{{ category.cat_name }}</div>
+                  <div class="double-underline"></div>
+                </div>
+              <div class="col-lg-8">
+                 
+                <a href="/{{ post.newsfrom.slug }}/{{ post.post_cat.sub_cat.cat_slug }}/{{ post.slug }}">
+                <img src="{{ post.post_image.url }}" alt="{{ post.post_title }}" title="{{ post.post_title }}"
+                  loading="lazy">
+              </a>
+                <div class="meta-info text-uppercase my-2 d-flex align-items-center">
+                  <span>{{ post.schedule_date|date:"M d, Y" }}</span>
+                  <span class="category">{{ category.cat_name }}</span>
+                  <div style="--custom-bottom: 0px; --custom-right: 0px;">
+                        {% include 'share.html' with posts=post %}
+                    </div>
+                </div>
+                <div class="article-title mb-3">
+                  <a href="/{{ post.newsfrom.slug }}/{{ post.post_cat.sub_cat.cat_slug }}/{{ post.slug }}"> {{ post.post_title|truncatechars:90 }}</a>
+                </div>
+                <div class="article-excerpt mb-3">
+                  {{ post.post_description|truncatechars:250 }}
+                </div>
+                <div class="text-center my-5">
+                <img src="{% static 'assets/img/ads3.jpg' %}" alt="Advertisement" class="img-fluid">
+              </div>
+              </div>
+              {% endwith %}
+              
+              <!-- Two Side News -->
+              <div class="col-lg-4 mb-3 ">
+                {% for post in posts|slice:"1:3" %}
+                <div class="news-items mb-3">
+                  <a href="/{{ post.newsfrom.slug }}/{{ post.post_cat.sub_cat.cat_slug }}/{{ post.slug }}">
+                <img src="{{ post.post_image.url }}" alt="{{ post.post_title }}" title="{{ post.post_title }}"
+                  loading="lazy">
+              </a>
+                  <div class="post-title my-2">
+                   <a href="/{{ post.newsfrom.slug }}/{{ post.post_cat.sub_cat.cat_slug }}/{{ post.slug }}"> {{ post.post_title|truncatechars:70 }}</a>
+                  </div>
+                  <div class="meta">
+                  <span>{{ post.schedule_date|date }} | {{ post.schedule_date|time }}</span>
+                  <div style="--custom-bottom: 0px; --custom-right: 0px;">
+                    {% include 'share.html' with posts=post %}
+                  </div>
+                </div>
+                </div>
+                {% endfor %}
+              </div>
+            </div>
+
+            <!-- Bottom Row (3 Posts) -->
+            <div class="row mt-4">
+              {% for post in posts|slice:"3:6" %}
+              <div class="col-lg-4 mb-3 ">
+                <a href="/{{ post.newsfrom.slug }}/{{ post.post_cat.sub_cat.cat_slug }}/{{ post.slug }}">
+                <img src="{{ post.post_image.url }}" alt="{{ post.post_title }}" title="{{ post.post_title }}"
+                  loading="lazy">
+              </a>
+                <div class="post-title card-background p-2">
+                  <a href="/{{ post.newsfrom.slug }}/{{ post.post_cat.sub_cat.cat_slug }}/{{ post.slug }}">{{ post.post_title|truncatechars:70 }}</a>
+                   <div class="meta">
+                  <span>{{ post.schedule_date|date }} | {{ post.schedule_date|time }}</span>
+                  <div style="--custom-bottom: 0px; --custom-right: 0px;">
+                    {% include 'share.html' with posts=post %}
+                  </div>
+                </div>
+                </div>
+               
+                 
+              </div>
+              {% endfor %}
+            </div>
+
+            
+          {% endif %}
+        {% endwith %}
+      {% endfor %}
+    </div>
+
+    <!-- RIGHT SECTION (Carousel or Sidebar) -->
+     
+    <div class="col-lg-3 col-md-3 col-sm-12 mb-3 text-left ">
+      <div class="d-lg-block sticky-sidebar ">
+        <div class="card-background p-3">
+      <div class="mb-3">
+        <div class="section-title">सभी समाचार</div>
+        <div class="double-underline"></div>
+      </div>
+
+      <div id="postCarousel" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-inner">
+          {% for category, subcat_data in grouped_postsdata2.items %}
+            {% with subcat_data.posts as posts %}
+              {% for post in posts|slice:"0:6" %}
+              <div class="carousel-item {% if forloop.parentloop.first and forloop.first %}active{% endif %}">
+                <div class="row">
+                  <div class="col-12 mb-4">
+                    <a href="/{{ post.newsfrom.slug }}/{{ post.post_cat.sub_cat.cat_slug }}/{{ post.slug }}" >
+                <img src="{{ post.post_image.url }}" alt="{{ post.post_title }}" title="{{ post.post_title }}"
+                  loading="lazy">
+              </a>
+                    <div class="category mt-2">In {{ category.cat_name }}</div>
+                    <div class="post-title my-2"><a href="/{{ post.newsfrom.slug }}/{{ post.post_cat.sub_cat.cat_slug }}/{{ post.slug }}">{{ post.post_title|truncatechars:80 }}</a></div>
+                    <div class="post-excerpt">{{ post.post_description|truncatechars:160 }}</div>
+                     <div class="meta">
+                      <span>{{ post.schedule_date|date }} | {{ post.schedule_date|time }}</span>
+                      <div style="--custom-bottom: 0px; --custom-right: 0px;">
+                        {% include 'share.html' with posts=post %}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              {% endfor %}
+            {% endwith %}
+          {% endfor %}
+        </div>
+
+        <!-- Carousel Controls -->
+        <!-- <button class="carousel-control-prev" type="button" data-bs-target="#postCarousel" data-bs-slide="prev">
+          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#postCarousel" data-bs-slide="next">
+          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        </button> -->
+
+        <!-- View More Posts -->
+        <div class="view-more">
+          <a href="/{{ category.cat_slug }}/{{ subcat.subcat_slug }}">अधिक पोस्ट देखें</a>
+          <span>
+            <button class="btn btn-link prev-btn p-0 me-2" data-bs-target="#postCarousel" data-bs-slide="prev">❮</button>
+            <button class="btn btn-link next-btn p-0" data-bs-target="#postCarousel" data-bs-slide="next">❯</button>
+          </span>
+        </div>
+      </div>
+       
+    </div>
+    <div class="text-center my-5">
+      <img src="{% static 'assets/img/ads2.jpg' %}" alt="Advertisement" class="img-fluid">
+    </div>
+   </div>
+    </div>
+  </div>
+</div>
+
+<!-- Bootstrap Bundle with Popper -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<style>
+  
+  .meta-info span {
+    margin-right: 10px;
+    font-size: 0.8rem;
+    color: #888;
+  }
+
+  .category {
+    color: #c02228 !important;
+    font-weight: bold;
+    text-transform: uppercase;
+  }
+
+  .post-title {
+    font-size: 1rem;
+    font-weight: 400;
+  }
+
+  .article-title {
+    font-size: 1.3rem;
+    font-weight: 700;
+  }
+  .article-title a,
+.post-title a {
+  text-decoration: none;
+  
+}
+
+.article-title a:hover,
+.post-title a:hover {
+  text-decoration: none;
+  color: #c02228 !important;
+}
+
+  .article-excerpt,
+  .post-excerpt {
+    color: #444;
+    font-size: 0.9rem;
+  }
+
+  .carousel-control-prev,
+  .carousel-control-next {
+    width: auto;
+    color: #000;
+    opacity: 1;
+  }
+
+  .prev-btn,
+  .next-btn {
+    color: #c02228 !important;
+  }
+
+  .view-more {
+    color: #000 !important;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.875rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 2px solid black;
+    padding-top: 10px;
+    margin-top: 1rem;
+  }
+  .view-more a {
+    color: #c02228 !important;
+    text-decoration: none;
+  }
+</style>

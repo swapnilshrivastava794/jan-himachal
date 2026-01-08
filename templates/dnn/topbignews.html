@@ -1,0 +1,121 @@
+{% load i18n %}
+{% load static %}
+<div class="container ">
+{% for ads in headtopad %}
+<div class="alert alert-dismissible fade show p-0 mt-2" role="alert">
+  <button type="button" class="btn-close btn-closee" data-bs-dismiss="alert" aria-label="Close"></button>
+  <a href="{{ads.ad_url}}" target="_blank">
+    {% if ads.ad_type == 'stil' %}
+    <img class="w-100" src="../upload/{{ads.ad_image}}" alt="{{ads.ad_url}}" />
+    {% else %}
+    <video class="w-100 topsingleads" autoplay loop muted>
+      <source src="../upload/{{ads.ad_image}}" />
+    </video>
+    {% endif %}
+  </a>
+</div>
+{% endfor %}
+
+  <div class="row mt-3 ">
+     <div class="text-center">
+        <div class="top-heading">आज के बड़े घटनाक्रम</div>
+    </div>
+    {% for news in bnews|slice:":1" %}
+            <a class="h2 text-decoration-none text-center py-3" href="/{{ news.newsfrom.slug }}/{{ news.post_cat.sub_cat.cat_slug }}/{{ news.slug }}">
+                {{ news.post_title|truncatechars:180 }}
+              </a>
+     {% endfor %}
+    <div class="col-lg-6 col-md-12 col-sm-12 mb-3 row-p-0">     
+     <div class="mb-3">
+            <div class="section-title">मौसम</div>
+            <div class="double-underline"></div>
+        </div>
+      <div class="block-content mt-4">
+         {% for news in LatestNews|slice:":2" %}
+        <article class="align-items-stretch news-card">
+          <div class="row mb-3">
+            <!-- 🔸 left: Media -->
+            <div class="col-lg-4 col-12">
+              <div class="ratio ratio-16x9 bg-dark">
+                {% if news.video_file %}
+                <video class="w-100 h-100 object-fit-cover" preload="none" loop playsinline autoplay muted>
+                  <source src="{{ news.video_file.url }}" type="video/mp4">
+                  Your browser does not support the video tag.
+                </video>
+                {% else %}
+                <img src="{{ news.post_image.url }}" alt="{{ news.post_title }}" title="{{ news.post_title }}"
+                    class="img-fluid rounded w-100 h-100 object-fit-cover" loading="lazy" />
+                {% endif %}
+              </div>
+            </div>
+            <!-- 🔹 right: Text Content -->
+            <div class="col-lg-8 col-12 d-flex flex-column justify-content-between">
+              <div class="b-news mb-1">
+                <a  href="/{{ news.newsfrom.slug }}/{{ news.post_cat.sub_cat.cat_slug }}/{{ news.slug }}">
+                  {{ news.post_title|truncatechars:246 }}
+                </a>
+
+                
+              </div>
+
+              <div class="d-flex align-items-center small  mt-1">
+                <span>{{ news.post_date }}</span>
+                <div class="share-icons-container  mx-2">
+                  {% include 'share.html' %}
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </article>
+        {% endfor %}
+      </div>
+
+    </div>
+    <div class="col-lg-6 col-md-12 col-sm-12 mb-3 row-p-0">     
+     <div class="mb-3">
+            <div class="section-title">बड़ी खबरें</div>
+            <div class="double-underline"></div>
+        </div>
+      <div class="block-content mt-4">
+         {% for news in headline|slice:":2" %}
+        <article class="align-items-stretch news-card2">
+          <div class="row mb-3">
+          <!-- 🔸 left: Media -->
+          <div class="col-lg-4 col-12">
+            <div class="ratio ratio-16x9 bg-dark">
+              {% if news.video_file %}
+              <video class="w-100 h-100 object-fit-cover" preload="none" loop playsinline autoplay muted>
+                <source src="{{ news.video_file.url }}" type="video/mp4">
+                Your browser does not support the video tag.
+              </video>
+              {% else %}
+              <img src="{{ news.post_image.url }}" alt="{{ news.post_title }}" title="{{ news.post_title }}"
+                  class="img-fluid rounded w-100 h-100 object-fit-cover" loading="lazy" />
+              {% endif %}
+            </div>
+          </div>
+          <!-- 🔹 right: Text Content -->
+          <div class="col-lg-8 col-12 d-flex flex-column justify-content-between">
+            <div class="b-news mb-1">
+              <a  href="/{{ news.newsfrom.slug }}/{{ news.post_cat.sub_cat.cat_slug }}/{{ news.slug }}">
+                {{ news.post_title|truncatechars:246 }}
+              </a>
+            </div>
+
+            <div class="d-flex align-items-center small  mt-1">
+              <span>{{ news.post_date }}</span>
+              <div class="share-icons-container  mx-2">
+                {% include 'share.html' %}
+              </div>
+            </div>
+          </div>
+          </div>
+          
+        </article>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+  </div>
+</div>

@@ -1,0 +1,440 @@
+{% extends 'base.html' %}
+{% block body %}
+{% load static %}
+
+<style>
+  .blue-pattern {
+  background-color: #000f3b; /* light blue base */
+  background-image: radial-gradient(#0b306b 1px, transparent 1px);
+  background-size: 20px 20px;
+  color: #fff;
+}
+.vou-text{
+    color: rgb(168 168 168 / 86%) !important;
+    font-size: 160px;
+    font-family: fantasy;
+    font-style: normal;
+    background-image: radial-gradient(#5d6e8a 1px, transparent 1px);
+  background-size: 20px 20px;
+  color: #fff;
+}
+
+.container {
+      position: relative;
+      margin-top: 0px;
+      padding-bottom:0px;
+      font-family: Montserrat;
+      
+    }
+
+    h1 {
+      text-align: center;
+    }
+
+    .control {
+      list-style: none;
+    }
+
+    .control li {
+      position: absolute;
+      z-index: 99;
+      top: 50%;
+      transform: translateY(-50%);
+      color: white;
+      background: rgba(0, 0, 0, 0.5);
+      padding: 12px 20px;
+      border-radius: 50%;
+      cursor: pointer;
+    }
+
+    .control li:hover {
+      background: #000;
+    }
+
+    .control li.prev {
+      left: 20px;
+    }
+
+    .control li.next {
+      right: 20px;
+    }
+
+    .tns-nav {
+      text-align: center;
+      margin: 15px 0;
+    }
+
+    .tns-nav button {
+      height: 8px;
+      width: 8px;
+      background-color: #00074e;
+      border: none;
+      margin-left: 7px;
+      border-radius: 50%;
+      padding: 0px;
+    }
+
+    .tns-nav .tns-nav-active {
+      background-color: black;
+    }
+
+  @media (max-width: 1200px) {
+  .vou-text{
+    color: rgb(168 168 168 / 86%) !important;
+    font-size: 40px;
+    font-family:Arial, Helvetica, sans-serif !important;
+    font-weight: bolder;
+    font-style: normal;
+    background-image: radial-gradient(#5d6e8a 1px, transparent 1px);
+  background-size: 20px 20px;
+  color: #fff;
+}
+.ad-image{
+  display: none;
+}
+}
+</style>
+
+<div class="bootstrap-new" style="background: #fff;">
+<div class="row m-3">
+  <div class="col-md-8 mt-3" >
+<h1 class="display-4 text-center vou-text">VOICES OF UAE</h1>
+<div>
+  <img src="{% static 'assets/images/Voices-Of-UAE.jpg' %}" alt="Voices of UAE" width="100%" class="ad-image">
+</div>
+  </div>
+    
+            <div class="col-12 col-md-4 mb-4">
+              <div>
+                <h3 class="text-center">Welcome! Let’s move forward.</h3>
+        <p class="lead py-2" style="text-align: justify;">Provide your information along with a high-resolution photo of yourself, submit your content and make the payment..that’s it!</p>
+              </div>
+              
+               {% if messages %}
+            {% for message in messages %}
+            <div class="alert alert-danger alert-dismissible fade show">
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                <strong>{{ message }}</strong>
+            </div>
+            {% endfor %}
+            {% endif %}
+            {% if form.non_field_errors %}
+            <small class="text-danger">{{ form.non_field_errors.as_ul}}</small>
+            {% endif %}
+              <form method="POST" action="/voices-of-uae" enctype="multipart/form-data" class="bg-light p-4 rounded shadow">
+              {% csrf_token %}
+
+              <div class="mb-3">
+              <!-- <label for="profile_pic" class="form-label">Your Full Name</label> -->
+              <input type="text" name="fullname" id="fullname" class="form-control" required placeholder="Your Full Name">
+              </div>
+              <!-- Are you based in UAE? -->
+              <div class="mb-3">
+              <label for="interestedin" class="form-label">Article Submisison for : </label>
+              <select class="form-select form-control" id="interestedin" name="interestedin" required>
+              <option value="" selected disabled>Select An Option</option>
+              <option value="vou">Voice Of UAE</option>
+              <option value="others">Others</option>
+              </select>
+              </div>
+
+              <!-- Profile Picture Upload -->
+              <div class="mb-3">
+              <!-- <label for="profile_pic" class="form-label">Upload your profile picture (JPG or PNG, Max 5MB)</label> -->
+              <input type="file" name="profile_picture" id="profile_pic" accept=".jpg,.jpeg,.png" class="form-control" required>
+              <small style="
+    font-size: 10px;
+">Upload your profile picture (JPG or PNG, Max 5MB)</small>
+              </div>
+
+              <!-- Biography -->
+              <div class="mb-3">
+              <!-- <label for="bio" class="form-label">Your Biography</label> -->
+              <textarea name="biography" id="bio" rows="5" class="form-control" placeholder="Tell us about your journey, achievements, profession, or what makes your voice unique" required></textarea>
+              </div>
+
+              <!-- Contact Email -->
+              <div class="mb-3">
+              <!-- <label for="email" class="form-label">Contact Email (Verification Only)</label> -->
+              <input type="email" name="contact_email" id="email" class="form-control" placeholder="Contact Email (Verification Only)" required>
+              </div>
+
+              <!-- Contact Number -->
+              <div class="mb-3">
+              <!-- <label for="phone" class="form-label">Contact Number (Verification Only)</label> -->
+              <input type="tel" name="contact_number" id="phone" class="form-control" pattern="[0-9+ -]{7,15}" placeholder="Contact Number (Verification Only)" required >
+              </div>
+
+              <button type="submit" class="btn btn-primary w-100">Submit Profile</button>
+              </form>
+            </div>
+
+   <div class="container blue-pattern">
+  <ul class="control" id="custom-control">
+    <!-- <li class="prev"><i class="fas fa-angle-left fa-2x"></i></li>
+    <li class="next"><i class="fas fa-angle-right fa-2x"></i></li> -->
+  </ul>
+
+  <div class="my-slider mt-2">
+    {% for bd in BlogData %}
+    <a href="/{{ bd.slug }}" class="text-body" target="_blank">
+      <img src="{{ bd.post_image.url }}" alt="{{ bd.post_title}}">
+      <p class="h5 text-white news-content bg-dark" >{{ bd.post_title|slice:":60"|safe }}... </p>
+    </a>
+    {% endfor %}
+    
+  </div>
+</div>
+
+
+    <div class="container blue-pattern">
+        
+      
+    <div class="row">
+        <div class="col-md-6 col-12">
+          <div class="mb-4 rounded border p-3" style="min-height:306px;">
+        <p class="text-white text-justify"><span class="h2">Voices of UAE</span> is a special initiative by DXB News Network, inviting people living in the UAE to share real stories that matter — your struggles, achievements, turning points, or lessons that can inspire others. You don’t need to be a writer or public figure. If your story has honesty and impact, we want to hear it — in any language, with just a clear photo and your words.
+        </p>
+        <p class="text-white  text-justify">
+          To submit, simply fill out our online form and pay a refundable AED 220 registration fee. If your story is not selected, you’ll get a full refund within 7 days. If approved and published, the fee becomes non-refundable. Stories must be respectful, non-promotional, and follow UAE media ethics. This is your chance to be featured on a trusted platform. Your voice can move someone — let it be heard.
+        </p>
+        
+        </div>
+    </div>
+    <div class="col-12 col-md-6">
+      <div class=" mb-4 rounded border  p-3" style="min-height:306px;">
+    <!-- Registration Section -->
+    
+    <p class="h2 text-justify" >A non-refundable registration fee of AED 220 will be required, payable to Markazzia Solutions LLC-FZ.</p>
+    <p class="h4 text-justify">Participants must provide a deposit slip as proof of payment along with their submissions.</p>
+</div>
+    </div>
+    </div>
+    
+    </div>
+
+    
+    <!-- Verification Process -->
+    <div class="container">
+        <h2 class="h2 mb-4 mt-4 text-center">Verification Process</h2>
+        <p>Submissions will undergo basic verification by DXB News Network to ensure authenticity. Participants must
+            provide
+            supporting documents or evidence (e.g., certificates, work samples, testimonials) for their claims.</p>
+    </div>
+    <!-- Campaign Categories Section -->
+    <div class="container">
+        <!-- Categories Row -->
+        <div class="row">
+           
+            <div class="col-12 col-md-6 mb-4">
+                 <h3 class="h3 mb-4 text-center">Campaign Categories</h3>
+                <div class="accordion" id="ageGroupAccordion">
+
+  <!-- 1. Young Children -->
+  <div class="accordion-item">
+    <h2 class="accordion-header" id="heading1">
+      <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse1" aria-expanded="true" aria-controls="collapse1">
+        1. Young Children (Ages 5–12)
+      </button>
+    </h2>
+    <div id="collapse1" class="accordion-collapse collapse show" aria-labelledby="heading1" data-bs-parent="#ageGroupAccordion">
+      <div class="accordion-body">
+        <ul>
+          <li>Creative Arts: Drawing, Painting, Craftwork</li>
+          <li>Performing Arts: Dance, Acting/Theater</li>
+          <li>Sports: Emerging Athletes</li>
+          <li>Academic Achievements: Science Projects</li>
+          <li>Social Contributions: Environmental Initiatives</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. Teenagers -->
+  <div class="accordion-item">
+    <h2 class="accordion-header" id="heading2">
+      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse2" aria-expanded="false" aria-controls="collapse2">
+        2. Teenagers (Ages 13–19)
+      </button>
+    </h2>
+    <div id="collapse2" class="accordion-collapse collapse" aria-labelledby="heading2" data-bs-parent="#ageGroupAccordion">
+      <div class="accordion-body">
+        <ul>
+          <li>Academic Excellence: Innovators in STEM</li>
+          <li>Creative Fields: Writers, Poets, Lyricists</li>
+          <li>Performing Arts: Dance, Drama</li>
+          <li>Sports: State/National Level Athletes</li>
+          <li>Social Media: Teen Influencers</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. Young Adults -->
+  <div class="accordion-item">
+    <h2 class="accordion-header" id="heading3">
+      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse3" aria-expanded="false" aria-controls="collapse3">
+        3. Young Adults (Ages 20–35)
+      </button>
+    </h2>
+    <div id="collapse3" class="accordion-collapse collapse" aria-labelledby="heading3" data-bs-parent="#ageGroupAccordion">
+      <div class="accordion-body">
+        <ul>
+          <li>Career Growth: Entrepreneurs, Innovators</li>
+          <li>Cultural Impact: Artists, Writers</li>
+          <li>Technology and Innovation: App Developers</li>
+          <li>Entertainment and Media: Actors, Social Media Influencers</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. Adults -->
+  <div class="accordion-item">
+    <h2 class="accordion-header" id="heading4">
+      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse4" aria-expanded="false" aria-controls="collapse4">
+        4. Adults (Ages 36–60)
+      </button>
+    </h2>
+    <div id="collapse4" class="accordion-collapse collapse" aria-labelledby="heading4" data-bs-parent="#ageGroupAccordion">
+      <div class="accordion-body">
+        <ul>
+          <li>Professional Excellence: Doctors, Lawyers, Engineers</li>
+          <li>Educational Impact: Teachers, Mentors</li>
+          <li>Creative Fields: Published Authors</li>
+          <li>Social Work and Leadership: Women’s Rights Advocates</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5. Senior Citizens -->
+  <div class="accordion-item">
+    <h2 class="accordion-header" id="heading5">
+      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse5" aria-expanded="false" aria-controls="collapse5">
+        5. Senior Citizens (Ages 60 and Above)
+      </button>
+    </h2>
+    <div id="collapse5" class="accordion-collapse collapse" aria-labelledby="heading5" data-bs-parent="#ageGroupAccordion">
+      <div class="accordion-body">
+        <ul>
+          <li>Legacy and Contributions: Lifetime Achievements in Arts</li>
+          <li>Creative Pursuits: Senior Writers, Poets</li>
+          <li>Community Service: Volunteers and Leaders</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cross-Sector Categories -->
+  <div class="accordion-item">
+    <h2 class="accordion-header" id="heading6">
+      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse6" aria-expanded="false" aria-controls="collapse6">
+        Cross-Sector Categories
+      </button>
+    </h2>
+    <div id="collapse6" class="accordion-collapse collapse" aria-labelledby="heading6" data-bs-parent="#ageGroupAccordion">
+      <div class="accordion-body">
+        <ul>
+          <li>Science and Technology: Innovators in AI, Blockchain</li>
+          <li>Entrepreneurship: Founders of Startups</li>
+          <li>Health and Wellness: Fitness Coaches, Medical Professionals</li>
+          <li>Civic Engagement: Local Heroes in Community Service</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+            </div>
+            
+        </div>
+
+        
+
+       
+    </div>
+    
+    <!-- Submit Your Story Section -->
+    
+</div>
+
+<style>
+    /* Default variables for light mode */
+    :root {
+        --modal-bg: #ffffff;
+        --modal-text: #000000;
+        --modal-border: #dddddd;
+    }
+
+    /* Variables for dark mode */
+    [data-theme="dark"] {
+        --modal-bg: #2c2c2c;
+        --modal-text: #f0f0f0;
+        --modal-border: #444444;
+    }
+
+    /* Modal styling */
+    .modal-content {
+        background-color: var(--modal-bg);
+        color: var(--modal-text);
+        border: 1px solid var(--modal-border);
+    }
+
+    .modal-header,
+    .modal-footer {
+        border-color: var(--modal-border);
+    }
+</style>
+
+<script>
+    // Enable/disable the "Submit Inquiry" button based on checkbox
+    document.getElementById('agreeCheckbox').addEventListener('change', function () {
+        const agreeButton = document.getElementById('agreeButton');
+        agreeButton.disabled = !this.checked;
+    });
+
+    // Submit form when "Submit Inquiry" is clicked
+    document.getElementById('agreeButton').addEventListener('click', function () {
+        const modal = bootstrap.Modal.getInstance(document.getElementById('agreementModal'));
+        modal.hide(); // Close the modal
+        document.querySelector('form').submit(); // Submit the form
+    });
+
+
+<!-- #-----dlider--------- -->
+
+
+</script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tiny-slider/2.9.4/min/tiny-slider.js"></script>
+<script>
+  var slider = tns({
+    container: ".my-slider",
+    items: 3,
+    gutter: 20,
+    slideBy: 1,
+    controls: false,
+    navPosition: "bottom",
+    mouseDrag: true,
+    autoplay: true,
+    autoplayButtonOutput: false,
+    controlsContainer: "#custom-control",
+    responsive: {
+      0: {
+        items: 1,
+        nav: false
+      },
+      768: {
+        items: 2,
+        nav: true
+      },
+      1440: {
+        items: 4
+      }
+    }
+  });
+</script>
+
+{% endblock %}

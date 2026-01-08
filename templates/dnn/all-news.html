@@ -1,0 +1,115 @@
+{% extends 'base.html' %}
+{% block body %}
+{% load static %}
+
+<div class="container mt-4">
+    <h2 class="border-b mb-3 text-uppercase font-weight-bold text-center">{{ sslug }}</h2>
+    <div class="row">
+
+        <div class="col-lg-9 col-md-8 col-sm-12  mt-1">
+            <!-- collam-middle !-->
+
+            {% comment %} ------video-podcast-news-start------- {% endcomment %}
+            {% if vidnews != null %}
+            <div class="mx-2">
+                <div class="section-title">ख़बरें और पॉडकास्ट</div>
+                <div class="double-underline"></div>
+            </div>
+            {% endif %}
+            {% comment %} ------video-podcast-news-end------- {% endcomment %}
+            <div class="container-fluid ">
+                <div class="container">
+                    <div class="row">
+                        {% for vidpost in vidnews %}
+                        <div class="col-lg-4 colo-md-6 colo-sm-12">
+                            <div class="position-relative mt-3">
+                                <a href="/video/{{vidpost.slug}}">
+                                    <img  style="border-radius: 4px 4px 0px 0px; width: 100%; height: 200px;"
+                                        src="https://img.youtube.com/vi/{{vidpost.video_url}}/mqdefault.jpg">
+                                    
+                                    <span class="playbut" style="top: 25%;">
+                                        <i class="fa fa-play-circle"></i>
+                                    </span>
+                                </a>
+                                <div class="p-3 card-background">                                    
+                                    <p>
+                                    <small><i class="fas fa-calendar-alt"></i> {{vidpost.schedule_date|date}}</small>
+                                    <small class="ml-3"> <i class="fas fa-clock"></i> {{ vidpost.schedule_date|time }}</small>
+                                    </p>
+                                   
+                                    <a  href="/video/{{vidpost.slug}}">
+                                        <p>{{vidpost.video_title|slice:":60"|safe}}...</p>
+                                        <p class="small">{{vidpost.video_short_des|slice:":150"|safe}}...</p>
+                                    </a>
+                                </div>
+                                
+                            </div>
+                        </div>
+
+                        {% endfor %}
+                        {% for Blog in BlogData %}
+                        <div class="col-lg-4 colo-md-6 colo-sm-12 mt-4">
+                            <a href="/{{Blog.newsfrom.slug}}/{{Blog.post_cat.sub_cat.cat_slug}}/{{Blog.slug}}">
+                                 <img class="" src="../upload/{{Blog.post_image}}" alt="">
+                            </a>
+                            <div class="news-card mb-3">
+                                
+                                <a class="news-title" href="/{{Blog.newsfrom.slug}}/{{Blog.post_cat.sub_cat.cat_slug}}/{{Blog.slug}}">
+                                    <p>{{Blog.post_title|slice:":60"|safe}}</p>
+                                </a>
+                                <a href="/{{Blog.newsfrom.slug}}/{{Blog.post_cat.sub_cat.cat_slug}}/{{Blog.slug}}" class="news-description">
+                                    <p>{{Blog.post_short_des|slice:":100"|safe}}</p>
+                                </a>
+
+                                <div class="d-flex align-items-center px-2 my-1 mb-1 news-meta">
+                                    <small><i class="fas fa-calendar-alt"></i> {{Blog.schedule_date|date}}</small>
+                                    <small class=""><i class="fas fa-clock"></i> {{ Blog.schedule_date|time }}</small>
+                                    <small class=""><i class="far fa-eye mr-2"></i>{{Blog.post_status|add:Blog.viewcounter}}</small>
+                                    <div style="--custom-bottom: 0px; --custom-right: 0px;">
+                                            {% include 'share.html' with posts=Blog %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            <!-- Featured News Slider End -->
+            <!-- Pagination Start -->
+            <div class="col-lg-12 text-center">
+                <div class="pagination mt-3 ">
+                    {% if BlogData.has_previous %}
+                    <a href="?page=1" class="pnum mr-2">&laquo; First</a>
+                    <a href="?page={{ BlogData.previous_page_number }}" class="pnum mr-2">Previous</a>
+                    {% endif %}
+
+                    <span class="current mr-2">
+                        Page {{ BlogData.number }} of {{ BlogData.paginator.num_pages }}.
+                    </span>
+
+                    {% if BlogData.has_next %}
+                    <a href="?page={{ BlogData.next_page_number }}" class="pnum mr-2">Next</a>
+                    <a href="?page={{ BlogData.paginator.num_pages }}" class="pnum mr-2">Last &raquo;</a>
+                    {% endif %}
+                </div>
+            </div>
+            <!-- Pagination End -->
+            <div class="col-lg-12 mb-3 ">
+                {% for adledb in adtop %}
+                <a href=""><img class="img-fluid w-100" src="../upload/{{adledb.ad_image}}" alt=""></a>
+                {% endfor %}
+            </div>
+            
+
+        </div>
+        <div class="col-lg-3 col-md-4 col-sm-12">
+            <!-- collam-right !-->
+            {% include "rightcollam.html" %}
+            <!-- collam-rightend !-->
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,100 @@
+{% include "head.html" %}
+{% block body %}
+{% load static %}
+
+<div class="singup-content container-fluid dxb-bg py-4">
+    <div class="m-3">
+
+        <div class="row">
+            <div class="login-container" id="login-container">
+                <div class="col-md-12 sighnup-logo">
+                    <a href="/">
+                        <img src="{{ profile_setting.logo_dark.url }}" style="width:200px;" alt="newsibleasia">
+                    </a>
+                    <h2 class="text-center sgignup-head">Login</h2>
+                </div>
+                <div class="px-3">
+                    <form id="login-form">
+                        {% csrf_token %}
+
+                        <div class="mb-3">
+                            <!-- <label for="login_input" class="form-label">Enter Email or Username</label> -->
+                            <input type="text" class="form-control" id="login_input" name="login_input"
+                                placeholder="Enter Email or Username">
+                            <p class="text-danger small" id="error-login_input"></p>
+                        </div>
+
+                        <div class="mb-3">
+                            <!-- <label for="password" class="form-label">Password</label> -->
+                            <input type="password" class="form-control" id="password" name="password"
+                                placeholder="password">
+                            <p class="text-danger small" id="error-password"></p>
+                        </div>
+
+                        <p class="text-danger small" id="error-general"></p>
+                        <p class="text-success small" id="success-message"></p>
+
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="rememberMe">
+                            <label class="form-check-label text-dark" for="rememberMe">Remember me</label>
+                        </div>
+
+                        <button type="submit" class="btn btn-login">Log In</button>
+                        <div class="text-center mt-3">
+                            <a href="{% url 'forgot-password' %}" class="forgot-password">Forgot Password</a>
+                        </div>
+                        <div class="col-md-12 mt-3 small text-center">
+                            <span class="me-2 text-dark">Don't have an account?
+                                <a style="color: #4891cd !important; font-weight: bold; padding-left: 10px;"
+                                    href="{% url 'sign-up' %}">Sign-Up</a></span>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    document.getElementById("login-form").addEventListener("submit", function (event) {
+        event.preventDefault();
+
+        let formData = new FormData(this);
+
+        fetch("{% url 'sign-in' %}", {
+            method: "POST",
+            body: formData,
+            headers: {
+                "X-CSRFToken": document.getElementsByName("csrfmiddlewaretoken")[0].value
+            }
+        })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById("error-login_input").innerText = "";
+                document.getElementById("error-password").innerText = "";
+                document.getElementById("error-general").innerText = "";
+                document.getElementById("success-message").innerText = "";
+
+                if (data.status === "error") {
+                    if (data.errors) {
+                        if (data.errors.email) {
+                            document.getElementById("error-login_input").innerText = data.errors.email;
+                        }
+                        if (data.errors.password) {
+                            document.getElementById("error-password").innerText = data.errors.password;
+                        }
+                    } else if (data.message) {
+                        document.getElementById("error-general").innerText = data.message;
+                    }
+                } else if (data.status === "success") {
+                    document.getElementById("success-message").innerText = data.message;
+
+                    setTimeout(() => {
+                        window.location.href = data.redirect_url;
+                    }, 2000);
+                }
+            })
+            .catch(error => console.error("Error:", error));
+    });
+</script>
+
+{% endblock %}

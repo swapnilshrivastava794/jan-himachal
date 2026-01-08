@@ -1,0 +1,124 @@
+{% load static %}
+
+<!-- Subscribe Modal -->
+<div class="modal fade" id="ModalSubscribe" tabindex="-1" aria-labelledby="subscribeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered {% if request.user_agent.is_mobile %}modal-fullscreen{% endif %}}">
+        <div class="modal-content bg-dark text-white">
+            <div class="modal-header border-0">
+                <h5 class="modal-title text-white" id="subscribeModalLabel">Subscribe</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body">
+                {% if error %}
+                    <div class="alert alert-danger">{{ error }}</div>
+                {% endif %}
+                {% if success %}
+                    <div class="alert alert-success">{{ success }}</div>
+                {% endif %}
+
+                <div id="message" class="mt-3 text-center"></div>
+
+                <form id="subscribeForm">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <input type="text" name="fname" class="form-control" placeholder="Your Name" required>
+                    </div>
+                    <div class="mb-3">
+                        <input type="email" id="email" name="email" class="form-control" placeholder="Your Email" required>
+                        <small id="otpStatus" class="text-primary"></small>
+                    </div>
+                    <div class="mb-3">
+                        <input type="text" id="otp" name="otp" class="form-control" placeholder="Enter OTP" disabled required>
+                        <small id="otpVerifyStatus" class="text-danger"></small>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100" style="background-color: #fd1e21; border: none;" id="subscribeBtn" disabled>Subscribe</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$(document).ready(function () {
+    $("#email").blur(function () {
+        var email = $("#email").val();
+        if (!email) return;
+
+        $("#otpStatus").text("Sending OTP...");
+
+        $.ajax({
+            url: "{% url 'send_otp' %}",
+            type: "POST",
+            data: {
+                email: email,
+                csrfmiddlewaretoken: "{{ csrf_token }}"
+            },
+            success: function (response) {
+                $("#otpStatus").text("OTP sent! Check your email.");
+                $("#otp").prop("disabled", false).focus();
+            },
+            error: function () {
+                $("#otpStatus").text("Error sending OTP. Try again.");
+            }
+        });
+    });
+
+    $("#otp").keyup(function () {
+        var otp = $("#otp").val();
+        var email = $("#email").val();
+        if (otp.length !== 6) return;
+
+        $("#otpVerifyStatus").text("Verifying OTP...");
+
+        $.ajax({
+            url: "{% url 'verify_otp' %}",
+            type: "POST",
+            data: {
+                email: email,
+                otp: otp,
+                csrfmiddlewaretoken: "{{ csrf_token }}"
+            },
+            success: function (response) {
+                if (response.status === "success") {
+                    $("#otpVerifyStatus").text("✅ OTP Verified!");
+                    $("#subscribeBtn").prop("disabled", false);
+                } else {
+                    $("#otpVerifyStatus").text("❌ Invalid OTP. Try again.");
+                    $("#subscribeBtn").prop("disabled", true);
+                }
+            },
+            error: function () {
+                $("#otpVerifyStatus").text("Error verifying OTP.");
+            }
+        });
+    });
+
+    $("#subscribeForm").submit(function (event) {
+        event.preventDefault();
+
+        var formData = $(this).serialize();
+
+        $.ajax({
+            url: "{% url 'UserSubscriber' %}",
+            type: "POST",
+            data: formData,
+            success: function (response) {
+                if (response.status === "error") {
+                    $("#message").html('<p class="text-danger">❌ ' + response.message + '</p>');
+                } else {
+                    $("#message").html('<p class="text-success">✅ ' + response.message + '</p>');
+                    setTimeout(function () {
+                        $("#ModalSubscribe").modal("hide");
+                        $("#message").html('');
+                    }, 2000);
+                }
+            },
+            error: function () {
+                $("#message").html('<p class="text-danger">❌ Subscription failed. Try again.</p>');
+            }
+        });
+    });
+});
+</script>

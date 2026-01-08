@@ -1,0 +1,277 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- ✅ BASIC META TAGS -->
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<meta name="copyright" content="Jan Himachal. All rights reserved.">
+<meta name="author" content="Jan Himachal Team">
+<meta name="language" content="hi">
+<meta name="distribution" content="global">
+<meta name="theme-color" content="#0d6efd">
+
+  {% if indseo == 'ndetail' %}
+  <title>{{Blogdetails.post_title}}</title>
+  <meta property="og:title" content="{{Blogdetails.post_title}}" />
+  <meta property="twitter:title" content="{{Blogdetails.post_title}}" />
+  <meta name="description" content="{{Blogdetails.post_short_des }} Jan Himachal" />
+  <meta property="og:description" content="{{Blogdetails.post_short_des }} Jan Himachal" />
+  <meta property="twitter:description" content="{{Blogdetails.post_short_des }} Jan Himachal" />
+  <meta name="news_keywords" content="Jan Himachal, breaking news, 
+  {% for tag in Blogdetails.tags.all %}{{tag.name}},
+  {% endfor %}" />
+  <meta property="og:url" content="https://www.janhimachal.com{{ request.path }}" />
+  <meta property="twitter:url" content="https://www.janhimachal.com{{ request.path }}" />
+  <meta property="og:image" content="https://www.janhimachal.com/upload/{{Blogdetails.post_image}}" />
+  <meta name="twitter:image" content="https://www.janhimachal.com/upload/{{Blogdetails.post_image}}" />
+  <link rel="canonical" href="https://www.janhimachal.com{{ request.path }}" />
+
+  <meta property="og:image:type" content="image/jpeg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="fb:pages" content="742922868908650">
+  <meta property="og:locale" content="hi_IN">
+  
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "NewsArticle",
+      "headline": "Heavy Rain and Snowfall Alert in Himachal Pradesh",
+      "description": "The weather department warns of heavy rain in lower areas and snowfall in higher regions of Himachal Pradesh. Travel and tourism may be affected.",
+      "image": [
+        "https://www.janhimachal.com/upload/newsimage/2025/10/09/FIRDlR0XoAk00ws.jpg"
+      ],
+      "author": {
+        "@type": "Person",
+        "name": "Shivani"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "Jan Himachal",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://www.janhimachal.com/static/assets/img/logo.svg"
+        }
+      },
+      "datePublished": "2025-10-09T11:31:00+05:30",
+      "dateModified": "2025-10-09T12:05:00+05:30",
+      "mainEntityOfPage": "https://www.janhimachal.com/himachal-pradesh/weather-desk/himachal-heavy-rain-snow-alert"
+    }
+    
+    </script>
+
+  {% elif indseo == 'video' %}
+  <title>{{Vnews.video_title}}</title>
+  <meta property="og:title" content="{{Vnews.video_title}}" />
+  <meta property="twitter:title" content="{{Vnews.video_title}}" />
+  <meta name="description" content="{{Vnews.video_short_des}}" />
+  <meta property="og:description" content="{{Vnews.video_short_des}}" />
+  <meta property="twitter:description" content="{{Vnews.video_short_des}}" />
+  <meta name="news_keywords" content="Jan Himachal, breaking news, {{Vnews.video_title}}" />
+  <meta property="og:url" content="https://www.janhimachal.com{{ request.path }}" />
+  <meta name="twitter:url" content="https://www.janhimachal.com{{ request.path }}" />
+  <meta property="og:image" content="https://img.youtube.com/vi/{{Vnews.video_url}}/mqdefault.jpg" />
+  <meta name="twitter:image" content="https://img.youtube.com/vi/{{Vnews.video_url}}/mqdefault.jpg" />
+  <link rel="canonical" href="https://www.janhimachal.com{{ request.path }}" />
+
+  <meta property="og:image:type" content="image/jpeg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="fb:pages" content="742922868908650">
+  <meta property="og:locale" content="hi_IN">
+  
+  {% else %}
+  <title>{{indseo.metatitle}}</title>
+  <meta property="og:title" content="{{indseo.metatitle}}" />
+  <meta property="twitter:title" content="{{indseo.metatitle}}" />
+  <meta name="description" content="{{indseo.metadescription}}" />
+  <meta property="og:description" content="{{indseo.metadescription}}" />
+  <meta property="twitter:description" content="{{indseo.metadescription}}" />
+  <meta property="og:url" content="https://www.janhimachal.com{{ request.path }}" />
+  <meta name="twitter:url" content="https://twitter.com/JanHimachal" />
+  <meta name="x:url" content="https://x.com/JanHimachal" />
+  <meta property="og:image" content="https://www.janhimachal.com/upload/logo/Jan_Himachal_78mKZBR.png" />
+  <meta name="twitter:image" content="https://www.janhimachal.com/upload/logo/Jan_Himachal_78mKZBR.png" />
+  <link rel="canonical" href="https://www.janhimachal.com" />
+
+  <meta property="og:image:type" content="image/jpeg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="fb:pages" content="742922868908650">
+  <meta property="og:locale" content="hi_IN">
+
+  <!-- ✅ NEWS & SEARCH RELATED -->
+<meta name="news_keywords" content="हिमाचल, समाचार, Jan Himachal, Hindi News, Himachal Pradesh News">
+<meta name="revisit-after" content="1 day">
+<meta name="rating" content="General">
+<meta name="coverage" content="Himachal Pradesh">
+<meta name="target" content="all">
+<meta name="geo.region" content="IN-HP">
+<meta name="geo.placename" content="Himachal Pradesh, India">
+<meta name="distribution" content="global">
+
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "NewsMediaOrganization",
+    "name": "Jan Himachal",
+    "alternateName": "JH",
+    "url": "https://www.janhimachal.com/",
+    "logo": "https://www.janhimachal.com/upload/logo/Jan_Himachal_78mKZBR.png",
+    "contactPoint": [{
+      "@type": "ContactPoint",
+      "telephone": "+91 8288872982",
+      "contactType": "customer service",
+      "contactOption": "TollFree",
+      "areaServed": "IN",
+      "availableLanguage": "Hindi, English"
+    }],
+    "sameAs": [
+          "https://www.facebook.com/janhimachal/",
+          "https://x.com/JanHimachal",
+          "https://www.linkedin.com/company/jan-himachal/"
+          "https://www.youtube.com/@JanHimachal"
+    ]
+  }
+  </script>
+  
+{% endif %}
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'assets/dnn/css/style.css' %}">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'assets/dnn/css/bootstrap.min.css' %}">
+  <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Bellefair&family=Coda:wght@400;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'assets/dnn/fonts/stylesheet_roboto.css' %}">
+  <link rel="icon" type="image/x-icon" href="{% static 'assets/dnn/img/favicon.png' %}">
+  <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.css"/>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
+  <script src="{% static 'assets/dnn2/index.js' %}"></script>
+  <link rel="stylesheet" href="{% static 'assets/dnn2/index.css' %}">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'assets/dnn2/hnews.css' %}">
+
+  <meta name="google-site-verification" content="b9AgCekDpKNwcfl2DFgOyqMtXk6PIwJ80ozmaG0vQI0" />
+
+ <!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-K96MVJ7G');</script>
+<!-- End Google Tag Manager -->
+
+  
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "Jan Himachal",
+    "url": "https://www.janhimachal.com/",
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": "https://www.janhimachal.com/search?q={search_term_string}",
+      "query-input": "required name=search_term_string"
+    }
+  }
+  </script>
+
+  <style>
+   :root {
+    --background-color: {{ profile_setting.background_theme_light|default:"#ffffff" }};
+    --text-color: #000000;
+    --primary-color: #0d6efd;
+  }
+
+  body.dark-mode {
+    --background-color: {{ profile_setting.background_theme_dark|default:"#121212" }};
+    --text-color: #ffffff;
+    --primary-color: #0d6efd;
+  }
+
+  body {
+    background-color: var(--background-color);
+    color: var(--text-color);
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+
+  .Container_background {
+    background-color: {{ profile_setting.container_background|default_if_none:"#fcf8e7" }};
+  }
+
+  .items_background {
+    background-color: {{ profile_setting.items_background|default_if_none:"#ffffff" }};
+  }
+
+  .body_img {
+    {% if profile_setting.body_img %}
+      background-image: url('{{ profile_setting.body_img.url }}');
+      background-repeat: no-repeat;
+      background-size: cover;
+      background-position: center;
+    {% endif %}
+  }
+  </style> 
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tiny-slider/2.9.4/tiny-slider.css" />
+
+  {% if is_mobile %}
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/js/all.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ti-icons/css/themify-icons.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ti-icons/css/themify-icons.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+
+  <link rel="stylesheet" href="{% static 'mobile/style.css' %}">
+  <link rel="stylesheet" href="{% static 'mobile/mdxbstyle.css' %}">
+  <link rel="manifest" href="{% static 'mobile/manifest.json' %}">
+  {% endif %}
+
+</head>
+
+
+<body>
+  <!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-K96MVJ7G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  <!-- End Google Tag Manager (noscript) -->
+  <script src="{% static 'ckeditor/ckeditor-init.js' %}"></script>
+  <script src="{% static 'ckeditor/ckeditor/ckeditor.js' %}"></script>
+
+  <script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const toggle = document.getElementById("theme-toggle");
+    const body = document.body;
+
+    // Load saved preference
+    const savedTheme = localStorage.getItem("theme");
+    if (savedTheme === "dark") {
+      body.classList.add("dark-mode");
+      toggle.checked = true;
+    }
+
+    toggle.addEventListener("change", function () {
+      if (this.checked) {
+        body.classList.add("dark-mode");
+        localStorage.setItem("theme", "dark");
+      } else {
+        body.classList.remove("dark-mode");
+        localStorage.setItem("theme", "light");
+      }
+    });
+  });
+
+  
+</script>
+

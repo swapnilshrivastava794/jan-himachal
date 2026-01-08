@@ -1,0 +1,130 @@
+{% load static %}  
+<div class="container">
+    <div class="row">
+<!-- reels Slider End -->
+<div class="short-videos">
+  {% for CatVid in videos %}
+      <div class="short-video-card" data-video-id="{{ CatVid.video_url }}" data-title="{{ CatVid.video_title }}" data-category="{{ CatVid.News_Category }}">
+        <img src="https://img.youtube.com/vi/{{ CatVid.video_url }}/hqdefault.jpg" alt="{{ CatVid.video_title }}" />
+        <div class="overlay">
+          <button class="play-button">&#9658;</button>
+          <div class="info">
+            <span class="category">{{ CatVid.News_Category }}</span>
+            <p class="title">{{ CatVid.video_title }}</p>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+</div>
+
+<div id="video-overlay" class="hidden">
+  <div class="video-container">
+    <button id="close-video">←</button>
+    <iframe id="video-player" width="900" height="506" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+  </div>
+</div>
+
+
+</div>
+</div>
+
+<style>
+    .short-videos {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  padding: 10px;
+}
+
+.short-video-card {
+  position: relative;
+  width: 250px;
+  cursor: pointer;
+}
+
+.short-video-card img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 5px;
+}
+
+.overlay {
+  position: absolute;
+  bottom: 0;
+  background: rgba(255, 0, 0, 0.8);
+  color: white;
+  width: 100%;
+  padding: 10px;
+  box-sizing: border-box;
+  border-radius: 0 0 5px 5px;
+}
+
+.play-button {
+  position: absolute;
+  top: 40%;
+  left: 45%;
+  font-size: 30px;
+  color: white;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+#video-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: black;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+#video-overlay.hidden {
+  display: none;
+}
+
+.video-container {
+  position: relative;
+}
+
+#close-video {
+  position: absolute;
+  top: 30px;
+  left: 5px;
+  font-size: 30px;
+  color: white;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  z-index: 10;
+}
+
+</style>
+
+<script>
+  const videoOverlay = document.getElementById('video-overlay');
+  const videoPlayer = document.getElementById('video-player');
+  const closeBtn = document.getElementById('close-video');
+
+  document.querySelectorAll('.short-video-card').forEach(card => {
+    card.addEventListener('click', () => {
+      const videoId = card.getAttribute('data-video-id');
+      // Set iframe src with autoplay=1 & mute=1 for auto play on open
+      videoPlayer.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&rel=0`;
+      videoOverlay.classList.remove('hidden');
+    });
+  });
+
+  closeBtn.addEventListener('click', () => {
+    videoOverlay.classList.add('hidden');
+    // Stop the video when closing by clearing the src
+    videoPlayer.src = '';
+  });
+
+  
+</script>

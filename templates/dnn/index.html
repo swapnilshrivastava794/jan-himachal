@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block body %}
+
+<div class="m-auto">
+   <h1 class="text-title h4 text-center mt-3 mb-3">Jan Himachal – Latest Himachal Pradesh News, HP Breaking Updates & District-Wise Headlines</h1>
+    {% include 'topbignews.html' %}
+    <!-- top news end -->
+   
+    {% include 'topnews.html' %}
+    <!-- top news end -->
+    
+    <!-- news2 (from third category) start -->
+    {% include 'news2.html' %}
+    <!-- news2 end -->
+    
+</div>
+{% endblock %}

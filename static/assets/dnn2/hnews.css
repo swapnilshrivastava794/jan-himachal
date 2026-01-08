@@ -1,0 +1,385 @@
+body {
+  background-color: var(--background-color) !important;
+  font-family: "Noto Sans Devanagari", sans-serif !important;
+  font-size: 16px !important;
+  color: var(--text-color) !important;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  overflow-x: hidden;
+}
+
+.double-underline {
+  border-bottom: 3px double #e50c15;
+  margin-top: 5px;
+}
+
+.section-title {
+  font-weight: 700;
+  font-size: 1.5rem;
+  text-align: left;
+  text-transform: uppercase;
+}
+
+.b-news a {
+  text-decoration: none !important;
+  font-weight: 400;
+  font-size: 20px;
+}
+.b-news a:hover {
+  text-decoration: none !important;
+  font-weight: 400;
+  color: #e50c15 !important;
+}
+.t-news a {
+  text-decoration: none !important;
+  font-weight: 400;
+  font-size: 14px;
+}
+.t-news a:hover {
+  text-decoration: none !important;
+  font-weight: 400;
+  color: #e50c15 !important;
+}
+
+.top-heading {
+  background: #000;
+  color: white;
+  padding: 8px 15px;
+  border-radius: 4px;
+  display: inline-block;
+  margin-bottom: 15px;
+}
+
+.card-background {
+  background: #fff;
+  border-radius: 6px;
+}
+
+.dark-theme .card-background {
+  background: none !important;
+}
+
+.dark-theme.black-bg .card-background {
+  background: #000 !important;
+}
+.news-card {
+  gap: 10px;
+  background: #e9fafa;
+  padding: 10px;
+  border-radius: 6px;
+  margin-bottom: 15px;
+  border: none;
+}
+
+.news-card2 {
+  display: flex;
+  gap: 10px;
+  background: #fff3f3;
+  padding: 10px;
+  border-radius: 6px;
+  margin-bottom: 15px;
+}
+
+.dark-theme .news-card,
+.dark-theme .news-card2 {
+  background: none !important;
+}
+
+.dark-theme.black-bg .news-card,
+.dark-theme.black-bg .news-card2 {
+  background: #000 !important;
+}
+#prevBtn {
+  left: 15px;
+}
+
+#skipBtn {
+  right: 15px;
+}
+
+.slider-container-top {
+  position: relative;
+}
+
+/* login-signup css start */
+
+/* ================= Common Containers ================= */
+.dxb-bg {
+  background: #efefef;
+  background-size: cover;
+  background-attachment: fixed;
+  align-items: center;
+  min-height: 100vh;
+  justify-content: center;
+  display: flex;
+}
+
+.singup-content {
+  position: relative;
+  z-index: 1; /* Content appears above the video */
+  display: flex;
+}
+
+.sighnup-logo {
+  text-align: center;
+}
+
+.form-wrapper {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 500px;
+  margin: auto;
+}
+
+/* ================= Auth Containers ================= */
+.login-container,
+.reset-container {
+  background: #fff !important;
+  border-radius: 30px !important;
+  padding: 20px 0px;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+  width: 350px;
+  margin: auto;
+}
+
+/* ================= Inputs ================= */
+.form-control {
+  border-radius: 8px;
+  color: #111 !important;
+  height: 44px;
+  font-size: 14px;
+}
+
+.form-control::placeholder {
+  color: #6c757d;
+  opacity: 1;
+}
+
+.form-select {
+  padding: 10px;
+}
+
+/* ================= Buttons ================= */
+.btn-login,
+.btn-reset {
+  width: 100%;
+  background: #222;
+  color: #fff;
+  opacity: 1 !important;
+  border-radius: 8px;
+}
+
+.btn-login:hover,
+.btn-reset:hover {
+  background: #000;
+  color: #fff;
+}
+
+.btn-primary,
+.btn-secondary,
+.btn-success {
+  border-radius: 4px;
+  width: 100%;
+  margin: 20px 0px;
+}
+
+.btn-primary-send {
+  background: #222;
+  color: #fff;
+  width: 100%;
+  padding: 16px;
+  border-radius: 16px;
+}
+
+.btn-primary-send:hover {
+  background: #000;
+  color: #fff;
+}
+
+.btn-primary-prev {
+  width: 100%;
+  background: #8b8484;
+  color: #fff;
+  padding: 16px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.btn-primary-prev:hover {
+  background: #5f5a5a;
+  color: #fff;
+}
+
+.btn-primary-next {
+  width: 100%;
+  background: #222 !important;
+  color: #fff !important;
+  border-radius: 8px;
+  padding: 10px !important;
+}
+
+.btn-primary-next:hover {
+  background: #000 !important;
+  color: #fff;
+}
+
+/* ================= Links ================= */
+.forgot-password {
+  color: #d61e25 !important;
+  font-size: 14px;
+  margin-top: 10px;
+  display: block;
+  text-decoration: none;
+  cursor: pointer;
+  text-align: center;
+}
+
+.forgot-password:hover {
+  text-decoration: underline;
+}
+
+/* ================= Headers ================= */
+.sgignup-head {
+  color: #000;
+  margin: 10px;
+  font-weight: 600;
+  font-size: 36px;
+}
+
+/* ================= Video Background ================= */
+.video-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  min-width: 100%;
+  min-height: 100%;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.video-background video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* ensures the video covers the whole background */
+}
+
+/* ================= Progress Steps ================= */
+.step {
+  display: none;
+}
+
+.step.active {
+  display: block;
+}
+
+.progress-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+  margin-bottom: 40px;
+}
+
+.progress-line {
+  position: relative;
+  top: 24px;
+  width: 100%;
+  height: 2px;
+  background: #ccc;
+  transform: translateY(-50%);
+  z-index: 0;
+}
+
+.progress-step {
+  width: 40px;
+  height: 40px;
+  background: #eae8e3;
+  text-align: center;
+  line-height: 40px;
+  border-radius: 50%;
+  font-weight: 500;
+  border: 1px solid #b6b1b1;
+}
+
+.progress-step.active {
+  background: #000;
+  color: white;
+}
+
+/* ================= OTP & Loader ================= */
+.otp-message {
+  display: none;
+  color: green;
+  font-size: 14px;
+}
+
+.loader {
+  border: 3px solid #f3f3f3;
+  border-top: 3px solid #e50c15;
+  border-radius: 50%;
+  width: 16px;
+  height: 16px;
+  animation: spin 1s linear infinite;
+  margin-left: 8px;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* ================= Options ================= */
+.option-style {
+  padding: 10px;
+  font-size: 14px;
+  background-color: #f4f4f4;
+  color: #333;
+  margin-bottom: 4px;
+  cursor: pointer;
+}
+
+.option-style:hover {
+  background-color: #4187c5;
+  color: #fff;
+}
+
+/* ================= Modals ================= */
+.modal {
+  background: #07070796;
+  z-index: 10000;
+}
+
+.modal-body {
+  max-height: 400px;
+  list-style: none;
+  overflow-y: auto;
+  font-size: 13px;
+}
+
+.modal-body ul {
+  list-style: none;
+  padding-left: 0;
+}
+
+/* ================= Error Messages ================= */
+.error-message {
+  color: #d32f2f;
+  font-size: 12px;
+  margin-top: 5px;
+  display: none;
+}
+
+.form-group.invalid .error-message {
+  display: block;
+}
+
+.text-danger {
+  font-size: 14px;
+  margin-top: 5px;
+}
+
+/* login-signup css end */

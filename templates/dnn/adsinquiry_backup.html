@@ -1,0 +1,520 @@
+{% block body %}
+{% load static %}
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<style>
+  .bg-danger {
+    background-color: rgb(237 27 36) !important;
+  }
+
+  .hero-section {
+    background: url("{% static 'images/section1_bg.jpg' %}") no-repeat top center;
+    background-size: contain !important;
+    height: 768px;
+    color: #fff;
+    display: flex;
+    align-items: center;
+  }
+
+  .hero-section2 {
+    background: url("{% static 'images/section2_bg.jpg' %}") no-repeat top center;
+    background-size: contain !important;
+    height: 768px;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    margin-top: -26px;
+  }
+
+
+  .readmore {
+    position: absolute;
+    right: 275px;
+    top: 440px;
+  }
+
+  .readnow {
+    position: relative;
+    left: 17%;
+    top: 3%;
+  }
+
+  .logo {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    top: 35%;
+    left: 46%;
+    gap: 25px;
+
+  }
+
+  .logo img,
+  .logo2 {
+    height: 50px;
+  }
+
+  .logo2 {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    top: 35%;
+    right: 108px;
+    gap: 25px;
+
+  }
+
+  .hero-section3 {
+    background: url("{% static 'images/section3_bg.jpg' %}") no-repeat top center;
+    background-size: contain !important;
+    height: 768px;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    margin-top: -42px;
+  }
+
+  .section3-content {
+    position: relative;
+    margin-bottom: 236px;
+    margin-right: 35px;
+  }
+
+  .step-icon {
+    width: 40px;
+    height: 40px;
+    background: red;
+    color: white;
+    font-weight: bold;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+  }
+
+  .step-text {
+    font-size: 1.5rem;
+    color: #000;
+    margin-left: 142px;
+    margin-bottom: 105px;
+    position: absolute;
+  }
+
+  .step-text1 {
+    font-size: 1.5rem;
+    color: #000;
+    margin-left: 142px;
+    margin-top: 50px;
+    position: absolute;
+
+  }
+
+  .step-text2 {
+    font-size: 1.5rem;
+    color: #000;
+    margin-left: 142px;
+    margin-top: 188px;
+    position: absolute;
+  }
+
+  .featured-img {
+    width: 100%;
+    height: auto;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+  }
+
+  .bottom-strip {
+    background: red;
+    color: white;
+    font-weight: bold;
+    padding: 20px;
+    text-align: center;
+  }
+
+  .bottom-strip span {
+    display: block;
+    font-size: 1.1rem;
+    margin-top: 5px;
+  }
+
+  .voices-logo {
+    width: 80px;
+    margin-top: 20px;
+  }
+
+  .addmore-btn {
+    width: 40px;
+    height: 40px;
+    float: right;
+    background: #ed1b24;
+    margin-top: 14px;
+  }
+
+  .addmore-btn:hover {
+    width: 40px;
+    height: 40px;
+    float: right;
+    background: #c60e17;
+    margin-top: 14px;
+  }
+
+  .btn-submit {
+    background: #e61a23;
+    color: #fff;
+  }
+
+  .btn-submit:hover {
+    background: #c61720;
+    color: #fff;
+  }
+
+  @media only screen and (min-width: 280px) and (max-width: 667px) {
+    .container {
+      background: orange;
+      padding-left: 0 !important;
+      padding-right: 0 !important;
+      max-width: 100% !important;
+    }
+
+    .readmore {
+      position: absolute !important;
+      right: 31px !important;
+      top: 136px !important;
+    }
+
+    .readmore img {
+      width: 84px !important;
+    }
+
+    .logo {
+      position: absolute;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      top: 193px;
+      left: 5px;
+      gap: 10px;
+    }
+    .logo2 {
+            position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        top: -24%;
+        right: 93px;
+        gap: 10px;
+    }
+
+    .logo img,
+    .logo2 img {
+      height: 33px;
+    }
+    .readnow{
+      position: relative;
+      left: 4%;
+      top: -32%;
+    }
+    .readnow h4{
+    font-size: 12px;
+    }
+    .readnow img{
+    height: 33px;
+    }
+
+  }
+
+    @media (max-width: 768px) {
+      .container {
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+      }
+
+      .featured-img {
+        margin-bottom: 15px;
+      }
+    }
+</style>
+</head>
+
+<body>
+  <div class="container">
+    <section class="hero-section w-100">
+      <div class="readmore">
+        <a href="#">
+          <img src="{% static 'images/button-read-more.png' %}" alt="read now" />
+        </a>
+      </div>
+      <div class="logo">
+        <a href="#">
+          <img src="{% static 'images/dxb_logo.png' %}" alt="read now" />
+        </a>
+        <a href="#">
+          <img src="{% static 'images/cni.png' %}" alt="read now" />
+        </a>
+        <a href="#">
+          <img src="{% static 'images/gcc_logo.png' %}" alt="read now" />
+        </a>
+        <a href="#">
+          <img src="{% static 'images/newsibleasia.png' %}" alt="read now" />
+        </a>
+      </div>
+    </section>
+    <section class=" hero-section2 w-100">
+
+      <div class="readnow">
+        <h4 class="text-black ps-2"> Jan. 14, 2025</h4>
+        <a href="#">
+          <img src="{% static 'images/button-read-more.png' %}" alt="read now" />
+        </a>
+      </div>
+      <div class="logo2">
+        <a href="#">
+          <img src="{% static 'images/dxb_logo.png' %}" alt="read now" />
+        </a>
+        <a href="#">
+          <img src="{% static 'images/cni.png' %}" alt="read now" />
+        </a>
+        <a href="#">
+          <img src="{% static 'images/gcc_logo.png' %}" alt="read now" />
+        </a>
+        <a href="#">
+          <img src="{% static 'images/newsibleasia.png' %}" alt="read now" />
+        </a>
+      </div>
+    </section>
+    <section class=" hero-section3 w-100">
+      <!-- Main Section -->
+
+      <div class="container section3-content">
+        <div class="row align-items-center mb-4">
+          <div class="col-md-6">
+            <!-- Steps -->
+            <div class="d-flex align-items-center mb-4">
+
+              <div class="step-text">Fill out short form</div>
+            </div>
+            <div class="d-flex align-items-center mb-4">
+
+              <div class="step-text1">Make one-time payment</div>
+            </div>
+            <div class="d-flex align-items-center mb-4">
+
+              <div class="step-text2">Get published & featured</div>
+            </div>
+
+
+          </div>
+
+          <div class="col-md-6 mt-5">
+            <!-- Featured Images Grid -->
+            <div class="row g-2">
+              <div class="col-6">
+                <a href="#">
+                  <img src="{% static 'images/img1.png' %}" class="featured-img" alt="Feature 1">
+                </a>
+              </div>
+              <div class="col-6">
+                <a href="#">
+                  <img src="{% static 'images/img2.png' %}" class="featured-img" alt="Feature 2">
+                </a>
+              </div>
+              <div class="col-6">
+                <a href="#">
+                  <img src="{% static 'images/img3.png' %}" class="featured-img" alt="Feature 3">
+                </a>
+              </div>
+              <div class="col-6">
+                <a href="#">
+                  <img src="{% static 'images/img4.png' %}" class="featured-img" alt="Feature 4">
+                </a>
+                <a href="#" data-bs-toggle="tooltip" title="Add more"
+                  class="btn addmore-btn rounded-circle d-flex align-items-center justify-content-center shadow">
+                  <span style="font-size: 1.8rem; color:#fff; ">+</span>
+                </a>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <section style="background-color: #f8f9fa;padding:30px 30px 0px 30px;margin-top: -57px;">
+      <div class="container">
+        <div class="row">
+
+          <!-- Left Column -->
+          <div class="col-md-6 mb-4">
+            <div class="mb-3">
+              <img src="{% static 'images/dxb_logo.png' %}" alt="DXB News Network" class="img-fluid"
+                style="max-height: 60px;">
+            </div>
+            <h5 class="fw-bold">Why You Should Apply</h5>
+            <ul class="list-unstyled">
+              <li>✅ Build your personal brand</li>
+              <li>✅ Get recognized across the World</li>
+              <li>✅ Share your story to inspire others</li>
+              <li>✅ Gain lifetime online presence through trusted media coverage</li>
+              <li>✅ Join an exclusive network of achievers and changemakers</li>
+            </ul>
+
+            <h6 class="fw-bold mt-4">Includes:</h6>
+            <ul class="list-unstyled">
+              <li>✅ Article published on DXB News Network.</li>
+              <li>✅ No words limitation.</li>
+              <li>✅ Social media feature.</li>
+              <li>✅ Life time membership of Voices of UAE Community.</li>
+              <li>✅ 200k+ daily readers.</li>
+            </ul>
+          </div>
+
+          <!-- Right Column -->
+          <div class="col-md-6">
+            <div class="bg-danger text-white p-3 rounded mb-3">
+              <h5 class="mb-0">Be Featured in “Voices of UAE” – Inspire the World with Your Story</h5>
+            </div>
+
+            <div class="bg-light p-3 border rounded mb-3">
+              <h6 class="text-danger fw-bold">🚫 but this Is Not for Everyone</h6>
+              <p class="mb-0">
+                We built this for serious, purpose-driven individuals who believe in the power of visibility &
+                Journalism.<br>
+                If you’re looking for a free platform or casual exposure, this may not be the right fit – and that’s
+                okay.
+                But if you value your story, your work and the legacy you’re building, then this is exactly where you
+                belong.
+              </p>
+            </div>
+
+            <div class="bg-danger text-white p-3 rounded mb-3 fw-semibold text-center">
+              Share your journey, gain recognition, and become part of an elite community celebrated across the UAE.
+            </div>
+
+            <p><strong>Voices of UAE</strong> is a premium platform that celebrates inspiring individuals through
+              published articles, professional storytelling and public recognition.</p>
+          </div>
+        </div>
+
+
+      </div>
+    </section>
+    <!-- Bottom Strip -->
+    <div class="bg-danger text-white text-center p-3 fw-semibold">
+      Payment filters serious candidates and supports our editorial work. Respect the platform, respect your story.
+      <br>
+      <span style="font-style: italic;">“If it’s valuable to you – show up for it.”</span>
+    </div>
+
+    <section style="background-color: #f9f9f9; padding:30px 30px 0px 30px;">
+      <div class="container">
+        <div class="row g-4">
+
+          <!-- Left: Form -->
+          <div class="col-lg-6">
+            <form method="POST" enctype="multipart/form-data" class="bg-white p-4 shadow-sm rounded">
+              {% csrf_token %}
+              <div class="mb-3">
+                <input type="text" name="full_name" class="form-control" placeholder="Your Full Name" required>
+              </div>
+
+              <div class="mb-3">
+                <label class="form-label fw-semibold">Article Submission for :</label>
+                <select name="submission_type" class="form-select" required>
+                  <option value="" selected disabled>Select An Option</option>
+                  <option value="inspiration">Inspiration</option>
+                  <option value="entrepreneur">Entrepreneurship</option>
+                  <option value="achievement">Achievements</option>
+                </select>
+              </div>
+
+              <div class="mb-3">
+                <label class="form-label">Upload your profile picture (JPG or PNG, Max 5MB)</label>
+                <input type="file" name="profile_picture" accept=".jpg,.jpeg,.png" class="form-control">
+              </div>
+
+              <div class="mb-3">
+                <textarea name="story" class="form-control" rows="5"
+                  placeholder="Tell us about your journey, achievements, profession, or what makes your voice unique"
+                  required></textarea>
+              </div>
+
+              <div class="mb-3">
+                <input type="email" name="email" class="form-control" placeholder="Contact Email (Verification Only)"
+                  required>
+              </div>
+
+              <div class="mb-3">
+                <input type="text" name="phone" class="form-control" placeholder="Contact Number (Verification Only)"
+                  required>
+              </div>
+
+              <button type="submit" class="btn btn-submit w-100 py-2 fw-semibold">Submit Now</button>
+            </form>
+          </div>
+
+          <!-- Right: Info -->
+          <div class="col-lg-6">
+            <div class="p-3">
+              <h5 class="fw-bold text-dark">You’re not “paying to talk” – you’re investing in how your story is told,
+                elevated, and remembered.</h5>
+
+              <div class="mt-3">
+                <p>✅ <strong>What Happens After You Apply & Pay?</strong></p>
+                <ul>
+                  <li>Team Review (within 24 working hours)</li>
+                  <li>Our editorial team will review your submission. If any additional information is needed, we will
+                    contact you.</li>
+                </ul>
+
+                <p class="fw-bold">Photo Guidelines:</p>
+                <p><em>Please make sure to upload a high-resolution, formal photo.</em></p>
+                <ul>
+                  <li>❌ No selfies, filters, group pictures, or casual shots.</li>
+                  <li>✅ Formal portraits with clear background are preferred.</li>
+                </ul>
+
+                <p class="fw-bold">Article Creation & Proofreading:</p>
+                <ul>
+                  <li>Your story will be professionally written and prepared for publishing.</li>
+                  <li>You’ll be able to review and request edits before final approval.</li>
+                  <li>Your article will be published on DXB News Network within a few days after final content approval.
+                  </li>
+                </ul>
+
+                <p class="fw-bold">Social Media Promotion:</p>
+                <ul>
+                  <li>Your story will be shared on our official social media within 1 day of publishing.</li>
+                </ul>
+
+                <p class="fw-bold">Content Rules:</p>
+                <ul>
+                  <li>No commercial promotions or ads allowed in “Voices of UAE.”</li>
+                  <li>All content must comply with Dubai Media Regulations and International Publishing Standards.</li>
+                </ul>
+              </div>
+
+              <div class="mt-4 bg-danger text-white text-center p-3 rounded">
+                <h6>Support & Contact:</h6>
+                <p class="mb-1">For any queries or assistance, reach us at:</p>
+                <strong>📧 contact@janhimachal.com</strong>
+                <br>
+                <span>⏱ Response time: within 12 working hours (Mon–Fri, 10 AM – 5 PM GST)</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+
+
+  {% endblock %}
