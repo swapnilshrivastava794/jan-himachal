@@ -66,6 +66,10 @@ urlpatterns = [
     path('voices-of-uae', views.voicesofuae, name='voices-of-uae'),
     path('cms<slug:slug>/', views.cms_detail, name='cms'),
     path('setting', views.Settings, name='setting'),
+
+
+    #for apk
+   path('api/', include('post_management.api.urls')),
     
     #path('sitemap.xml',sitemap,{'sitemaps':sitemaps},name='django.contrib.sitemaps.views.sitemap'),
     # path("robots.txt",TemplateView.as_view(template_name="robots.txt", content_type="text/plain"),),
