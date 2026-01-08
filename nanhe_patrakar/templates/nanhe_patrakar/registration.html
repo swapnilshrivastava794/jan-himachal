@@ -1,0 +1,269 @@
+{% extends 'nanhe_patrakar/base.html' %}
+
+{% block title %}पंजीकरण - नन्हे पत्रकार - जन हिमाचल{% endblock %}
+
+{% block extra_css %}
+<style>
+    .registration-page {
+        background: var(--bg-light);
+        padding: 40px 0;
+    }
+    
+    .registration-card {
+        max-width: 700px;
+        margin: 0 auto;
+    }
+    
+    .card-header {
+        text-align: center;
+        font-size: 24px;
+    }
+    
+    .requirements-box {
+        background: #fff;
+        border-left: 3px solid var(--primary-color);
+        padding: 20px;
+        border-radius: 3px;
+        margin-bottom: 25px;
+        border: 1px solid var(--border-color);
+    }
+    
+    .requirements-box h6 {
+        color: #000;
+        font-weight: 700;
+        margin-bottom: 15px;
+        font-size: 16px;
+    }
+    
+    .requirements-box ul {
+        margin-bottom: 0;
+        padding-left: 25px;
+        color: var(--text-dark);
+    }
+    
+    .requirements-box li {
+        margin-bottom: 8px;
+        line-height: 1.6;
+    }
+    
+    .requirements-box .fee {
+        background: var(--primary-color);
+        color: #fff;
+        padding: 8px 15px;
+        border-radius: 3px;
+        display: inline-block;
+        font-weight: 700;
+        margin-top: 10px;
+    }
+    
+    .form-section {
+        background: #fff;
+        padding: 30px;
+        border-radius: 4px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        border: 1px solid var(--border-color);
+    }
+    
+    .section-title {
+        font-size: 16px;
+        font-weight: 700;
+        color: #000;
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid var(--primary-color);
+    }
+    
+    .form-help-text {
+        font-size: 12px;
+        color: var(--text-light);
+        margin-top: 5px;
+    }
+    
+    .submit-btn {
+        width: 100%;
+        padding: 15px;
+        font-size: 16px;
+        font-weight: 700;
+        text-transform: uppercase;
+    }
+    
+    .login-link {
+        text-align: center;
+        margin-top: 20px;
+        padding-top: 20px;
+        border-top: 1px solid #e0e0e0;
+    }
+    
+    .required-mark {
+        color: var(--primary-color);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="registration-page">
+    <div class="container">
+        <div class="registration-card">
+            <!-- Page Header -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <i class="fas fa-user-plus me-2"></i>
+                    माता-पिता पंजीकरण / Parent Registration
+                </div>
+                <div class="card-body">
+                    <p class="text-center mb-0">अपने बच्चे को नन्हे पत्रकार कार्यक्रम में नामांकित करने के लिए पंजीकरण करें</p>
+                    <p class="text-center text-muted mb-0"><small>Register to enroll your child in Nanhe Patrakar program</small></p>
+                </div>
+            </div>
+
+            <!-- Requirements Box -->
+            <div class="requirements-box">
+                <h6><i class="fas fa-check-circle me-2"></i>पात्रता मानदंड / Eligibility Requirements</h6>
+                <ul>
+                    <li><strong>आयु सीमा:</strong> बच्चे की आयु 8-16 वर्ष के बीच होनी चाहिए</li>
+                    <li><strong>निवास:</strong> हिमाचल प्रदेश का निवासी होना आवश्यक है</li>
+                    <li><strong>माता-पिता की सहमति:</strong> माता-पिता/अभिभावक की पूर्ण सहमति आवश्यक है</li>
+                </ul>
+                <div class="fee">
+                    <i class="fas fa-rupee-sign me-1"></i>599 - एकमुश्त भागीदारी शुल्क
+                </div>
+            </div>
+
+            <!-- Registration Form -->
+            <div class="form-section">
+                <form method="post" id="registrationForm">
+                    {% csrf_token %}
+                    
+                    <div class="section-title">
+                        <i class="fas fa-user me-2"></i>व्यक्तिगत जानकारी / Personal Information
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label" for="{{ form.first_name.id_for_label }}">
+                                पहला नाम / First Name <span class="required-mark">*</span>
+                            </label>
+                            {{ form.first_name }}
+                            {% if form.first_name.errors %}
+                                <div class="text-danger small mt-1">{{ form.first_name.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label" for="{{ form.last_name.id_for_label }}">
+                                उपनाम / Last Name <span class="required-mark">*</span>
+                            </label>
+                            {{ form.last_name }}
+                            {% if form.last_name.errors %}
+                                <div class="text-danger small mt-1">{{ form.last_name.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label" for="{{ form.mobile.id_for_label }}">
+                            मोबाइल नंबर / Mobile Number <span class="required-mark">*</span>
+                        </label>
+                        {{ form.mobile }}
+                        <div class="form-help-text">
+                            <i class="fas fa-info-circle me-1"></i>
+                            इस नंबर पर OTP भेजा जाएगा / OTP will be sent to this number
+                        </div>
+                        {% if form.mobile.errors %}
+                            <div class="text-danger small mt-1">{{ form.mobile.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label" for="{{ form.email.id_for_label }}">
+                            ईमेल पता / Email Address <span class="required-mark">*</span>
+                        </label>
+                        {{ form.email }}
+                        {% if form.email.errors %}
+                            <div class="text-danger small mt-1">{{ form.email.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="section-title mt-4">
+                        <i class="fas fa-map-marker-alt me-2"></i>स्थान विवरण / Location Details
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label" for="{{ form.city.id_for_label }}">
+                                शहर / City <span class="required-mark">*</span>
+                            </label>
+                            {{ form.city }}
+                            {% if form.city.errors %}
+                                <div class="text-danger small mt-1">{{ form.city.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label" for="{{ form.district.id_for_label }}">
+                                जिला / District <span class="required-mark">*</span>
+                            </label>
+                            {{ form.district }}
+                            {% if form.district.errors %}
+                                <div class="text-danger small mt-1">{{ form.district.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="section-title mt-4">
+                        <i class="fas fa-file-contract me-2"></i>नियम और शर्तें / Terms & Conditions
+                    </div>
+
+                    <div class="mb-4">
+                        <div class="form-check">
+                            {{ form.terms_accepted }}
+                            <label class="form-check-label" for="{{ form.terms_accepted.id_for_label }}">
+                                मैं <a href="#" class="text-primary" target="_blank">नियम और शर्तें</a> तथा 
+                                <a href="#" class="text-primary" target="_blank">गोपनीयता नीति</a> से सहमत हूं 
+                                <span class="required-mark">*</span>
+                            </label>
+                            {% if form.terms_accepted.errors %}
+                                <div class="text-danger small mt-1">{{ form.terms_accepted.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary submit-btn">
+                        <i class="fas fa-mobile-alt me-2"></i>
+                        OTP भेजें और आगे बढ़ें / Send OTP & Continue
+                    </button>
+                </form>
+
+                <div class="login-link">
+                    <p class="text-muted mb-0">
+                        पहले से पंजीकृत हैं? / Already registered? 
+                        <a href="#" class="text-primary fw-semibold">यहां लॉगिन करें / Login here</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Mobile number formatting - only numbers
+    document.getElementById('{{ form.mobile.id_for_label }}').addEventListener('input', function(e) {
+        let value = e.target.value.replace(/\D/g, '');
+        if (value.length > 10) {
+            value = value.slice(0, 10);
+        }
+        e.target.value = value;
+    });
+    
+    // Form validation before submit
+    document.getElementById('registrationForm').addEventListener('submit', function(e) {
+        const mobile = document.getElementById('{{ form.mobile.id_for_label }}').value;
+        if (mobile.length !== 10) {
+            e.preventDefault();
+            alert('कृपया वैध 10 अंकों का मोबाइल नंबर दर्ज करें / Please enter a valid 10-digit mobile number');
+        }
+    });
+</script>
+{% endblock %}
