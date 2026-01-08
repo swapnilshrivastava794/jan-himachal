@@ -1,0 +1,55 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Django stuff
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+
+# Environment variables
+.env
+.env.*
+venv/
+ENV/
+env/
+.venv/
+
+# Static & media
+staticfiles/
+static_collect/
+media/
+upload/
+
+# IDEs & Editors
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Temporary files
+tmp/
+*.tmp
+
+# Node (agar future me use ho)
+node_modules/
+
+# Coverage / test
+htmlcov/
+.coverage
+.tox/
+.pytest_cache/
+
+# Secrets
+*.key
+*.pem
+
+# Django migration cache
+**/migrations/__pycache__/
