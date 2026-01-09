@@ -1,0 +1,173 @@
+{% extends 'nanhe_patrakar/base.html' %}
+
+{% block title %}भुगतान - {{ program.name_hindi }} - जन हिमाचल{% endblock %}
+
+{% block extra_css %}
+<style>
+    .payment-page {
+        padding: 40px 0;
+        background: #f8f9fa;
+    }
+    
+    .payment-card {
+        max-width: 700px;
+        margin: 0 auto;
+    }
+    
+    .summary-box {
+        background: #fff;
+        border: 1px solid var(--border-color);
+        border-radius: 4px;
+        padding: 30px;
+        margin-bottom: 20px;
+    }
+    
+    .summary-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 15px 0;
+        border-bottom: 1px solid var(--border-color);
+    }
+    
+    .summary-row:last-child {
+        border-bottom: none;
+        font-weight: 700;
+        font-size: 18px;
+        color: var(--primary-color);
+    }
+    
+    .order-details {
+        background: #f8f9fa;
+        padding: 20px;
+        border-radius: 4px;
+        margin-bottom: 20px;
+    }
+    
+    .order-details .row {
+        margin-bottom: 10px;
+    }
+    
+    .order-details .label {
+        font-weight: 600;
+        color: #000;
+    }
+    
+    .payment-btn {
+        width: 100%;
+        padding: 18px;
+        font-size: 18px;
+        font-weight: 700;
+        text-transform: uppercase;
+    }
+    
+    .secure-badge {
+        text-align: center;
+        color: var(--text-light);
+        font-size: 13px;
+        margin-top: 15px;
+    }
+    
+    .secure-badge i {
+        color: #28a745;
+    }
+    
+    .temp-notice {
+        background: #fff3cd;
+        border-left: 3px solid #ffc107;
+        padding: 15px;
+        margin-bottom: 20px;
+        border-radius: 3px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="payment-page">
+    <div class="container">
+        <div class="payment-card">
+            <!-- Page Header -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <i class="fas fa-credit-card me-2"></i>
+                    भुगतान विवरण / Payment Details
+                </div>
+            </div>
+
+            <!-- Temporary Notice -->
+            <div class="temp-notice">
+                <i class="fas fa-info-circle me-2"></i>
+                <strong>नोट:</strong> भुगतान गेटवे जल्द ही सक्रिय होगा। अभी के लिए, आगे बढ़ने के लिए "आगे बढ़ें" पर क्लिक करें।
+                <br>
+                <small><strong>Note:</strong> Payment gateway will be activated soon. For now, click "Continue" to proceed.</small>
+            </div>
+
+            <!-- Order Details -->
+            <div class="order-details">
+                <h5 class="mb-3"><i class="fas fa-receipt me-2"></i>ऑर्डर विवरण / Order Details</h5>
+                <div class="row">
+                    <div class="col-6 label">ऑर्डर ID / Order ID:</div>
+                    <div class="col-6 text-end"><strong>{{ order.order_id }}</strong></div>
+                </div>
+                <div class="row">
+                    <div class="col-6 label">पंजीकृत नाम / Name:</div>
+                    <div class="col-6 text-end">{{ parent.user.get_full_name }}</div>
+                </div>
+                <div class="row">
+                    <div class="col-6 label">मोबाइल / Mobile:</div>
+                    <div class="col-6 text-end">{{ parent.mobile }}</div>
+                </div>
+                <div class="row">
+                    <div class="col-6 label">ईमेल / Email:</div>
+                    <div class="col-6 text-end">{{ parent.user.email }}</div>
+                </div>
+            </div>
+
+            <!-- Payment Summary -->
+            <div class="summary-box">
+                <h5 class="mb-3"><i class="fas fa-file-invoice-dollar me-2"></i>भुगतान सारांश / Payment Summary</h5>
+                
+                <div class="summary-row">
+                    <span>{{ program.name_hindi }} / {{ program.name }}</span>
+                    <span>₹{{ program.price }}</span>
+                </div>
+                
+                <div class="summary-row">
+                    <span>GST (18%)</span>
+                    <span>₹0.00</span>
+                </div>
+                
+                <div class="summary-row">
+                    <span>कुल राशि / Total Amount</span>
+                    <span>₹{{ order.amount }}</span>
+                </div>
+            </div>
+
+            <!-- Payment Button -->
+            <form method="post">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-primary payment-btn">
+                    <i class="fas fa-arrow-right me-2"></i>
+                    आगे बढ़ें / Continue
+                </button>
+            </form>
+
+            <div class="secure-badge">
+                <i class="fas fa-lock me-1"></i>
+                सुरक्षित भुगतान / Secure Payment
+            </div>
+
+            <!-- Info Box -->
+            <div class="card mt-4">
+                <div class="card-body">
+                    <h6><i class="fas fa-info-circle me-2"></i>महत्वपूर्ण जानकारी / Important Information</h6>
+                    <ul class="mb-0">
+                        <li>भुगतान के बाद आपको जन हिमाचल मोबाइल ऐप डाउनलोड करना होगा</li>
+                        <li>ऐप में आप अपने बच्चे की प्रोफाइल बना सकेंगे</li>
+                        <li>भुगतान की रसीद आपके ईमेल पर भेजी जाएगी</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

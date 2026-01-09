@@ -8,18 +8,19 @@ import uuid
 class ParentProfile(models.Model):
     """Parent profile with verification status"""
     STATUS_CHOICES = [
-        ('REGISTERED_NOT_ACTIVATED', 'Registered Not Activated'),
-        ('PAID_AWAITING_APP', 'Paid Awaiting App'),
-        ('VERIFIED_PENDING_SUBMISSION', 'Verified Pending Submission'),
+        ('REGISTERED', 'Registered'),
+        ('PAYMENT_PENDING', 'Payment Pending'),
+        ('PAYMENT_COMPLETED', 'Payment Completed'),
         ('ACTIVE', 'Active'),
     ]
 
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='parent_profile')
+    program = models.ForeignKey('Program', on_delete=models.PROTECT, related_name='participants')
     mobile = models.CharField(max_length=15, unique=True)
     city = models.CharField(max_length=100)
     district = models.ForeignKey('District', on_delete=models.PROTECT)
     
-    status = models.CharField(max_length=50, choices=STATUS_CHOICES, default='REGISTERED_NOT_ACTIVATED')
+    status = models.CharField(max_length=50, choices=STATUS_CHOICES, default='REGISTERED')
     id_proof = models.FileField(upload_to='parent_docs/', null=True, blank=True)
     id_proof_verified = models.BooleanField(default=False)
     terms_accepted = models.BooleanField(default=False)
@@ -49,7 +50,8 @@ class ParticipationOrder(models.Model):
 
     order_id = models.CharField(max_length=100, unique=True, db_index=True)
     parent = models.ForeignKey(ParentProfile, on_delete=models.CASCADE, related_name='orders')
-    amount = models.DecimalField(max_digits=10, decimal_places=2, default=599.00)
+    program = models.ForeignKey('Program', on_delete=models.PROTECT)
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
     payment_status = models.CharField(max_length=20, choices=PAYMENT_STATUS_CHOICES, default='PENDING')
     
     # Razorpay fields
@@ -246,6 +248,39 @@ class Submission(models.Model):
             self.submission_id = f"SUB{timezone.now().strftime('%Y%m%d')}{uuid.uuid4().hex[:8].upper()}"
         super().save(*args, **kwargs)
 
+class SubmissionMedia(models.Model):
+    """
+    Store multiple media files for a submission
+    This allows unlimited images and videos per submission
+    """
+    MEDIA_TYPE_CHOICES = [
+        ('IMAGE', 'Image'),
+        ('VIDEO', 'Video'),
+        ('AUDIO', 'Audio'),
+    ]
+    
+    submission = models.ForeignKey(
+        'Submission', 
+        on_delete=models.CASCADE, 
+        related_name='media_files'
+    )
+    media_type = models.CharField(max_length=10, choices=MEDIA_TYPE_CHOICES)
+    file = models.FileField(upload_to='submissions/media/')
+    file_name = models.CharField(max_length=255)
+    file_size = models.IntegerField(help_text="File size in bytes")
+    display_order = models.IntegerField(default=0)
+    
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        db_table = 'nanhe_patrakar_submission_media'
+        ordering = ['display_order', 'created_at']
+        verbose_name = 'Submission Media'
+        verbose_name_plural = 'Submission Media'
+    
+    def __str__(self):
+        return f"{self.media_type} - {self.submission.submission_id}"
+    
 
 class Certificate(models.Model):
     """Generated certificates for published content"""
@@ -291,3 +326,59 @@ class District(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class Program(models.Model):
+    """Dynamic program configuration"""
+    name = models.CharField(max_length=200, help_text="Program name in English")
+    name_hindi = models.CharField(max_length=200, help_text="Program name in Hindi")
+    slug = models.SlugField(unique=True, help_text="URL friendly name")
+    
+    description = models.TextField(help_text="Program description in English")
+    description_hindi = models.TextField(help_text="Program description in Hindi")
+    
+    price = models.DecimalField(max_digits=10, decimal_places=2, help_text="Participation fee in INR")
+    
+    min_age = models.IntegerField(default=8, help_text="Minimum age for participation")
+    max_age = models.IntegerField(default=16, help_text="Maximum age for participation")
+    
+    # App download links
+    android_app_url = models.URLField(blank=True, null=True, help_text="Google Play Store URL")
+    ios_app_url = models.URLField(blank=True, null=True, help_text="Apple App Store URL")
+    
+    # Age group configuration
+    age_group_a_min = models.IntegerField(default=8)
+    age_group_a_max = models.IntegerField(default=10)
+    age_group_b_min = models.IntegerField(default=11)
+    age_group_b_max = models.IntegerField(default=13)
+    age_group_c_min = models.IntegerField(default=14)
+    age_group_c_max = models.IntegerField(default=16)
+    
+    # Program status
+    is_active = models.BooleanField(default=True)
+    registration_open = models.BooleanField(default=True, help_text="Accept new registrations")
+    
+    # Additional details
+    terms_and_conditions = models.TextField(blank=True)
+    privacy_policy = models.TextField(blank=True)
+    
+    # Display settings
+    display_order = models.IntegerField(default=0)
+    featured_image = models.ImageField(upload_to='program_images/', blank=True, null=True)
+    
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = 'nanhe_patrakar_programs'
+        ordering = ['display_order', 'name']
+        verbose_name = 'Program'
+        verbose_name_plural = 'Programs'
+
+    def __str__(self):
+        return f"{self.name} (₹{self.price})"
+    
+    @classmethod
+    def get_active_program(cls):
+        """Get the first active program"""
+        return cls.objects.filter(is_active=True, registration_open=True).first()

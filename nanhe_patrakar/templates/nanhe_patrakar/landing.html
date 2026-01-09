@@ -178,10 +178,10 @@
 <!-- Hero Section -->
 <section class="hero-section">
     <div class="container">
-        <h1>नन्हे पत्रकार</h1>
-        <h2>Nanhe Patrakar</h2>
-        <p>हिमाचल प्रदेश के बच्चों के लिए पत्रकारिता का सुनहरा अवसर</p>
-        <p>A Golden Opportunity for Children of Himachal Pradesh to Learn Journalism</p>
+        <h1>{{ program.name_hindi }}</h1>
+        <h2>{{ program.name }}</h2>
+        <p>{{ program.description_hindi }}</p>
+        <p>{{ program.description }}</p>
         <a href="{% url 'nanhe_patrakar:register' %}" class="btn hero-btn">
             <i class="fas fa-pen-fancy me-2"></i>अभी पंजीकरण करें / Register Now
         </a>
@@ -287,7 +287,7 @@
                 <div class="pricing-box">
                     <h3>एकमुश्त भुगतान</h3>
                     <div class="price">
-                        <i class="fas fa-rupee-sign"></i>{{ program_fee }}
+                        <i class="fas fa-rupee-sign"></i>{{ program.price }}
                     </div>
                     <ul class="price-features">
                         <li><i class="fas fa-check me-2"></i>एक बच्चे की भागीदारी</li>

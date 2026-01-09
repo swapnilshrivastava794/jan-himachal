@@ -1,21 +1,61 @@
 from django.contrib import admin
 from django.utils.html import format_html
 from .models import (
-    ParentProfile, ParticipationOrder, ChildProfile, 
-    ParentConsent, Topic, Submission, Certificate, District
+    Program, ParentProfile, ParticipationOrder, ChildProfile, 
+    ParentConsent, Topic, Submission, Certificate, District, SubmissionMedia
 )
+
+
+@admin.register(Program)
+class ProgramAdmin(admin.ModelAdmin):
+    list_display = ['name', 'name_hindi', 'price', 'min_age', 'max_age', 'is_active', 'registration_open', 'participants_count']
+    list_filter = ['is_active', 'registration_open', 'created_at']
+    search_fields = ['name', 'name_hindi', 'slug']
+    prepopulated_fields = {'slug': ('name',)}
+    
+    fieldsets = (
+        ('Program Information', {
+            'fields': ('name', 'name_hindi', 'slug', 'description', 'description_hindi', 'featured_image')
+        }),
+        ('Pricing & Age', {
+            'fields': ('price', 'min_age', 'max_age')
+        }),
+        ('Age Groups Configuration', {
+            'fields': (
+                ('age_group_a_min', 'age_group_a_max'),
+                ('age_group_b_min', 'age_group_b_max'),
+                ('age_group_c_min', 'age_group_c_max')
+            ),
+            'description': 'Configure age ranges for each group'
+        }),
+        ('App Download Links', {
+            'fields': ('android_app_url', 'ios_app_url')
+        }),
+        ('Program Status', {
+            'fields': ('is_active', 'registration_open', 'display_order')
+        }),
+        ('Legal', {
+            'fields': ('terms_and_conditions', 'privacy_policy'),
+            'classes': ('collapse',)
+        }),
+    )
+    
+    def participants_count(self, obj):
+        count = obj.participants.count()
+        return format_html('<strong>{}</strong>', count)
+    participants_count.short_description = 'Total Participants'
 
 
 @admin.register(ParentProfile)
 class ParentProfileAdmin(admin.ModelAdmin):
-    list_display = ['user', 'mobile', 'district', 'status_badge', 'id_proof_verified', 'created_at']
-    list_filter = ['status', 'id_proof_verified', 'terms_accepted', 'district', 'created_at']
+    list_display = ['user', 'mobile', 'program', 'district', 'status_badge', 'id_proof_verified', 'created_at']
+    list_filter = ['status', 'program', 'id_proof_verified', 'terms_accepted', 'district', 'created_at']
     search_fields = ['user__email', 'mobile', 'user__first_name', 'user__last_name', 'city']
     readonly_fields = ['created_at', 'updated_at', 'terms_accepted_at']
     
     fieldsets = (
         ('User Information', {
-            'fields': ('user', 'mobile', 'status')
+            'fields': ('user', 'mobile', 'program', 'status')
         }),
         ('Location', {
             'fields': ('city', 'district')
@@ -34,9 +74,9 @@ class ParentProfileAdmin(admin.ModelAdmin):
     
     def status_badge(self, obj):
         colors = {
-            'REGISTERED_NOT_ACTIVATED': 'orange',
-            'PAID_AWAITING_APP': 'blue',
-            'VERIFIED_PENDING_SUBMISSION': 'lightblue',
+            'REGISTERED': 'blue',
+            'PAYMENT_PENDING': 'orange',
+            'PAYMENT_COMPLETED': 'green',
             'ACTIVE': 'green',
         }
         color = colors.get(obj.status, 'gray')
@@ -49,14 +89,14 @@ class ParentProfileAdmin(admin.ModelAdmin):
 
 @admin.register(ParticipationOrder)
 class ParticipationOrderAdmin(admin.ModelAdmin):
-    list_display = ['order_id', 'parent_name', 'amount', 'payment_status_badge', 'payment_date', 'created_at']
-    list_filter = ['payment_status', 'payment_date', 'created_at']
+    list_display = ['order_id', 'parent_name', 'program', 'amount', 'payment_status_badge', 'payment_date', 'created_at']
+    list_filter = ['payment_status', 'program', 'payment_date', 'created_at']
     search_fields = ['order_id', 'invoice_number', 'razorpay_order_id', 'parent__user__email', 'parent__mobile']
     readonly_fields = ['order_id', 'invoice_number', 'created_at', 'updated_at']
     
     fieldsets = (
         ('Order Information', {
-            'fields': ('order_id', 'parent', 'amount', 'payment_status')
+            'fields': ('order_id', 'parent', 'program', 'amount', 'payment_status')
         }),
         ('Razorpay Details', {
             'fields': ('razorpay_order_id', 'razorpay_payment_id', 'razorpay_signature', 'payment_method')
@@ -245,6 +285,17 @@ class DistrictAdmin(admin.ModelAdmin):
         count = ParentProfile.objects.filter(district=obj).count()
         return format_html('<strong>{}</strong>', count)
     parent_count.short_description = 'Registered Parents'
+    
+    
+@admin.register(SubmissionMedia)
+class SubmissionMediaAdmin(admin.ModelAdmin):
+    list_display = ['submission', 'media_type', 'file_name', 'file_size_kb', 'display_order', 'created_at']
+    list_filter = ['media_type', 'created_at']
+    search_fields = ['submission__submission_id', 'file_name']
+    
+    def file_size_kb(self, obj):
+        return f"{obj.file_size / 1024:.2f} KB"
+    file_size_kb.short_description = 'File Size'
 
 
 # Customize Admin Site

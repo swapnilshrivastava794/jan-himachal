@@ -1,13 +1,12 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.views import View
 from django.contrib.auth.models import User
 from django.contrib.auth import login
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.utils import timezone
-from django.core.cache import cache
-import random
-from .forms import ParentRegistrationForm, OTPVerificationForm
-from .models import ParentProfile
+from .forms import ParentRegistrationForm
+from .models import ParentProfile, ParticipationOrder, Program
 
 
 class LandingPageView(View):
@@ -15,12 +14,33 @@ class LandingPageView(View):
     template_name = 'nanhe_patrakar/landing.html'
 
     def get(self, request):
+        program = Program.get_active_program()
+        
+        if not program:
+            messages.error(request, 'कोई सक्रिय कार्यक्रम उपलब्ध नहीं है / No active program available')
+            return render(request, self.template_name, {'program': None})
+        
         context = {
-            'program_fee': 599,
+            'program': program,
             'age_groups': [
-                {'name': 'Group A', 'name_hindi': 'समूह अ', 'range': '8-10 years', 'range_hindi': '8-10 वर्ष'},
-                {'name': 'Group B', 'name_hindi': 'समूह ब', 'range': '11-13 years', 'range_hindi': '11-13 वर्ष'},
-                {'name': 'Group C', 'name_hindi': 'समूह स', 'range': '14-16 years', 'range_hindi': '14-16 वर्ष'},
+                {
+                    'name': 'Group A',
+                    'name_hindi': 'समूह अ',
+                    'range': f'{program.age_group_a_min}-{program.age_group_a_max} years',
+                    'range_hindi': f'{program.age_group_a_min}-{program.age_group_a_max} वर्ष'
+                },
+                {
+                    'name': 'Group B',
+                    'name_hindi': 'समूह ब',
+                    'range': f'{program.age_group_b_min}-{program.age_group_b_max} years',
+                    'range_hindi': f'{program.age_group_b_min}-{program.age_group_b_max} वर्ष'
+                },
+                {
+                    'name': 'Group C',
+                    'name_hindi': 'समूह स',
+                    'range': f'{program.age_group_c_min}-{program.age_group_c_max} years',
+                    'range_hindi': f'{program.age_group_c_min}-{program.age_group_c_max} वर्ष'
+                },
             ]
         }
         return render(request, self.template_name, context)
@@ -32,169 +52,158 @@ class ParentRegistrationView(View):
     form_class = ParentRegistrationForm
 
     def get(self, request):
-        # Check if user is already logged in and has parent profile
-        if request.user.is_authenticated:
-            if hasattr(request.user, 'parent_profile'):
-                return redirect('nanhe_patrakar:payment')
-        
+        if request.user.is_authenticated and hasattr(request.user, 'parent_profile'):
+            return redirect('nanhe_patrakar:payment')
+
+        program = Program.get_active_program()
+        if not program:
+            messages.error(request, 'पंजीकरण बंद है / Registration is closed')
+            return redirect('nanhe_patrakar:landing')
+
         form = self.form_class()
-        return render(request, self.template_name, {'form': form})
+        return render(request, self.template_name, {'form': form, 'program': program})
 
     def post(self, request):
+        program = Program.get_active_program()
+        if not program:
+            messages.error(request, 'पंजीकरण बंद है / Registration is closed')
+            return redirect('nanhe_patrakar:landing')
+
         form = self.form_class(request.POST)
         
         if form.is_valid():
-            # Store form data in session temporarily
-            request.session['registration_data'] = {
-                'first_name': form.cleaned_data['first_name'],
-                'last_name': form.cleaned_data['last_name'],
-                'mobile': form.cleaned_data['mobile'],
-                'email': form.cleaned_data['email'],
-                'city': form.cleaned_data['city'],
-                'district_id': form.cleaned_data['district'].id,
-                'terms_accepted': form.cleaned_data['terms_accepted'],
-            }
-            
-            # Generate and send OTP
-            otp = self.generate_otp()
-            mobile = form.cleaned_data['mobile']
-            
-            # Store OTP in cache (expires in 5 minutes)
-            cache.set(f'otp_{mobile}', otp, 300)
-            
-            # Send OTP via SMS
-            self.send_otp(mobile, otp)
-            
-            messages.success(request, 'आपके मोबाइल नंबर पर OTP भेजा गया है / OTP has been sent to your mobile number')
-            return redirect('nanhe_patrakar:verify_otp')
-        
-        return render(request, self.template_name, {'form': form})
+            try:
+                # ONLY CHANGE THIS PART - Create user with username and password
+                user = User.objects.create_user(
+                    username=form.cleaned_data['username'],  # Changed from mobile
+                    email=form.cleaned_data['email'],
+                    first_name=form.cleaned_data['first_name'],
+                    last_name=form.cleaned_data['last_name'],
+                    password=form.cleaned_data['password']  # Added password
+                )
 
-    def generate_otp(self):
-        """Generate 6-digit OTP"""
-        return str(random.randint(100000, 999999))
+                # Rest remains the same
+                parent_profile = ParentProfile.objects.create(
+                    user=user,
+                    program=program,
+                    mobile=form.cleaned_data['mobile'],
+                    city=form.cleaned_data['city'],
+                    district=form.cleaned_data['district'],
+                    status='PAYMENT_PENDING',
+                    terms_accepted=form.cleaned_data['terms_accepted'],
+                    terms_accepted_at=timezone.now() if form.cleaned_data['terms_accepted'] else None
+                )
 
-    def send_otp(self, mobile, otp):
-        """Send OTP via SMS gateway"""
-        # TODO: Implement actual SMS gateway integration
-        # For development, print OTP
-        print(f"[NANHE PATRAKAR OTP] Mobile: {mobile}, OTP: {otp}")
-        
-        # Production implementation:
-        # You can integrate with your existing SMS provider
-        # from your_project.utils import send_sms
-        # message = f"आपका नन्हे पत्रकार पंजीकरण OTP है: {otp}. यह 5 मिनट के लिए मान्य है। - जन हिमाचल"
-        # send_sms(mobile, message)
-        
-        return True
+                ParticipationOrder.objects.create(
+                    parent=parent_profile,
+                    program=program,
+                    amount=program.price,
+                    payment_status='PENDING'
+                )
 
-
-class OTPVerificationView(View):
-    """OTP verification view"""
-    template_name = 'nanhe_patrakar/verify_otp.html'
-    form_class = OTPVerificationForm
-
-    def get(self, request):
-        # Check if registration data exists in session
-        if 'registration_data' not in request.session:
-            messages.error(request, 'कृपया पहले पंजीकरण पूरा करें / Please complete registration first')
-            return redirect('nanhe_patrakar:register')
-        
-        form = self.form_class()
-        mobile = request.session['registration_data']['mobile']
-        return render(request, self.template_name, {
-            'form': form,
-            'masked_mobile': self.mask_mobile(mobile)
-        })
-
-    def post(self, request):
-        form = self.form_class(request.POST)
-        
-        if 'registration_data' not in request.session:
-            messages.error(request, 'सत्र समाप्त हो गया। कृपया पुनः पंजीकरण करें / Session expired. Please register again')
-            return redirect('nanhe_patrakar:register')
-        
-        if form.is_valid():
-            entered_otp = form.cleaned_data['otp']
-            mobile = request.session['registration_data']['mobile']
-            stored_otp = cache.get(f'otp_{mobile}')
-            
-            if not stored_otp:
-                messages.error(request, 'OTP समाप्त हो गया है। कृपया नया OTP मांगें / OTP has expired. Please request a new one')
-                return redirect('nanhe_patrakar:register')
-            
-            if entered_otp == stored_otp:
-                # OTP verified, create user account
-                user = self.create_user_account(request.session['registration_data'])
-                
-                # Delete OTP from cache
-                cache.delete(f'otp_{mobile}')
-                
-                # Clear session data
-                del request.session['registration_data']
-                
                 # Auto-login user
                 login(request, user)
-                
-                messages.success(request, 'पंजीकरण सफल रहा! कृपया भुगतान के साथ आगे बढ़ें / Registration successful! Please proceed with payment')
-                return redirect('nanhe_patrakar:payment')
-            else:
-                messages.error(request, 'गलत OTP। कृपया पुनः प्रयास करें / Invalid OTP. Please try again')
-        
-        mobile = request.session['registration_data']['mobile']
-        return render(request, self.template_name, {
-            'form': form,
-            'masked_mobile': self.mask_mobile(mobile)
-        })
 
-    def create_user_account(self, data):
-        """Create user and parent profile"""
-        # Create user
-        user = User.objects.create_user(
-            username=data['mobile'],  # Using mobile as username
-            email=data['email'],
-            first_name=data['first_name'],
-            last_name=data['last_name']
-        )
-        
-        # Create parent profile
-        ParentProfile.objects.create(
-            user=user,
-            mobile=data['mobile'],
-            city=data['city'],
-            district_id=data['district_id'],
-            status='REGISTERED_NOT_ACTIVATED',
-            terms_accepted=data['terms_accepted'],
-            terms_accepted_at=timezone.now() if data['terms_accepted'] else None
-        )
-        
-        return user
+                messages.success(request, 'पंजीकरण सफल! अब भुगतान के साथ आगे बढ़ें / Registration successful! Please proceed with payment')
+                return redirect('nanhe_patrakar:payment')  # Same redirect
 
-    def mask_mobile(self, mobile):
-        """Mask mobile number for display"""
-        if len(mobile) >= 10:
-            return f"******{mobile[-4:]}"
-        return mobile
+            except Exception as e:
+                messages.error(request, f'पंजीकरण में त्रुटि / Registration error: {str(e)}')
 
+        return render(request, self.template_name, {'form': form, 'program': program})
+    
+    
+class PaymentView(LoginRequiredMixin, View):
+    """Payment page - For now redirects to app download"""
+    template_name = 'nanhe_patrakar/payment.html'
+    login_url = '/nanhe-patrakar/register/'
 
-class ResendOTPView(View):
-    """Resend OTP"""
+    def get(self, request):
+        try:
+            parent_profile = request.user.parent_profile
+            program = parent_profile.program
+            
+            # Get the latest pending order
+            order = ParticipationOrder.objects.filter(
+                parent=parent_profile,
+                payment_status='PENDING'
+            ).first()
+            
+            if not order:
+                # Create new order if none exists
+                order = ParticipationOrder.objects.create(
+                    parent=parent_profile,
+                    program=program,
+                    amount=program.price,
+                    payment_status='PENDING'
+                )
+            
+            context = {
+                'parent': parent_profile,
+                'program': program,
+                'order': order
+            }
+            
+            return render(request, self.template_name, context)
+            
+        except ParentProfile.DoesNotExist:
+            messages.error(request, 'कृपया पहले पंजीकरण करें / Please register first')
+            return redirect('nanhe_patrakar:register')
     
     def post(self, request):
-        if 'registration_data' not in request.session:
+        """For now, just mark as success and redirect to download page"""
+        try:
+            parent_profile = request.user.parent_profile
+            
+            # Update order status (temporary until Razorpay integration)
+            order = ParticipationOrder.objects.filter(
+                parent=parent_profile,
+                payment_status='PENDING'
+            ).first()
+            
+            if order:
+                order.payment_status = 'SUCCESS'
+                order.payment_date = timezone.now()
+                order.save()
+            
+            # Update parent status
+            parent_profile.status = 'PAYMENT_COMPLETED'
+            parent_profile.save()
+            
+            messages.success(request, 'भुगतान सफल! / Payment successful!')
+            return redirect('nanhe_patrakar:download_app')
+            
+        except Exception as e:
+            messages.error(request, f'भुगतान में त्रुटि / Payment error: {str(e)}')
+            return redirect('nanhe_patrakar:payment')
+
+
+class DownloadAppView(LoginRequiredMixin, View):
+    """App download page with instructions"""
+    template_name = 'nanhe_patrakar/download_app.html'
+    login_url = '/nanhe-patrakar/register/'
+
+    def get(self, request):
+        try:
+            parent_profile = request.user.parent_profile
+            program = parent_profile.program
+            
+            # Check if payment is completed
+            if parent_profile.status != 'PAYMENT_COMPLETED':
+                messages.warning(request, 'कृपया पहले भुगतान पूरा करें / Please complete payment first')
+                return redirect('nanhe_patrakar:payment')
+            
+            context = {
+                'parent': parent_profile,
+                'program': program,
+                'order': ParticipationOrder.objects.filter(
+                    parent=parent_profile,
+                    payment_status='SUCCESS'
+                ).first()
+            }
+            
+            return render(request, self.template_name, context)
+            
+        except ParentProfile.DoesNotExist:
+            messages.error(request, 'कृपया पहले पंजीकरण करें / Please register first')
             return redirect('nanhe_patrakar:register')
-        
-        mobile = request.session['registration_data']['mobile']
-        
-        # Generate new OTP
-        otp = str(random.randint(100000, 999999))
-        
-        # Store in cache
-        cache.set(f'otp_{mobile}', otp, 300)
-        
-        # Send OTP
-        print(f"[NANHE PATRAKAR RESEND OTP] Mobile: {mobile}, OTP: {otp}")
-        
-        messages.success(request, 'नया OTP आपके मोबाइल नंबर पर भेजा गया है / New OTP has been sent to your mobile number')
-        return redirect('nanhe_patrakar:verify_otp')
-    
