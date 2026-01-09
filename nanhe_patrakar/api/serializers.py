@@ -94,6 +94,14 @@ class DistrictSerializer(serializers.ModelSerializer):
         fields = ['id', 'name', 'name_hindi']
 
 
+class DistrictListSerializer(serializers.ModelSerializer):
+    """Lightweight serializer for district list"""
+    
+    class Meta:
+        model = District
+        fields = ['id', 'name', 'name_hindi']
+        
+
 class ProgramSerializer(serializers.ModelSerializer):
     """Program serializer"""
     class Meta:

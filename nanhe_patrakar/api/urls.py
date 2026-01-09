@@ -8,7 +8,8 @@ from .views import (
     ChildProfileDetailAPIView,
     ChildSubmissionsAPIView,
     SubmissionCreateAPIView,
-    ChildProfilesByRecentSubmissionsAPIView
+    ChildProfilesByRecentSubmissionsAPIView, 
+    DistrictListAPIView
 )
 
 urlpatterns = [
@@ -26,4 +27,7 @@ urlpatterns = [
     # Submissions
     path('child-profiles/<int:child_id>/submissions/', ChildSubmissionsAPIView.as_view(), name='api_child_submissions'),
     path('submissions/', SubmissionCreateAPIView.as_view(), name='api_submission_create'),
+    
+    path('districts/', DistrictListAPIView.as_view(), name='district-list'),
+
 ]

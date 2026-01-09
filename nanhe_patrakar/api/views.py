@@ -1,6 +1,7 @@
 # nanhe_patrakar/api/views.py
 
 from rest_framework.views import APIView
+from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
@@ -10,6 +11,7 @@ from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
 from django.db import transaction
 from django.db.models import Count, Max
+from django.db.models import Q
 
 from nanhe_patrakar.models import (
     ParentProfile, ChildProfile, Submission, 
@@ -19,10 +21,10 @@ from .serializers import (
     ParentProfileSerializer, ChildProfileSerializer,
     ChildProfileCreateSerializer, SubmissionSerializer,
     SubmissionCreateSerializer, ChildProfileListSerializer,
-    CustomTokenObtainPairSerializer
+    CustomTokenObtainPairSerializer, DistrictSerializer
 )
 from .utils import success_response, error_response
-
+from .pagination import DynamicPageNumberPagination
 
 class LoginView(TokenObtainPairView):
     """
@@ -523,3 +525,82 @@ class ChildProfilesByRecentSubmissionsAPIView(APIView):
                 status=status.HTTP_404_NOT_FOUND
             )
             
+
+class DistrictListAPIView(ListAPIView):
+    """
+    GET /api/districts/
+    
+    Get list of districts with pagination and search
+    
+    Query Parameters:
+    - page: Page number (default: 1)
+    - page_size: Number of items per page (default: 10, max: 100)
+    - search: Search by name or name_hindi
+    - is_active: Filter by active status (true/false)
+    - ordering: Sort by field (name, -name, created_at, -created_at)
+    
+    Examples:
+    - /api/districts/
+    - /api/districts/?page=2&page_size=20
+    - /api/districts/?search=shimla
+    - /api/districts/?is_active=true
+    - /api/districts/?ordering=-name
+    - /api/districts/?page=1&page_size=50&search=shimla&is_active=true
+    
+    Response:
+    {
+        "status": true,
+        "message": "Districts retrieved successfully",
+        "data": {
+            "count": 12,
+            "total_pages": 2,
+            "current_page": 1,
+            "page_size": 10,
+            "next": "http://localhost:8000/api/districts/?page=2",
+            "previous": null,
+            "results": [
+                {
+                    "id": 1,
+                    "name": "Shimla",
+                    "name_hindi": "शिमला",
+                    "is_active": true,
+                    "created_at": "2025-01-09T10:30:00Z"
+                },
+                ...
+            ]
+        }
+    }
+    """
+    serializer_class = DistrictSerializer
+    pagination_class = DynamicPageNumberPagination
+    
+    def get_queryset(self):
+        """
+        Get filtered and sorted queryset based on query parameters
+        """
+        queryset = District.objects.all()
+        
+        # Search filter
+        search = self.request.query_params.get('search', None)
+        if search:
+            queryset = queryset.filter(
+                Q(name__icontains=search) |
+                Q(name_hindi__icontains=search)
+            )
+        
+        # Active status filter
+        is_active = self.request.query_params.get('is_active', None)
+        if is_active is not None:
+            if is_active.lower() in ['true', '1', 'yes']:
+                queryset = queryset.filter(is_active=True)
+            elif is_active.lower() in ['false', '0', 'no']:
+                queryset = queryset.filter(is_active=False)
+        
+        # Ordering
+        ordering = self.request.query_params.get('ordering', 'name')
+        valid_ordering_fields = ['name', '-name', 'name_hindi', '-name_hindi', 
+                                 'created_at', '-created_at', 'id', '-id']
+        if ordering in valid_ordering_fields:
+            queryset = queryset.order_by(ordering)
+        
+        return queryset
