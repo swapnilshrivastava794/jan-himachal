@@ -10,7 +10,7 @@ app_name = 'nanhe_patrakar'
 
 urlpatterns = [
     # Landing and Registration
-    path('', LandingPageView.as_view(), name='landing'),
+    path('landing/', LandingPageView.as_view(), name='landing'),
     path('register/', ParentRegistrationView.as_view(), name='register'),
     path('verify-otp/', OTPVerificationView.as_view(), name='verify_otp'),
     path('resend-otp/', ResendOTPView.as_view(), name='resend_otp'),

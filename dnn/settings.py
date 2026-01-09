@@ -61,6 +61,7 @@ INSTALLED_APPS = [
     'django_user_agents',
     'rest_framework',
     'rest_framework_simplejwt',
+    'nanhe_patrakar'
     #'django_crontab',
     #'embed_video',
 ]
