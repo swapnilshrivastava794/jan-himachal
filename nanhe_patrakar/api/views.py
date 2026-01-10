@@ -954,3 +954,78 @@ class EnrollToNanhePatrakarAPIView(APIView):
             ),
             status=status.HTTP_201_CREATED
         )
+
+
+
+class FakePaymentSuccessAPIView(APIView):
+    """
+    TEMPORARY API – Fake payment success
+    Marks participation order as SUCCESS
+    """
+
+    permission_classes = [IsAuthenticated]
+
+    @transaction.atomic
+    def post(self, request):
+        user = request.user
+        order_id = request.data.get('order_id')
+
+        # Ensure user is enrolled
+        if not hasattr(user, 'parent_profile'):
+            return Response(
+                error_response("User is not enrolled in the program"),
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        parent_profile = user.parent_profile
+
+        try:
+            # If order_id provided, use it
+            if order_id:
+                order = ParticipationOrder.objects.get(
+                    order_id=order_id,
+                    parent=parent_profile
+                )
+            else:
+                # Otherwise, pick latest pending order
+                order = ParticipationOrder.objects.filter(
+                    parent=parent_profile,
+                    payment_status='PENDING'
+                ).latest('created_at')
+
+            if order.payment_status == 'SUCCESS':
+                return Response(
+                    error_response("Payment already completed for this order"),
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+
+            # Mark payment success
+            order.payment_status = 'SUCCESS'
+            order.payment_method = 'FAKE'
+            order.payment_date = timezone.now()
+            order.save()
+
+            # Update parent status
+            parent_profile.status = 'PAYMENT_COMPLETED'
+            parent_profile.save(update_fields=['status', 'updated_at'])
+
+            return Response(
+                success_response(
+                    {
+                        "order_id": order.order_id,
+                        "payment_status": order.payment_status,
+                        "payment_date": order.payment_date.isoformat(),
+                        "invoice_number": order.invoice_number,
+                        "parent_status": parent_profile.status
+                    },
+                    "Fake payment completed successfully"
+                ),
+                status=status.HTTP_200_OK
+            )
+
+        except ParticipationOrder.DoesNotExist:
+            return Response(
+                error_response("Order not found"),
+                status=status.HTTP_404_NOT_FOUND
+            )
+        

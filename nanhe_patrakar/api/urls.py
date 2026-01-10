@@ -6,7 +6,7 @@ from .views import (
     ParentProfileAPIView,
     ChildProfileAPIView,
     ChildProfileDetailAPIView,
-    ChildSubmissionsAPIView,
+    ChildSubmissionsAPIView, FakePaymentSuccessAPIView,
     SubmissionCreateAPIView, EnrollToNanhePatrakarAPIView,
     ChildProfilesByRecentSubmissionsAPIView, 
     DistrictListAPIView, ParentRegistrationAPIView
@@ -31,5 +31,8 @@ urlpatterns = [
     path('submission/', SubmissionCreateAPIView.as_view(), name='api_submission_create'),
     
     path('districts/', DistrictListAPIView.as_view(), name='district-list'),
+    
+    #Fake Payment API 
+    path('fake/payment/', FakePaymentSuccessAPIView.as_view()),
 
 ]
