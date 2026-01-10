@@ -1,34 +1,31 @@
 # nanhe_patrakar/api/serializers.py
 
+from datetime import datetime
 from rest_framework import serializers
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from django.contrib.auth.models import User
 from nanhe_patrakar.models import (
     ParentProfile, ChildProfile, Submission, 
     District, Program, Topic, SubmissionMedia
 )
-from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
-
-from datetime import datetime
+from .utils import get_parent_children_payload
+import re
 
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
-    """Custom JWT token serializer with user type detection"""
-    
+    """Custom JWT token serializer with Nanhe Patrakar context"""
+
     def validate(self, attrs):
         data = super().validate(attrs)
-        
-        # Get the refresh token to extract expiration times
+
         refresh = self.get_token(self.user)
-        
-        # Determine user type based on Nanhe Patrakar registration
-        user_type = "user"  # Default user type
+
+        user_type = "user"
         program_info = None
-        
-        # Check if user is registered to Nanhe Patrakar program
+
         if hasattr(self.user, 'parent_profile'):
             parent_profile = self.user.parent_profile
             user_type = "nanhe_patrakar"
-            
-            # Add parent profile information
+
             program_info = {
                 "parent_id": parent_profile.id,
                 "program_id": parent_profile.program.id if parent_profile.program else None,
@@ -37,48 +34,26 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
                 "mobile": parent_profile.mobile,
                 "city": parent_profile.city,
                 "district": parent_profile.district.name if parent_profile.district else None,
-                "kyc_status": parent_profile.kyc_status if hasattr(parent_profile, 'kyc_status') else None,
+
+                # Children summary
+                "children": get_parent_children_payload(parent_profile),
+
+                # Optional / future-safe fields
+                "kyc_status": getattr(parent_profile, 'kyc_status', None),
+                "terms_accepted": parent_profile.terms_accepted,
+                "terms_accepted_at": parent_profile.terms_accepted_at,
             }
-        
-        # Calculate expiration times
-        access_token_expiration = datetime.fromtimestamp(refresh.access_token['exp'])
-        refresh_token_expiration = datetime.fromtimestamp(refresh['exp'])
-        
-        # Build response data
+
         data.update({
             "user_id": self.user.id,
-            "username": self.user.username,
-            "email": self.user.email,
-            "first_name": self.user.first_name,
-            "last_name": self.user.last_name,
-            "full_name": self.user.get_full_name(),
             "user_type": user_type,
-            "program_info": program_info,
-            "access_token_expiration": access_token_expiration.isoformat(),
-            "refresh_token_expiration": refresh_token_expiration.isoformat(),
-            # Expiration in seconds from now
-            "access_expires_in": int(refresh.access_token['exp'] - datetime.now().timestamp()),
-            "refresh_expires_in": int(refresh['exp'] - datetime.now().timestamp()),
+            "refresh_expires": refresh.payload.get('exp'),
+            "access_expires": data['access'] and None,
+            "program_info": program_info
         })
-        
+
         return data
 
-    @classmethod
-    def get_token(cls, user):
-        token = super().get_token(user)
-        
-        # Add custom claims to token
-        token['username'] = user.username
-        token['email'] = user.email
-        
-        # Add user type to token
-        if hasattr(user, 'parent_profile'):
-            token['user_type'] = 'nanhe_patrakar'
-        else:
-            token['user_type'] = 'user'
-        
-        return token
-    
 
 class UserSerializer(serializers.ModelSerializer):
     """User basic info serializer"""
@@ -109,17 +84,27 @@ class ProgramSerializer(serializers.ModelSerializer):
         fields = ['id', 'name', 'name_hindi', 'price', 'min_age', 'max_age']
 
 
+class ParentChildMinimalSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ChildProfile
+        fields = ['id', 'name']
+        
+        
 class ParentProfileSerializer(serializers.ModelSerializer):
     """Parent profile serializer"""
     user = UserSerializer(read_only=True)
     district = DistrictSerializer(read_only=True)
     program = ProgramSerializer(read_only=True)
+    children = ParentChildMinimalSerializer(
+        many=True,
+        read_only=True
+    )
     
     class Meta:
         model = ParentProfile
         fields = [
             'id', 'user', 'mobile', 'city', 'district', 
-            'program', 'status', 'created_at'
+            'program', 'children', 'status', 'created_at'
         ]
 
 
@@ -249,3 +234,161 @@ class ChildProfileListSerializer(serializers.ModelSerializer):
     
     def get_total_submissions(self, obj):
         return obj.submissions.count()
+    
+
+class ParentRegistrationSerializer(serializers.Serializer):
+    """
+    Serializer for parent registration API
+    """
+    # Personal Information
+    first_name = serializers.CharField(
+        max_length=150,
+        required=True,
+        error_messages={
+            'required': 'पहला नाम आवश्यक है / First name is required',
+            'blank': 'पहला नाम खाली नहीं हो सकता / First name cannot be blank'
+        }
+    )
+    
+    last_name = serializers.CharField(
+        max_length=150,
+        required=True,
+        error_messages={
+            'required': 'उपनाम आवश्यक है / Last name is required',
+            'blank': 'उपनाम खाली नहीं हो सकता / Last name cannot be blank'
+        }
+    )
+    
+    username = serializers.CharField(
+        max_length=150,
+        required=True,
+        error_messages={
+            'required': 'यूजरनेम आवश्यक है / Username is required',
+            'blank': 'यूजरनेम खाली नहीं हो सकता / Username cannot be blank'
+        }
+    )
+    
+    mobile = serializers.CharField(
+        max_length=15,
+        required=True,
+        error_messages={
+            'required': 'मोबाइल नंबर आवश्यक है / Mobile number is required',
+            'blank': 'मोबाइल नंबर खाली नहीं हो सकता / Mobile number cannot be blank'
+        }
+    )
+    
+    email = serializers.EmailField(
+        required=True,
+        error_messages={
+            'required': 'ईमेल आवश्यक है / Email is required',
+            'invalid': 'कृपया वैध ईमेल दर्ज करें / Please enter a valid email'
+        }
+    )
+    
+    password = serializers.CharField(
+        min_length=6,
+        required=True,
+        write_only=True,
+        error_messages={
+            'required': 'पासवर्ड आवश्यक है / Password is required',
+            'min_length': 'पासवर्ड कम से कम 6 अक्षरों का होना चाहिए / Password must be at least 6 characters'
+        }
+    )
+    
+    # Location Details
+    city = serializers.CharField(
+        max_length=100,
+        required=True,
+        error_messages={
+            'required': 'शहर आवश्यक है / City is required'
+        }
+    )
+    
+    district_id = serializers.IntegerField(
+        required=True,
+        error_messages={
+            'required': 'जिला आवश्यक है / District is required',
+            'invalid': 'कृपया वैध जिला चुनें / Please select a valid district'
+        }
+    )
+    
+    # Terms & Conditions
+    terms_accepted = serializers.BooleanField(
+        required=True,
+        error_messages={
+            'required': 'आपको नियम और शर्तें स्वीकार करनी होंगी / You must accept the terms and conditions'
+        }
+    )
+    
+    def validate_username(self, value):
+        """Validate username"""
+        # Remove leading/trailing spaces
+        value = value.strip()
+        
+        # Check minimum length
+        if len(value) < 3:
+            raise serializers.ValidationError(
+                'यूजरनेम कम से कम 3 अक्षरों का होना चाहिए / Username must be at least 3 characters'
+            )
+        
+        # Check for valid characters (alphanumeric, underscore, hyphen)
+        if not re.match(r'^[a-zA-Z0-9_-]+$', value):
+            raise serializers.ValidationError(
+                'यूजरनेम में केवल अक्षर, संख्या, अंडरस्कोर और हाइफन हो सकते हैं / Username can only contain letters, numbers, underscore and hyphen'
+            )
+        
+        # Check if username already exists
+        if User.objects.filter(username__iexact=value).exists():
+            raise serializers.ValidationError(
+                'यह यूजरनेम पहले से उपयोग में है / This username is already taken'
+            )
+        
+        return value.lower()
+    
+    def validate_mobile(self, value):
+        """Validate mobile number"""
+        # Remove spaces and special characters
+        mobile = re.sub(r'[^\d+]', '', value)
+        
+        # Validate Indian mobile number format
+        if not re.match(r'^[6-9]\d{9}$', mobile):
+            raise serializers.ValidationError(
+                'कृपया वैध 10 अंकों का मोबाइल नंबर दर्ज करें / Please enter a valid 10-digit Indian mobile number'
+            )
+        
+        # Check if mobile already exists
+        if ParentProfile.objects.filter(mobile=mobile).exists():
+            raise serializers.ValidationError(
+                'यह मोबाइल नंबर पहले से पंजीकृत है / This mobile number is already registered'
+            )
+        
+        return mobile
+    
+    def validate_email(self, value):
+        """Validate email"""
+        # Check if email already exists
+        if User.objects.filter(email__iexact=value).exists():
+            raise serializers.ValidationError(
+                'यह ईमेल पहले से पंजीकृत है / This email is already registered'
+            )
+        
+        return value.lower()
+    
+    def validate_district_id(self, value):
+        """Validate district exists"""
+        try:
+            District.objects.get(id=value, is_active=True)
+        except District.DoesNotExist:
+            raise serializers.ValidationError(
+                'कृपया वैध जिला चुनें / Please select a valid district'
+            )
+        
+        return value
+    
+    def validate_terms_accepted(self, value):
+        """Validate terms accepted"""
+        if not value:
+            raise serializers.ValidationError(
+                'आपको नियम और शर्तें स्वीकार करनी होंगी / You must accept the terms and conditions'
+            )
+        return value

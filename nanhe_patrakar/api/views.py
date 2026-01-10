@@ -12,16 +12,20 @@ from django.contrib.auth.models import User
 from django.db import transaction
 from django.db.models import Count, Max
 from django.db.models import Q
+from django.utils import timezone
+
+from datetime import datetime
 
 from nanhe_patrakar.models import (
     ParentProfile, ChildProfile, Submission, 
-    District, Topic, SubmissionMedia
+    District, Topic, SubmissionMedia, Program, 
+    ParticipationOrder
 )
 from .serializers import (
     ParentProfileSerializer, ChildProfileSerializer,
     ChildProfileCreateSerializer, SubmissionSerializer,
     SubmissionCreateSerializer, ChildProfileListSerializer,
-    CustomTokenObtainPairSerializer, DistrictSerializer
+    CustomTokenObtainPairSerializer, DistrictSerializer, ParentRegistrationSerializer
 )
 from .utils import success_response, error_response
 from .pagination import DynamicPageNumberPagination
@@ -134,16 +138,18 @@ class ChildProfileAPIView(APIView):
     def get(self, request):
         try:
             parent_profile = request.user.parent_profile
-            children = ChildProfile.objects.filter(
+
+            queryset = ChildProfile.objects.filter(
                 parent=parent_profile
             ).select_related('district').order_by('-created_at')
-            
-            serializer = ChildProfileSerializer(children, many=True)
-            
-            return Response(
-                success_response(serializer.data, "Child profiles retrieved"),
-                status=status.HTTP_200_OK
-            )
+
+            paginator = DynamicPageNumberPagination()
+            paginated_qs = paginator.paginate_queryset(queryset, request)
+
+            serializer = ChildProfileSerializer(paginated_qs, many=True)
+
+            return paginator.get_paginated_response(serializer.data)
+
         except ParentProfile.DoesNotExist:
             return Response(
                 error_response("Parent profile not found"),
@@ -490,35 +496,29 @@ class SubmissionCreateAPIView(APIView):
 class ChildProfilesByRecentSubmissionsAPIView(APIView):
     """
     GET /api/nanhe-patrakar/child-profiles/by-recent-submissions/
-    
-    Get all child profiles ordered by most recent submissions
+
+    Get child profiles ordered by most recent submissions (Paginated)
     """
     permission_classes = [IsAuthenticated]
-    
+
     def get(self, request):
         try:
             parent_profile = request.user.parent_profile
-            
-            # Get child profiles with their latest submission date
-            children = ChildProfile.objects.filter(
+
+            queryset = ChildProfile.objects.filter(
                 parent=parent_profile
             ).annotate(
                 latest_submission_date=Max('submissions__created_at'),
                 submission_count=Count('submissions')
             ).order_by('-latest_submission_date', '-created_at')
-            
-            serializer = ChildProfileListSerializer(children, many=True)
-            
-            return Response(
-                success_response(
-                    {
-                        "total_children": children.count(),
-                        "children": serializer.data
-                    },
-                    "Child profiles retrieved successfully"
-                ),
-                status=status.HTTP_200_OK
-            )
+
+            paginator = DynamicPageNumberPagination()
+            paginated_qs = paginator.paginate_queryset(queryset, request)
+
+            serializer = ChildProfileListSerializer(paginated_qs, many=True)
+
+            return paginator.get_paginated_response(serializer.data)
+
         except ParentProfile.DoesNotExist:
             return Response(
                 error_response("Parent profile not found"),
@@ -604,3 +604,189 @@ class DistrictListAPIView(ListAPIView):
             queryset = queryset.order_by(ordering)
         
         return queryset
+
+
+class ParentRegistrationAPIView(APIView):
+    """
+    POST /api/nanhe-patrakar/register/
+    
+    Register new parent for Nanhe Patrakar program
+    
+    Request Body (JSON):
+    {
+        "first_name": "John",
+        "last_name": "Doe",
+        "username": "johndoe123",
+        "mobile": "9876543210",
+        "email": "john@example.com",
+        "password": "password123",
+        "city": "Shimla",
+        "district_id": 1,
+        "terms_accepted": true
+    }
+    
+    Response:
+    {
+        "status": true,
+        "message": "Registration successful! Please proceed with payment",
+        "data": {
+            "user": {
+                "id": 1,
+                "username": "johndoe123",
+                "email": "john@example.com",
+                "first_name": "John",
+                "last_name": "Doe",
+                "full_name": "John Doe"
+            },
+            "parent_profile": {
+                "id": 5,
+                "program_name": "Nanhe Patrakar 2025",
+                "mobile": "9876543210",
+                "city": "Shimla",
+                "district_name": "Shimla",
+                "status": "PAYMENT_PENDING"
+            },
+            "order": {
+                "id": 10,
+                "amount": 599,
+                "payment_status": "PENDING"
+            },
+            "tokens": {
+                "refresh": "eyJ0eXAiOiJKV1QiLCJhbGc...",
+                "access": "eyJ0eXAiOiJKV1QiLCJhbGc...",
+                "access_expires_in": 3600,
+                "refresh_expires_in": 2592000
+            }
+        }
+    }
+    """
+    
+    @transaction.atomic
+    def post(self, request):
+        # Check if active program exists
+        program = Program.get_active_program()
+        if not program:
+            return Response(
+                error_response('पंजीकरण बंद है / Registration is closed'),
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        # Validate input data
+        serializer = ParentRegistrationSerializer(data=request.data)
+        
+        if not serializer.is_valid():
+            return Response(
+                error_response(serializer.errors),
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        try:
+            # Get validated data
+            validated_data = serializer.validated_data
+            
+            # Get district
+            district = District.objects.get(id=validated_data['district_id'])
+            
+            # Create user account
+            user = User.objects.create_user(
+                username=validated_data['username'],
+                email=validated_data['email'],
+                first_name=validated_data['first_name'],
+                last_name=validated_data['last_name'],
+                password=validated_data['password']
+            )
+            
+            # Create parent profile
+            parent_profile = ParentProfile.objects.create(
+                user=user,
+                program=program,
+                mobile=validated_data['mobile'],
+                city=validated_data['city'],
+                district=district,
+                status='PAYMENT_PENDING',
+                terms_accepted=validated_data['terms_accepted'],
+                terms_accepted_at=timezone.now() if validated_data['terms_accepted'] else None
+            )
+            
+            # Create pending order
+            order = ParticipationOrder.objects.create(
+                parent=parent_profile,
+                program=program,
+                amount=program.price,
+                payment_status='PENDING'
+            )
+            
+            # Generate JWT tokens
+            refresh = RefreshToken.for_user(user)
+            
+            # Add custom claims
+            refresh['user_type'] = 'nanhe_patrakar'
+            refresh['parent_id'] = parent_profile.id
+            
+            # Calculate token expiration
+            access_token_expiration = datetime.fromtimestamp(refresh.access_token['exp'])
+            refresh_token_expiration = datetime.fromtimestamp(refresh['exp'])
+            
+            # Build response
+            response_data = {
+                'user': {
+                    'id': user.id,
+                    'username': user.username,
+                    'email': user.email,
+                    'first_name': user.first_name,
+                    'last_name': user.last_name,
+                    'full_name': user.get_full_name()
+                },
+                'parent_profile': {
+                    'id': parent_profile.id,
+                    'program_id': program.id,
+                    'program_name': program.name,
+                    'mobile': parent_profile.mobile,
+                    'city': parent_profile.city,
+                    'district_id': district.id,
+                    'district_name': district.name,
+                    'status': parent_profile.status,
+                    'created_at': parent_profile.created_at.isoformat()
+                },
+                'order': {
+                    'id': order.id,
+                    'amount': float(order.amount),
+                    'payment_status': order.payment_status,
+                    'created_at': order.created_at.isoformat()
+                },
+                'tokens': {
+                    'refresh': str(refresh),
+                    'access': str(refresh.access_token),
+                    'access_token_expiration': access_token_expiration.isoformat(),
+                    'refresh_token_expiration': refresh_token_expiration.isoformat(),
+                    'access_expires_in': int(refresh.access_token['exp'] - datetime.now().timestamp()),
+                    'refresh_expires_in': int(refresh['exp'] - datetime.now().timestamp()),
+                }
+            }
+            
+            return Response(
+                success_response(
+                    response_data,
+                    'पंजीकरण सफल! अब भुगतान के साथ आगे बढ़ें / Registration successful! Please proceed with payment'
+                ),
+                status=status.HTTP_201_CREATED
+            )
+            
+        except District.DoesNotExist:
+            return Response(
+                error_response('जिला नहीं मिला / District not found'),
+                status=status.HTTP_404_NOT_FOUND
+            )
+        except Exception as e:
+            # If user was created but profile failed, delete the user
+            if 'user' in locals():
+                try:
+                    user.delete()
+                except:
+                    pass
+            
+            return Response(
+                error_response(f'पंजीकरण में त्रुटि / Registration error: {str(e)}'),
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+            

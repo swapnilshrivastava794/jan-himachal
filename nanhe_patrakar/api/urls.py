@@ -9,7 +9,7 @@ from .views import (
     ChildSubmissionsAPIView,
     SubmissionCreateAPIView,
     ChildProfilesByRecentSubmissionsAPIView, 
-    DistrictListAPIView
+    DistrictListAPIView, ParentRegistrationAPIView
 )
 
 urlpatterns = [
@@ -17,6 +17,7 @@ urlpatterns = [
     path('login/', LoginView.as_view(), name='api_login'),
     
     # Parent Profile
+    path('register/', ParentRegistrationAPIView.as_view(), name='parent-register'),
     path('parent-profile/', ParentProfileAPIView.as_view(), name='api_parent_profile'),
     
     # Child Profiles
@@ -26,7 +27,7 @@ urlpatterns = [
     
     # Submissions
     path('child-profiles/<int:child_id>/submissions/', ChildSubmissionsAPIView.as_view(), name='api_child_submissions'),
-    path('submissions/', SubmissionCreateAPIView.as_view(), name='api_submission_create'),
+    path('submission/', SubmissionCreateAPIView.as_view(), name='api_submission_create'),
     
     path('districts/', DistrictListAPIView.as_view(), name='district-list'),
 
