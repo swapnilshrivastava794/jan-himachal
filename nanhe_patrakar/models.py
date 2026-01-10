@@ -107,6 +107,11 @@ class ChildProfile(models.Model):
     school_name = models.CharField(max_length=255, null=True, blank=True)
     district = models.ForeignKey('District', on_delete=models.PROTECT)
     photo = models.ImageField(upload_to='child_photos/', null=True, blank=True)
+    id_proof = models.FileField(
+        upload_to='child_docs/',
+        null=True,
+        blank=True
+    )
     is_active = models.BooleanField(default=True)
     
     created_at = models.DateTimeField(auto_now_add=True)
