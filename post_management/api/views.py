@@ -317,68 +317,79 @@ class AppProfileUpdateAPI(APIView):
 class UserRegistrationAPIView(APIView):
     """
     POST /api/nanhe-patrakar/register/
-    
-    Register a new user with username and password
-    
-    {
-        "username": "john_doe",
-        "password": "password123"
-    }
+
+    Register a new user with username, password, email, first name, last name
     """
-    
+
     @transaction.atomic
     def post(self, request):
         username = request.data.get('username')
         password = request.data.get('password')
-        
-        if not username or not password:
+        email = request.data.get('email')
+        first_name = request.data.get('first_name')
+        last_name = request.data.get('last_name')
+
+        # Required field validation
+        if not all([username, password, email, first_name, last_name]):
             return Response(
-                error_response("Username and password are required"),
+                error_response(
+                    "Username, password, email, first name, and last name are required"
+                ),
                 status=status.HTTP_400_BAD_REQUEST
             )
-        
-        # Validate username length
+
+        # Username validation
         if len(username) < 3:
             return Response(
                 error_response("Username must be at least 3 characters long"),
                 status=status.HTTP_400_BAD_REQUEST
             )
-        
-        # Validate password length
+
+        # Password validation
         if len(password) < 6:
             return Response(
                 error_response("Password must be at least 6 characters long"),
                 status=status.HTTP_400_BAD_REQUEST
             )
-        
-        # Check if username already exists
+
+        # Check uniqueness
         if User.objects.filter(username=username).exists():
             return Response(
                 error_response("Username already exists"),
                 status=status.HTTP_400_BAD_REQUEST
             )
-        
+
+        if User.objects.filter(email=email).exists():
+            return Response(
+                error_response("Email already exists"),
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
         try:
-            # Create user
             user = User.objects.create_user(
                 username=username,
-                password=password
+                password=password,
+                email=email,
+                first_name=first_name.strip(),
+                last_name=last_name.strip()
             )
-            
+
             return Response(
                 success_response(
                     {
                         "user_id": user.id,
-                        "username": user.username
+                        "username": user.username,
+                        "email": user.email,
+                        "full_name": user.get_full_name()
                     },
                     "User registered successfully"
                 ),
                 status=status.HTTP_201_CREATED
             )
-            
+
         except Exception as e:
             return Response(
                 error_response(f"Failed to register user: {str(e)}"),
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
-        
+               
