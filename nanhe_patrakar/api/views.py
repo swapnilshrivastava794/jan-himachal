@@ -4,7 +4,7 @@ from rest_framework.views import APIView
 from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import authenticate
@@ -608,11 +608,12 @@ class DistrictListAPIView(ListAPIView):
 
 class ParentRegistrationAPIView(APIView):
     """
-    POST /api/nanhe-patrakar/register/
+    POST /api/nanhe-patrakar/parent/register/
     
     Register new parent for Nanhe Patrakar program
+    Works for both new users and existing users
     
-    Request Body (JSON):
+    For New Users (provide all fields):
     {
         "first_name": "John",
         "last_name": "Doe",
@@ -625,41 +626,15 @@ class ParentRegistrationAPIView(APIView):
         "terms_accepted": true
     }
     
-    Response:
+    For Existing Users (must be authenticated, provide only):
     {
-        "status": true,
-        "message": "Registration successful! Please proceed with payment",
-        "data": {
-            "user": {
-                "id": 1,
-                "username": "johndoe123",
-                "email": "john@example.com",
-                "first_name": "John",
-                "last_name": "Doe",
-                "full_name": "John Doe"
-            },
-            "parent_profile": {
-                "id": 5,
-                "program_name": "Nanhe Patrakar 2025",
-                "mobile": "9876543210",
-                "city": "Shimla",
-                "district_name": "Shimla",
-                "status": "PAYMENT_PENDING"
-            },
-            "order": {
-                "id": 10,
-                "amount": 599,
-                "payment_status": "PENDING"
-            },
-            "tokens": {
-                "refresh": "eyJ0eXAiOiJKV1QiLCJhbGc...",
-                "access": "eyJ0eXAiOiJKV1QiLCJhbGc...",
-                "access_expires_in": 3600,
-                "refresh_expires_in": 2592000
-            }
-        }
+        "mobile": "9876543210",
+        "city": "Shimla",
+        "district_id": 1,
+        "terms_accepted": true
     }
     """
+    permission_classes = [AllowAny]  # Allow both authenticated and non-authenticated
     
     @transaction.atomic
     def post(self, request):
@@ -671,6 +646,9 @@ class ParentRegistrationAPIView(APIView):
                 status=status.HTTP_400_BAD_REQUEST
             )
         
+        # Check if user is authenticated
+        is_authenticated = request.user.is_authenticated
+        
         # Validate input data
         serializer = ParentRegistrationSerializer(data=request.data)
         
@@ -681,53 +659,126 @@ class ParentRegistrationAPIView(APIView):
             )
         
         try:
-            # Get validated data
             validated_data = serializer.validated_data
             
             # Get district
             district = District.objects.get(id=validated_data['district_id'])
             
-            # Create user account
-            user = User.objects.create_user(
-                username=validated_data['username'],
-                email=validated_data['email'],
-                first_name=validated_data['first_name'],
-                last_name=validated_data['last_name'],
-                password=validated_data['password']
-            )
+            # Check if mobile already registered in program
+            if ParentProfile.objects.filter(mobile=validated_data['mobile']).exists():
+                return Response(
+                    error_response('यह मोबाइल नंबर पहले से पंजीकृत है / This mobile number is already registered in the program'),
+                    status=status.HTTP_400_BAD_REQUEST
+                )
             
-            # Create parent profile
-            parent_profile = ParentProfile.objects.create(
-                user=user,
-                program=program,
-                mobile=validated_data['mobile'],
-                city=validated_data['city'],
-                district=district,
-                status='PAYMENT_PENDING',
-                terms_accepted=validated_data['terms_accepted'],
-                terms_accepted_at=timezone.now() if validated_data['terms_accepted'] else None
-            )
+            # ============================================
+            # Handle Existing User (Authenticated)
+            # ============================================
+            if is_authenticated:
+                user = request.user
+                
+                # Create parent profile for existing user
+                parent_profile = ParentProfile.objects.create(
+                    user=user,
+                    program=program,
+                    mobile=validated_data['mobile'],
+                    city=validated_data['city'],
+                    district=district,
+                    status='PAYMENT_PENDING',
+                    terms_accepted=validated_data['terms_accepted'],
+                    terms_accepted_at=timezone.now() if validated_data['terms_accepted'] else None
+                )
+                
+                # Create pending order
+                order = ParticipationOrder.objects.create(
+                    parent=parent_profile,
+                    program=program,
+                    amount=program.price,
+                    payment_status='PENDING'
+                )
+                
+                # Generate new JWT tokens with updated claims
+                refresh = RefreshToken.for_user(user)
+                refresh['user_type'] = 'nanhe_patrakar'
+                refresh['parent_id'] = parent_profile.id
+                
+                message = 'मौजूदा उपयोगकर्ता के लिए पंजीकरण सफल! / Registration successful for existing user!'
             
-            # Create pending order
-            order = ParticipationOrder.objects.create(
-                parent=parent_profile,
-                program=program,
-                amount=program.price,
-                payment_status='PENDING'
-            )
+            # ============================================
+            # Handle New User (Not Authenticated)
+            # ============================================
+            else:
+                # Validate required fields for new user
+                if not all([
+                    validated_data.get('username'),
+                    validated_data.get('password'),
+                    validated_data.get('email'),
+                    validated_data.get('first_name'),
+                    validated_data.get('last_name')
+                ]):
+                    return Response(
+                        error_response('नए उपयोगकर्ता के लिए सभी फ़ील्ड आवश्यक हैं / All fields required for new user: username, password, email, first_name, last_name'),
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
+                
+                # Check if username already exists
+                if User.objects.filter(username=validated_data['username']).exists():
+                    return Response(
+                        error_response('उपयोगकर्ता नाम पहले से मौजूद है / Username already exists'),
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
+                
+                # Check if email already exists
+                if User.objects.filter(email=validated_data['email']).exists():
+                    return Response(
+                        error_response('ईमेल पहले से पंजीकृत है / Email already registered'),
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
+                
+                # Create new user account
+                user = User.objects.create_user(
+                    username=validated_data['username'],
+                    email=validated_data['email'],
+                    first_name=validated_data['first_name'],
+                    last_name=validated_data['last_name'],
+                    password=validated_data['password']
+                )
+                
+                # Create parent profile
+                parent_profile = ParentProfile.objects.create(
+                    user=user,
+                    program=program,
+                    mobile=validated_data['mobile'],
+                    city=validated_data['city'],
+                    district=district,
+                    status='PAYMENT_PENDING',
+                    terms_accepted=validated_data['terms_accepted'],
+                    terms_accepted_at=timezone.now() if validated_data['terms_accepted'] else None
+                )
+                
+                # Create pending order
+                order = ParticipationOrder.objects.create(
+                    parent=parent_profile,
+                    program=program,
+                    amount=program.price,
+                    payment_status='PENDING'
+                )
+                
+                # Generate JWT tokens
+                refresh = RefreshToken.for_user(user)
+                refresh['user_type'] = 'nanhe_patrakar'
+                refresh['parent_id'] = parent_profile.id
+                
+                message = 'पंजीकरण सफल! अब भुगतान के साथ आगे बढ़ें / Registration successful! Please proceed with payment'
             
-            # Generate JWT tokens
-            refresh = RefreshToken.for_user(user)
-            
-            # Add custom claims
-            refresh['user_type'] = 'nanhe_patrakar'
-            refresh['parent_id'] = parent_profile.id
+            # ============================================
+            # Build Common Response
+            # ============================================
             
             # Calculate token expiration
             access_token_expiration = datetime.fromtimestamp(refresh.access_token['exp'])
             refresh_token_expiration = datetime.fromtimestamp(refresh['exp'])
             
-            # Build response
             response_data = {
                 'user': {
                     'id': user.id,
@@ -750,6 +801,7 @@ class ParentRegistrationAPIView(APIView):
                 },
                 'order': {
                     'id': order.id,
+                    'order_id': order.order_id,
                     'amount': float(order.amount),
                     'payment_status': order.payment_status,
                     'created_at': order.created_at.isoformat()
@@ -765,10 +817,7 @@ class ParentRegistrationAPIView(APIView):
             }
             
             return Response(
-                success_response(
-                    response_data,
-                    'पंजीकरण सफल! अब भुगतान के साथ आगे बढ़ें / Registration successful! Please proceed with payment'
-                ),
+                success_response(response_data, message),
                 status=status.HTTP_201_CREATED
             )
             
@@ -778,8 +827,8 @@ class ParentRegistrationAPIView(APIView):
                 status=status.HTTP_404_NOT_FOUND
             )
         except Exception as e:
-            # If user was created but profile failed, delete the user
-            if 'user' in locals():
+            # Rollback: If user was created but profile failed, delete the user
+            if not is_authenticated and 'user' in locals():
                 try:
                     user.delete()
                 except:
@@ -789,4 +838,4 @@ class ParentRegistrationAPIView(APIView):
                 error_response(f'पंजीकरण में त्रुटि / Registration error: {str(e)}'),
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
-            
+      

@@ -9,6 +9,10 @@ from rest_framework.response import Response
 from rest_framework import status
 from django.contrib.auth.hashers import check_password
 from rest_framework_simplejwt.tokens import RefreshToken
+from django.db import transaction
+from nanhe_patrakar.api.utils import success_response, error_response
+
+from django.contrib.auth.models import User
 
 
 class SearchPagination(PageNumberPagination):
@@ -308,3 +312,73 @@ class AppProfileUpdateAPI(APIView):
             }, status=status.HTTP_200_OK)
         
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class UserRegistrationAPIView(APIView):
+    """
+    POST /api/nanhe-patrakar/register/
+    
+    Register a new user with username and password
+    
+    {
+        "username": "john_doe",
+        "password": "password123"
+    }
+    """
+    
+    @transaction.atomic
+    def post(self, request):
+        username = request.data.get('username')
+        password = request.data.get('password')
+        
+        if not username or not password:
+            return Response(
+                error_response("Username and password are required"),
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        # Validate username length
+        if len(username) < 3:
+            return Response(
+                error_response("Username must be at least 3 characters long"),
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        # Validate password length
+        if len(password) < 6:
+            return Response(
+                error_response("Password must be at least 6 characters long"),
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        # Check if username already exists
+        if User.objects.filter(username=username).exists():
+            return Response(
+                error_response("Username already exists"),
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        try:
+            # Create user
+            user = User.objects.create_user(
+                username=username,
+                password=password
+            )
+            
+            return Response(
+                success_response(
+                    {
+                        "user_id": user.id,
+                        "username": user.username
+                    },
+                    "User registered successfully"
+                ),
+                status=status.HTTP_201_CREATED
+            )
+            
+        except Exception as e:
+            return Response(
+                error_response(f"Failed to register user: {str(e)}"),
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+        

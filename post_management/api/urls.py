@@ -1,7 +1,12 @@
 from django.urls import path
-from .views import CategoryListAPI, GlobalSearchAPI, NewsListAPI, NewsDetailAPI , VideoListAPI, VideoDetailAPI, AppSignupAPI, AppLoginAPI, AppProfileUpdateAPI
-
+from .views import (
+    CategoryListAPI, GlobalSearchAPI, NewsListAPI, NewsDetailAPI , VideoListAPI, VideoDetailAPI, 
+    AppSignupAPI, AppLoginAPI, AppProfileUpdateAPI, UserRegistrationAPIView
+)
 urlpatterns = [
+    
+    path('register/', UserRegistrationAPIView.as_view(), name='api_register'),
+
     path('categories/', CategoryListAPI.as_view(), name='api-category-list'),
     path('news/', NewsListAPI.as_view(), name='api-news-list'),
     path(

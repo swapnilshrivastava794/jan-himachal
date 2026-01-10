@@ -237,158 +237,34 @@ class ChildProfileListSerializer(serializers.ModelSerializer):
     
 
 class ParentRegistrationSerializer(serializers.Serializer):
-    """
-    Serializer for parent registration API
-    """
-    # Personal Information
-    first_name = serializers.CharField(
-        max_length=150,
-        required=True,
-        error_messages={
-            'required': 'पहला नाम आवश्यक है / First name is required',
-            'blank': 'पहला नाम खाली नहीं हो सकता / First name cannot be blank'
-        }
-    )
-    
-    last_name = serializers.CharField(
-        max_length=150,
-        required=True,
-        error_messages={
-            'required': 'उपनाम आवश्यक है / Last name is required',
-            'blank': 'उपनाम खाली नहीं हो सकता / Last name cannot be blank'
-        }
-    )
-    
-    username = serializers.CharField(
-        max_length=150,
-        required=True,
-        error_messages={
-            'required': 'यूजरनेम आवश्यक है / Username is required',
-            'blank': 'यूजरनेम खाली नहीं हो सकता / Username cannot be blank'
-        }
-    )
-    
-    mobile = serializers.CharField(
-        max_length=15,
-        required=True,
-        error_messages={
-            'required': 'मोबाइल नंबर आवश्यक है / Mobile number is required',
-            'blank': 'मोबाइल नंबर खाली नहीं हो सकता / Mobile number cannot be blank'
-        }
-    )
-    
-    email = serializers.EmailField(
-        required=True,
-        error_messages={
-            'required': 'ईमेल आवश्यक है / Email is required',
-            'invalid': 'कृपया वैध ईमेल दर्ज करें / Please enter a valid email'
-        }
-    )
-    
-    password = serializers.CharField(
-        min_length=6,
-        required=True,
-        write_only=True,
-        error_messages={
-            'required': 'पासवर्ड आवश्यक है / Password is required',
-            'min_length': 'पासवर्ड कम से कम 6 अक्षरों का होना चाहिए / Password must be at least 6 characters'
-        }
-    )
-    
-    # Location Details
-    city = serializers.CharField(
-        max_length=100,
-        required=True,
-        error_messages={
-            'required': 'शहर आवश्यक है / City is required'
-        }
-    )
-    
-    district_id = serializers.IntegerField(
-        required=True,
-        error_messages={
-            'required': 'जिला आवश्यक है / District is required',
-            'invalid': 'कृपया वैध जिला चुनें / Please select a valid district'
-        }
-    )
-    
-    # Terms & Conditions
-    terms_accepted = serializers.BooleanField(
-        required=True,
-        error_messages={
-            'required': 'आपको नियम और शर्तें स्वीकार करनी होंगी / You must accept the terms and conditions'
-        }
-    )
-    
-    def validate_username(self, value):
-        """Validate username"""
-        # Remove leading/trailing spaces
-        value = value.strip()
-        
-        # Check minimum length
-        if len(value) < 3:
-            raise serializers.ValidationError(
-                'यूजरनेम कम से कम 3 अक्षरों का होना चाहिए / Username must be at least 3 characters'
-            )
-        
-        # Check for valid characters (alphanumeric, underscore, hyphen)
-        if not re.match(r'^[a-zA-Z0-9_-]+$', value):
-            raise serializers.ValidationError(
-                'यूजरनेम में केवल अक्षर, संख्या, अंडरस्कोर और हाइफन हो सकते हैं / Username can only contain letters, numbers, underscore and hyphen'
-            )
-        
-        # Check if username already exists
-        if User.objects.filter(username__iexact=value).exists():
-            raise serializers.ValidationError(
-                'यह यूजरनेम पहले से उपयोग में है / This username is already taken'
-            )
-        
-        return value.lower()
+    """Serializer for parent registration"""
+    first_name = serializers.CharField(max_length=150, required=False)
+    last_name = serializers.CharField(max_length=150, required=False)
+    username = serializers.CharField(max_length=150, required=False)
+    mobile = serializers.CharField(max_length=15)
+    email = serializers.EmailField(required=False)
+    password = serializers.CharField(min_length=6, write_only=True, required=False)
+    city = serializers.CharField(max_length=100)
+    district_id = serializers.IntegerField()
+    terms_accepted = serializers.BooleanField()
     
     def validate_mobile(self, value):
-        """Validate mobile number"""
         # Remove spaces and special characters
+        import re
         mobile = re.sub(r'[^\d+]', '', value)
         
         # Validate Indian mobile number format
         if not re.match(r'^[6-9]\d{9}$', mobile):
-            raise serializers.ValidationError(
-                'कृपया वैध 10 अंकों का मोबाइल नंबर दर्ज करें / Please enter a valid 10-digit Indian mobile number'
-            )
-        
-        # Check if mobile already exists
-        if ParentProfile.objects.filter(mobile=mobile).exists():
-            raise serializers.ValidationError(
-                'यह मोबाइल नंबर पहले से पंजीकृत है / This mobile number is already registered'
-            )
+            raise serializers.ValidationError('कृपया वैध 10 अंकों का मोबाइल नंबर दर्ज करें / Please enter a valid 10-digit Indian mobile number')
         
         return mobile
     
-    def validate_email(self, value):
-        """Validate email"""
-        # Check if email already exists
-        if User.objects.filter(email__iexact=value).exists():
-            raise serializers.ValidationError(
-                'यह ईमेल पहले से पंजीकृत है / This email is already registered'
-            )
-        
-        return value.lower()
-    
-    def validate_district_id(self, value):
-        """Validate district exists"""
-        try:
-            District.objects.get(id=value, is_active=True)
-        except District.DoesNotExist:
-            raise serializers.ValidationError(
-                'कृपया वैध जिला चुनें / Please select a valid district'
-            )
-        
+    def validate_terms_accepted(self, value):
+        if not value:
+            raise serializers.ValidationError('आपको नियम और शर्तें स्वीकार करनी होंगी / You must accept the terms and conditions')
         return value
     
-    def validate_terms_accepted(self, value):
-        """Validate terms accepted"""
-        if not value:
-            raise serializers.ValidationError(
-                'आपको नियम और शर्तें स्वीकार करनी होंगी / You must accept the terms and conditions'
-            )
+    def validate_district_id(self, value):
+        if not District.objects.filter(id=value, is_active=True).exists():
+            raise serializers.ValidationError('अमान्य जिला / Invalid district')
         return value
