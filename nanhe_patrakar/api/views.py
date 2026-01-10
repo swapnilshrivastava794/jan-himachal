@@ -839,3 +839,144 @@ class ParentRegistrationAPIView(APIView):
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
       
+      
+class EnrollToNanhePatrakarAPIView(APIView):
+    """
+    POST /api/nanhe-patrakar/enroll/
+
+    Enroll authenticated user into Nanhe Patrakar
+    Creates ParentProfile + first ChildProfile + Order
+    
+    {
+        "mobile": "9876543210",
+        "city": "Shimla",
+        "district_id": 1,
+        "terms_accepted": true,
+
+        "child_name": "Aarav Sharma",
+        "child_date_of_birth": "2015-05-15",
+        "child_age": 9,
+        "child_gender": "M",
+        "child_school_name": "ABC Public School",
+        "child_district_id": 1
+    }
+    """
+
+    permission_classes = [IsAuthenticated]
+
+    @transaction.atomic
+    def post(self, request):
+        user = request.user
+        data = request.data
+
+        # Prevent duplicate enrollment
+        if hasattr(user, 'parent_profile'):
+            return Response(
+                error_response("User already enrolled in the program"),
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        # Active program check
+        program = Program.get_active_program()
+        if not program:
+            return Response(
+                error_response("Registration is closed"),
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        # Parent-level required fields
+        parent_fields = ['mobile', 'city', 'district_id', 'terms_accepted']
+        if not all(field in data for field in parent_fields):
+            return Response(
+                error_response("mobile, city, district_id and terms_accepted are required"),
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        if not data.get('terms_accepted'):
+            return Response(
+                error_response("Terms and conditions must be accepted"),
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        # Child-level required fields (flat)
+        child_fields = [
+            'child_name',
+            'child_date_of_birth',
+            'child_age',
+            'child_district_id'
+        ]
+        if not all(field in data for field in child_fields):
+            return Response(
+                error_response("All child details are required"),
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        # Prevent duplicate mobile
+        if ParentProfile.objects.filter(mobile=data['mobile']).exists():
+            return Response(
+                error_response("Mobile number already registered"),
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        try:
+            parent_district = District.objects.get(id=data['district_id'])
+            child_district = District.objects.get(id=data['child_district_id'])
+
+            # Create ParentProfile
+            parent_profile = ParentProfile.objects.create(
+                user=user,
+                program=program,
+                mobile=data['mobile'],
+                city=data['city'],
+                district=parent_district,
+                status='PAYMENT_PENDING',
+                terms_accepted=True,
+                terms_accepted_at=timezone.now()
+            )
+
+            # Create ChildProfile
+            child_profile = ChildProfile.objects.create(
+                parent=parent_profile,
+                name=data['child_name'],
+                date_of_birth=data['child_date_of_birth'],
+                age=data['child_age'],
+                gender=data.get('child_gender'),
+                school_name=data.get('child_school_name'),
+                district=child_district
+            )
+
+            # Create Order
+            order = ParticipationOrder.objects.create(
+                parent=parent_profile,
+                program=program,
+                amount=program.price,
+                payment_status='PENDING'
+            )
+
+            response_data = {
+                "parent_profile_id": parent_profile.id,
+                "child_profile_id": child_profile.id,
+                "order_id": order.order_id,
+                "amount": float(order.amount),
+                "payment_status": order.payment_status
+            }
+
+            return Response(
+                success_response(
+                    response_data,
+                    "Enrollment successful. Please proceed with payment."
+                ),
+                status=status.HTTP_201_CREATED
+            )
+
+        except District.DoesNotExist:
+            return Response(
+                error_response("Invalid district provided"),
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+        except Exception as e:
+            return Response(
+                error_response(f"Enrollment failed: {str(e)}"),
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )

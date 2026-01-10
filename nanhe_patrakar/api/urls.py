@@ -7,7 +7,7 @@ from .views import (
     ChildProfileAPIView,
     ChildProfileDetailAPIView,
     ChildSubmissionsAPIView,
-    SubmissionCreateAPIView,
+    SubmissionCreateAPIView, EnrollToNanhePatrakarAPIView,
     ChildProfilesByRecentSubmissionsAPIView, 
     DistrictListAPIView, ParentRegistrationAPIView
 )
@@ -18,6 +18,7 @@ urlpatterns = [
     
     # Parent Profile
     path('register/', ParentRegistrationAPIView.as_view(), name='parent-register'),
+    path('enrollment/', EnrollToNanhePatrakarAPIView.as_view(), name='enrollment'),
     path('parent-profile/', ParentProfileAPIView.as_view(), name='api_parent_profile'),
     
     # Child Profiles
