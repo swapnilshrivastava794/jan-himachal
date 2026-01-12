@@ -1,41 +1,118 @@
 {% load static %}
-<div class="row m-3">
-    <div class="heading-text">Reporter</div>
+
+<div class="container my-4">
+
+  <!-- HEADER -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h5 class="fw-bold text-uppercase mb-0">Reporters</h5>
+  </div>
+
+  <div class="row g-3 mb-3">
+
     {% for profile in profiles %}
-        <div class="col-lg-2 col-md-6 col-sm-12">
-            <div class="article-card">
-                <div class="image-section">
-                    <a href="{% url 'journalist_profile' profile.username %}">
-                        {% if profile.profile_picture %}
-                            <img style="height: 226px;" src="{{ profile.profile_picture.url }}" alt="{{ profile.username }}"
-                                title="{{ profile.username }}" loading="lazy" class="article-image" />
-                        {% else %}
-                            <img style="height: 226px;" src="{% static 'static/assets/img/user.jpg' %}" alt="{{ profile.username }}"
-                                title="{{ profile.username }}" loading="lazy" class="article-image" />
-                        {% endif %}
-                    </a>
+    <!-- 👇 4 PER ROW ON DESKTOP -->
+    <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-3">
 
-                    <div class="content-section items_background">
-                        {% if profile.registration_type == 'artist' %}
-                            <a href="{% url 'journalist_profile' profile.username %}" class="article-tag">
-                                {{ profile.first_name }} {{ profile.last_name }}
-                            </a>
-                        {% else %}
-                            <a href="{% url 'journalist_profile' profile.username %}" class="article-tag">
-                                {{ profile.organisation_name|truncatechars:30 }}
-                            </a>
-                        {% endif %}
+      <div class="card h-100 shadow-sm border-0 author-card">
 
-                        <a href="{% url 'journalist_profile' profile.username %}">
-                            <h2 style="font-size: 11px; font-weight: 700;">{{ profile.registration_type|capfirst }}</h2>
+        <div class="card-body d-flex align-items-center gap-3">
+
+          <!-- PROFILE IMAGE -->
+          <div class="author-img flex-shrink-0">
+            <a href="{% url 'journalist_profile' profile.username %}">
+                {% if profile.profile_picture %}
+                    <img src="{{ profile.profile_picture.url }}" alt="{{ profile.username }}"
+                        title="{{ profile.username }}" loading="lazy" class="article-image profile-image" />
+                {% else %}
+                    <img src="{% static 'static/assets/img/user.jpg' %}" alt="{{ profile.username }}"
+                        title="{{ profile.username }}" loading="lazy" class="article-image profile-image" />
+                {% endif %}
+            </a>
+          </div>
+
+          <!-- CONTENT -->
+          <div class="flex-grow-1">
+
+            <h6 class="mb-1 fw-semibold">
+              {% if profile.registration_type == 'journalist' %}
+                  <a href="{% url 'journalist_profile' profile.username %}" class="text-dark text-decoration-none">
+                      {{ profile.first_name }} {{ profile.last_name|default:"" }}
+                  </a>
+              {% else %}
+                  <a href="{% url 'journalist_profile' profile.username %}" class="text-dark text-decoration-none">
+                      {{ profile.organisation_name|truncatechars:30 }}
+                  </a>
+              {% endif %}
+            </h6>
+
+            <p class="small text-muted mb-0">
+             <a href="{% url 'journalist_profile' profile.username %}" class="profile-info-item">
+                  <h2 class="profile-info-text">{{ profile.registration_type|capfirst }}</h2>
+              </a>
+
+              <a href="{% url 'journalist_profile' profile.username %}" class="profile-info-item">
+                  <h2 class="profile-info-text nationality">{{ profile.nationality|default:"Punjab" }}</h2>
+              </a>
+            </p>
+             <div class="mt-2">
+                {% if profile.social_media_links %}
+                    {% for platform, link in profile.social_media_links.items %}
+                        <a href="{{ link }}" target="_blank" class="me-2 text-muted fs-5" style="font-size: 20px !important;">
+                            <i class="
+                                {% if platform == 'globe' %}
+                                    fas fa-globe
+                                {% elif platform == 'x' or platform == 'twitter' %}
+                                    fab fa-x-twitter
+                                {% elif platform == 'whatsapp' %}
+                                    fab fa-whatsapp
+                                {% else %}
+                                    fab fa-{{ platform }}
+                                {% endif %}
+                            "></i>
                         </a>
-
-                        <a href="{% url 'journalist_profile' profile.username %}">
-                            <h2 style="font-size: 11px; font-weight: 700;">{{ profile.nationality }}</h2>
-                        </a>
-                    </div>
-                </div>
+                    {% endfor %}
+                {% endif %}
             </div>
+
+          </div>
+
         </div>
+
+      </div>
+    </div>
     {% endfor %}
+
+  </div>
 </div>
+
+<style>
+    .author-card {
+  border-radius: 12px;
+  transition: all 0.25s ease;
+  background: #fff;
+}
+
+.author-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+}
+
+.author-img img {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #eee;
+}
+
+.author-card h6 {
+  font-size: 14px;
+  line-height: 1.3;
+}
+
+.author-card p {
+  font-size: 12px;
+}
+
+
+</style>

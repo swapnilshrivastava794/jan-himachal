@@ -100,14 +100,14 @@
         {% for Blog in BlogData %}
                     <div class="col-lg-4">
                         <div class="position-relative mb-3 mt-3">
-                            <p><a class="h6 d-block mb-0 text-secondary text-uppercase font-weight-bold" href="/{{Blog.slug}}">{{Blog.post_title}}</a></p>
+                            <p><a class="h6 d-block mb-0 text-secondary text-uppercase font-weight-bold" href="/{{ Blog.newsfrom.slug }}/{{ Blog.post_cat.sub_cat.cat_slug }}/{{ Blog.slug }}">{{Blog.post_title}}</a></p>
                             <img class="img-fluid w-100 sliderimg" src="../upload/{{Blog.post_image}}">
                             <div class="bg-white border border-top-0 p-4">
                                 <p  style="min-height:75px">
                                     {{Blog.post_short_des|slice:":270"|safe}}
                                 </p>
                                 <div class="mb-2">
-                                    <a class="badge badge-primary text-uppercase font-weight-semi-bold p-2 mr-2" href="/{{Blog.slug}}">Read More</a>
+                                    <a class="badge badge-primary text-uppercase font-weight-semi-bold p-2 mr-2" href="/{{ Blog.newsfrom.slug }}/{{ Blog.post_cat.sub_cat.cat_slug }}/{{ Blog.slug }}">Read More</a>
                                     <a class="text-body" href="">
                                         <small ><i class="fas fa-calendar-alt"></i> {{Blog.schedule_date|date}}</small>
                                 <small class="ml-3"> <i class="fas fa-clock"></i> {{ Blog.schedule_date|time }}</small>

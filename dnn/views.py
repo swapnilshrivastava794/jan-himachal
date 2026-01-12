@@ -469,8 +469,8 @@ def AllNews(request,slug):
 # Video-all-News-details-----------
 def AllvideoNews(request,slug):
     alnslug='/all-video-news/'+ slug
-    seo=seo_optimization.objects.get(pageslug=alnslug)
-    
+    # seo=seo_optimization.objects.get(pageslug=alnslug)
+    seo = seo_optimization.objects.filter(pageslug=slug).first()
     if slug == 'articles':
         blogdata=VideoNews.objects.filter(articles=1,is_active='active',video_type='video').order_by('-id')
     elif slug == 'breaking':

@@ -11,7 +11,7 @@
             <img class="img-fluid w-100 sliderimg" src="../upload/{{Blog.post_image}}" alt="{{Blog.post_cat|lower}}">
 
             <div class="overlay">
-                <a class="h6 m-0 text-uppercase font-weight-semi-bold" href="/{{Blog.slug}}" style="color:#fff;">{{Blog.post_title}}</a>
+                <a class="h6 m-0 text-uppercase font-weight-semi-bold" href="/{{ Blog.newsfrom.slug }}/{{ Blog.post_cat.sub_cat.cat_slug }}/{{ Blog.slug }}" style="color:#fff;">{{Blog.post_title}}</a>
                 <small class="badge badge-primary"> <i class="fas fa-clock"></i> {{ Blog.post_date|time }}</small>
             </div>
         </div>

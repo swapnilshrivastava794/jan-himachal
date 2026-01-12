@@ -15,8 +15,8 @@ li {
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 40px;          
-  height: 40px;        
+  width:36px;          
+  height: 36px;        
   border-radius: 50%;   
   background-color: #3d3c38;
   color: white !important;        
@@ -32,8 +32,8 @@ li {
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 40px;          
-  height: 40px;        
+  width: 36px;          
+  height: 36px;        
   border-radius: 50%;   
   background-color: #3d3c38;
   color: white !important;        
@@ -47,25 +47,17 @@ li {
 }
 
 </style>
-<div class="container mt-4">
+<div class="topspace"></div>
+<div class="container my-5">
   <div class="row">
     <div class="col-lg-9 col-md-7 col-sm-12">
-      <div class="position-relative my-1">
+      <div class="position-relative">
        
         <div class="mb-3">
           <div class="section-title">{{ Blogdetails.post_title }}</div>
           <div class="double-underline"></div>
         </div>
-        {% if Blogdetails.post_image == '' %}
-        <img class="img-fluid w-100" src="{% static 'upload/blog/null.jpg' %}" style="object-fit: cover"
-          alt="{{ Blogdetails.post_title|default:'No Image' }}" title="{{ Blogdetails.post_title }}" loading="lazy">
-        {% else %}
-        <img class="img-fluid w-100" src="{{ Blogdetails.post_image.url }}" style="object-fit: cover"
-          alt="{{ Blogdetails.post_title }}" title="{{ Blogdetails.post_title }}" loading="lazy">
-        {% endif %}
-        <div class="p-3 card-background">
-          <div class="row">
-            <div class="col-lg-6">
+        <div class="mb-3">
               <p class="m-0">
                 {% if Blogdetails.author %}
                 Post by : {{ Blogdetails.author.first_name|default:""|capfirst }}
@@ -83,12 +75,21 @@ li {
               </p>
               <div class="d-flex align-items-center">
                 <small><i class="fas fa-calendar-alt"></i> {{ Blogdetails.schedule_date|date }}</small>
-                <small ><i class="fas fa-clock"></i> {{ Blogdetails.schedule_date|time }}</small>
+                <small  class="mx-2"><i class="fas fa-clock"></i> {{ Blogdetails.schedule_date|time }}</small>
                 <small ><i class="far fa-eye mr-2"></i>{{ Blogdetails.post_status|add:Blogdetails.viewcounter }}</small>
               </div>
             </div>
-            <div class="col-lg-6 mt-1">
-              <div class="social-share" style="display: flex; float: right; gap: 10px;">
+        {% if Blogdetails.post_image == '' %}
+        <img class="img-fluid w-100" src="{% static 'upload/blog/null.jpg' %}" style="object-fit: cover"
+          alt="{{ Blogdetails.post_title|default:'No Image' }}" title="{{ Blogdetails.post_title }}" loading="lazy">
+        {% else %}
+        <img class="img-fluid w-100" src="{{ Blogdetails.post_image.url }}" style="object-fit: cover"
+          alt="{{ Blogdetails.post_title }}" title="{{ Blogdetails.post_title }}" loading="lazy">
+        {% endif %}
+        <div class="card-background">
+          <div class="row">            
+            <div class="col-lg-6 mt-3">
+              <div class="social-share" style="display: flex; gap:5px;">
                 <div class="slider-item1">
                   <a href="https://api.whatsapp.com/send?text=Check%20this%20out!%20{{ request.build_absolute_uri }}" target="_blank">
                     <i class="fab fa-whatsapp"></i>
@@ -143,7 +144,7 @@ li {
               (adsbygoogle = window.adsbygoogle || []).push({});
             </script>
           </div> -->
-          <div class="my-4">
+          <div class="my-3">
           {{ Blogdetails.post_des|safe }}
           </div>
           <!-- <div class="my-1">
@@ -159,7 +160,7 @@ li {
           </div> -->
 
           {% for tag in Blogdetails.tags.all %}
-          <a href="/topic/{{ tag.slug }}" class="badge bg-secondary">#{{ tag.name }}</a>
+          <a href="/topic/{{ tag.slug }}" class="badge bg-primary-subtle">#{{ tag.name }}</a>
           {% endfor %}
         </div>
       </div>
@@ -168,7 +169,7 @@ li {
       <!-- {% for mnews in mainnews %}
         <div class="position-relative mb-3 mt-3 artical-box">
           <h2 class="title my-3">
-            <a href="/{{ mnews.newsfrom.slug }}/{{ mnews.post_cat.sub_cat.cat_slug }}/{{ mnews.slug }}" title="{{ mnews.post_title }}">{{ mnews.post_title }}</a>
+            <a href="/{{ mnews.slug }}" title="{{ mnews.post_title }}">{{ mnews.post_title }}</a>
           </h2>
 
           <img class="img-fluid w-100" src="{{ mnews.post_image.url }}" style="object-fit: cover" alt="{{ mnews.post_title }}" title="{{ mnews.post_title }}" loading="lazy">
@@ -182,7 +183,7 @@ li {
 
             <p class="m-0">
               {{ mnews.post_short_des|slice:":270"|safe }}...
-              <a href="/{{ mnews.newsfrom.slug }}/{{ mnews.post_cat.sub_cat.cat_slug }}/{{ mnews.slug }}" title="Read more about {{ mnews.post_title }}">Read More</a>
+              <a href="/{{ mnews.slug }}" title="Read more about {{ mnews.post_title }}">Read More</a>
             </p>
           </div>
         </div>
@@ -207,15 +208,14 @@ li {
         </div>
         {% for Blog in BlogData %}
         <div class="col-lg-4">
-          <a href="/{{Blog.newsfrom.slug}}/{{Blog.post_cat.sub_cat.cat_slug}}/{{Blog.slug}}">
-            <img class="" src="{{Blog.post_image.url}}" alt="{{Blog.post_title}}" title="{{Blog.post_title}}" loading="lazy">
-          </a>
+          <a href="/{{ Blog.newsfrom.slug }}/{{ Blog.post_cat.sub_cat.cat_slug }}/{{ Blog.slug }}"><img class="" src="../upload/{{Blog.post_image}}" alt=""></a>
           
           <div class="news-card mb-3">
-            <a class="news-title" href="/{{Blog.newsfrom.slug}}/{{Blog.post_cat.sub_cat.cat_slug}}/{{Blog.slug}}">
+            
+            <a class="news-title" href="/{{ Blog.newsfrom.slug }}/{{ Blog.post_cat.sub_cat.cat_slug }}/{{ Blog.slug }}">
               <p>{{Blog.post_title|slice:":60"|safe}}...</p>
             </a>
-            <a href="/{{Blog.newsfrom.slug}}/{{Blog.post_cat.sub_cat.cat_slug}}/{{Blog.slug}}" class="news-description">
+            <a href="/{{ Blog.newsfrom.slug }}/{{ Blog.post_cat.sub_cat.cat_slug }}/{{ Blog.slug }}" class="news-description">
               <p>{{Blog.post_short_des|slice:":100"|safe}}</p>
             </a>
 
@@ -244,10 +244,14 @@ li {
         {% endfor %}
       </div>
     </div>
+
     <div class="col-lg-3 col-md-5 col-sm-12">
       {# Right Column #}
       {% include "rightcollam.html" %}
     </div>
+
   </div>
 </div>
+
 {% endblock %}
+

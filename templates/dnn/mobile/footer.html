@@ -1,28 +1,31 @@
 
 {% load static %}
-<!-- Floating Vertical Social Media Links -->
-  <div class="floating-social-links-vertical">
+
+<!-- 🌐 Footer Social Icons -->
+<div class="footer-social-m text-center py-2 d-md-none">
+  <div class="d-flex justify-content-center align-items-center gap-4 flex-wrap">
+
     {% if profile_setting.facbook %}
     <a href="{{ profile_setting.facbook }}" target="_blank" class="social-icon facebook">
-      <i class="fab fa-facebook-f"></i>
+      <i class="fab fa-facebook-f text-white"></i>
     </a>
     {% endif %}
 
     {% if profile_setting.twitter %}
     <a href="{{ profile_setting.twitter }}" target="_blank" class="social-icon twitter">
-      <i class="fab fa-twitter"></i>
+      <i class="fab fa-twitter text-white"></i>
     </a>
     {% endif %}
 
     {% if profile_setting.instagram %}
     <a href="{{ profile_setting.instagram }}" target="_blank" class="social-icon instagram">
-      <i class="fab fa-instagram"></i>
+      <i class="fab fa-instagram text-white"></i>
     </a>
     {% endif %}
 
     {% if profile_setting.linkedin %}
     <a href="{{ profile_setting.linkedin }}" target="_blank" class="social-icon linkedin">
-      <i class="fab fa-linkedin-in"></i>
+      <i class="fab fa-linkedin-in text-white"></i>
     </a>
     {% endif %}
 
@@ -31,45 +34,100 @@
       <i class="fab fa-youtube"></i>
     </a>
     {% endif %}
-   
-  </div>
 
-  <!-- Footer Nav -->
-  <div class="footer-nav-area" id="footerNav">
-    <div class="newsten-footer-nav h-100 onclick">
-      <ul class="h-100 d-flex align-items-center justify-content-between">
-        <li class="active">
-          <a href="/">
-            <i class="bi bi-house-door-fill"></i> <!-- Home Icon -->
-          </a>
-        </li>
-        <!-- <li>
-          <a href="#">
-            <i class="bi bi-grid-fill"></i> 
-          </a>
-        </li>
-        <li>
-          <a href="#">
-            <i class="bi bi-lightning-charge-fill"></i> 
-          </a>
-        </li> -->
-       <li> 
-        <a href="javascript:void(0);" class="nav-icon" data-bs-toggle="modal" data-bs-target="#ModalSubscribe">
-          <i class="bi bi-bell-fill notification-icon"></i>
-        </a>
-      </li>
-         {% include 'subscribe_model.html' %}
-        <!-- <li>
-          <a href="#">
-            <i class="bi bi-file-earmark-text-fill"></i> 
-          </a>
-        </li> -->
-      </ul>
+  <!-- 🎥 VIDEO REELS BUTTON -->
+<a id="openReelModal" class="" style="border-radius:50%; cursor:pointer;">
+  <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24">
+    <path d="m19.45,3.88c1.12,1.82.48,4.15-1.42,5.22l-1.32.74.94.41c1.36.58,2.27,1.85,2.35,3.27.08,1.43-.68,2.77-1.97,3.49l-8,4.47c-1.91,1.06-4.35.46-5.48-1.35-1.12-1.82-.48-4.15,1.42-5.22l1.33-.74-.94-.41c-1.36-.58-2.27-1.85-2.35-3.27-.08-1.43.68-2.77,1.97-3.49l8-4.47c1.91-1.06,4.35-.46,5.48,1.35Z" fill="#f03"></path>
+    <path d="m10,15l5-3-5-3v6Z" fill="#fff"></path>
+  </svg>
+</a>
+
+  </div>
+</div>
+
+
+<!-- 🎥 VIDEO REELS MODAL -->
+<div id="reelModal" class="reel-modal d-md-none">
+
+  <span id="closeReelModal" class="close-btn">×</span>
+
+  <div class="swiper reels-swiper">
+    <div class="swiper-wrapper">
+
+      {% for CatVid in videos %}
+      <div class="swiper-slide">
+        <div class="ratio ratio-16x9" style="height:100vh;">
+           <iframe
+            class="reel-video-iframe"
+            src="https://www.youtube.com/embed/{{ CatVid.video_url|escape }}?rel=0&modestbranding=1&enablejsapi=1"
+            title="{{ CatVid.video_title|escape }}"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen
+            loading="lazy"
+            referrerpolicy="strict-origin-when-cross-origin">
+          </iframe>
+        </div>
+      </div>
+      {% endfor %}
 
     </div>
+
+    <!-- Controls -->
+    <div class="swiper-button-prev" id="reelPrevBtn"></div>
+    <div class="swiper-button-next" id="reelNextBtn"></div>
   </div>
-  <!-- Modal -->
-  
+
+</div>
+
+
+<!-- Swiper CDN -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
+<script>
+/* OPEN MODAL */
+document.getElementById("openReelModal").addEventListener("click", function () {
+  document.getElementById("reelModal").style.display = "block";
+  document.body.style.overflow = "hidden";
+});
+
+/* CLOSE MODAL */
+document.getElementById("closeReelModal").addEventListener("click", function () {
+  document.getElementById("reelModal").style.display = "none";
+  document.body.style.overflow = "auto";
+});
+
+/* CLICK OUTSIDE TO CLOSE */
+window.addEventListener("click", function (e) {
+  if (e.target.id === "reelModal") {
+    document.getElementById("reelModal").style.display = "none";
+    document.body.style.overflow = "auto";
+  }
+});
+
+/* REELS SWIPER */
+var reelSwiper = new Swiper(".reels-swiper", {
+  loop: false,
+  autoplay: false,
+  slidesPerView: 1,
+  spaceBetween: 0,
+  navigation: {
+    nextEl: "#reelNextBtn",
+    prevEl: "#reelPrevBtn",
+  }
+});
+
+/* SLIDE CHANGE → video pause */
+reelSwiper.on('slideChange', function () {
+  document.querySelectorAll(".reel-video-iframe").forEach(function (frame) {
+    frame.contentWindow.postMessage(
+      '{"event":"command","func":"pauseVideo","args":""}', '*'
+    );
+  });
+});
+</script>
+
 
   
   <script>
@@ -85,6 +143,7 @@
       document.getElementById('sideMenu').style.display = 'none';
     }
   </script>
+
   <script>
     function toggleMenu() {
       document.getElementById('sideMenu').classList.add('active');
@@ -124,7 +183,9 @@
     }
     
   </script>
+
   
+
   <!-- All JavaScript Files-->
   {% load static %}
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
@@ -142,5 +203,4 @@
   <script src="{% static 'mobile/js/pwa.js' %}"></script>
 
 </body>
-
-</html>
+</html> 

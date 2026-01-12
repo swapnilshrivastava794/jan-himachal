@@ -1,0 +1,489 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block body %}
+{% load i18n %}
+
+<div class="menu-bar breaking-news py-2 px-2 position-relative">
+  <button class="scroll-btn left-btn" onclick="scrollMenu(-150)">&#10094;</button>
+
+  <div id="menu-scroll" class="d-flex align-items-center mt-2 no-scrollbar">
+    {% for link in Blogcat %}
+    <div class="nav-item dropdown p-0 me-3" data-cat-index="{{ forloop.counter0 }}">
+      <!-- toggle must have data attributes so our script finds it -->
+      <a href="#" class="dropdown-toggle text-white small-font" data-bs-toggle="dropdown" aria-expanded="false">
+        {% trans link.cat_name %}
+      </a>
+
+      <!-- keep original markup BUT will be hidden and used as source for items -->
+      <div class="dropdown-menu rounded-0 m-0" aria-hidden="true">
+        {% for sublink in link.sub_category_set.all|dictsort:"subcat_status" %}
+          {% if sublink.subcat_status == 'active' %}
+            <a href="/{{ link.cat_slug }}/{{ sublink.subcat_slug }}" class="dropdown-item">
+              {% trans sublink.subcat_name %}
+            </a>
+          {% endif %}
+        {% endfor %}
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <button class="scroll-btn right-btn" onclick="scrollMenu(150)">&#10095;</button>
+</div>
+
+<!-- top ad end -->
+ <div class="bg-light py-3">
+      <div class="text-center mt-1">
+        <div class="top-heading text-white py-1 px-3 d-inline-block" 
+            style="background-color: #fd1e21; border: none; font-weight: bold;">
+          आज के बड़े घटनाक्रम
+        </div>
+      </div>
+
+      <div class="ticker-wrap my-2">
+        <div class="ticker">
+          {% for news in bnews %}
+          <a href="/{{ news.newsfrom.slug }}/{{ news.post_cat.sub_cat.cat_slug }}/{{ news.slug }}" class="text-dark text-decoration-none">
+            {{ news.post_title }} |
+          </a>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+<div class="container ">
+   
+  <!-- <div class="text-center my-3">
+    <img src="{% static 'assets/img/ads.jpg' %}" alt="Advertisement" class="img-fluid">
+  </div> -->
+  
+  <div class="row ">  
+    <div class="col-lg-6 col-md-12 col-sm-12 mb-3 row-p-0">     
+     <div class="my-3">
+            <div class="section-title">मौसम</div>
+            <div class="double-underline"></div>
+        </div>
+      <div class="block-content mt-4">
+         {% for news in LatestNews|slice:":2" %}
+        <article class="align-items-stretch news-card">
+          <div class="row">
+            <!-- 🔸 left: Media -->
+            <div class="col-lg-4 col-12">
+              <div class="ratio ratio-16x9 ">
+                {% if news.video_file %}
+                <video class="w-100 h-100 object-fit-cover" preload="none" loop playsinline autoplay muted>
+                  <source src="{{ news.video_file.url }}" type="video/mp4">
+                  Your browser does not support the video tag.
+                </video>
+                {% else %}
+                <img src="{{ news.post_image.url }}" alt="{{ news.post_title }}" title="{{ news.post_title }}"
+                    class="img-fluid rounded w-100 h-100 object-fit-cover" loading="lazy" />
+                {% endif %}
+              </div>
+            </div>
+            <!-- 🔹 right: Text Content -->
+            <div class="col-lg-8 col-12 d-flex flex-column justify-content-between mt-2">
+              <div class="b-news mb-1">
+                <a  href="/{{ news.newsfrom.slug }}/{{ news.post_cat.sub_cat.cat_slug }}/{{ news.slug }}">
+                  {{ news.post_title|truncatechars:246 }}
+                </a>
+
+                
+              </div>
+
+              <div class="d-flex align-items-center small  mt-1">
+                <span>{{ news.post_date }}</span>
+                <div class="share-icons-container  mx-2">
+                  {% include 'share.html' %}
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </article>
+        {% endfor %}
+      </div>
+
+    </div>
+    <div class="col-lg-6 col-md-12 col-sm-12 mb-3 row-p-0">     
+     <div class="mb-3">
+            <div class="section-title">बड़ी खबरें</div>
+            <div class="double-underline"></div>
+        </div>
+      <div class="block-content mt-4">
+         {% for news in headline|slice:":2" %}
+        <article class="align-items-stretch news-card2">
+          <div class="row">
+          <!-- 🔸 left: Media -->
+          <div class="col-lg-4 col-12">
+            <div class="ratio ratio-16x9 ">
+              {% if news.video_file %}
+              <video class="w-100 h-100 object-fit-cover" preload="none" loop playsinline autoplay muted>
+                <source src="{{ news.video_file.url }}" type="video/mp4">
+                Your browser does not support the video tag.
+              </video>
+              {% else %}
+              <img src="{{ news.post_image.url }}" alt="{{ news.post_title }}" title="{{ news.post_title }}"
+                  class="img-fluid rounded w-100 h-100 object-fit-cover" loading="lazy" />
+              {% endif %}
+            </div>
+          </div>
+          <!-- 🔹 right: Text Content -->
+          <div class="col-lg-8 col-12 d-flex flex-column justify-content-between mt-2">
+            <div class="b-news mb-1">
+              <a  href="/{{ news.newsfrom.slug }}/{{ news.post_cat.sub_cat.cat_slug }}/{{ news.slug }}">
+                {{ news.post_title|truncatechars:246 }}
+              </a>
+
+              
+            </div>
+
+            <div class="d-flex align-items-center small  mt-1">
+              <span>{{ news.post_date }}</span>
+              <div class="share-icons-container  mx-2">
+                {% include 'share.html' %}
+              </div>
+            </div>
+          </div>
+          </div>
+          
+        </article>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+  </div>
+
+
+<!-- top left ad -->
+{% for ads in adtl|slice:":4" %}
+<div class="mb-3 p-2">
+  <a href="{{ads.ad_url}}" target="_blank">
+    {% if ads.ad_type == 'stil' %}
+    <img class="w-100" src="../upload/{{ads.ad_image}}" alt="{{ads.ad_url}}" />
+    {% else %}
+    <video class="w-100" autoplay loop muted>
+      <source src="../upload/{{ads.ad_image}}" />
+    </video>
+    {% endif %}
+  </a>
+</div>
+{% endfor %}
+<!-- top left ad end-->
+
+{% include 'topnews.html' %}
+
+<!-- top Right ad -->
+{% for trad in adtr|slice:":4" %}
+<div class="mb-3 p-2">
+  <a href="{{trad.ad_url}}" target="_blank">
+    {% if trad.ad_type == 'stil' %}
+      <img class="w-100" src="../upload/{{trad.ad_image}}" alt="{{trad.ad_url}}" />
+      {% else %}
+      <video class="w-100" autoplay loop muted>
+        <source src="../upload/{{trad.ad_image}}" />
+      </video>
+    {% endif %}
+  </a>
+</div>
+{% endfor %}
+<!-- top Right ad end-->
+
+
+
+<!-- Events-->
+<div class="tabs-news-wrapper bg-gray">
+  <div class="">
+    <!-- Nav Tabs-->
+    <nav>
+      <div class="nav nav-tabs" id="nav-tab" role="tablist">
+        <button style="width: 30% !important; font-size: 14px; text-align:center !important; margin:0;" class="nav-link active" id="nav-newest-tab" data-bs-target="#nav-newest" data-bs-toggle="tab" role="tab"
+          aria-controls="nav-newest" aria-selected="false">ताज़ा समाचार</button>
+
+        <button style="width: 30% !important; font-size: 14px; text-align:center !important; margin:0;" class="nav-link " id="nav-popular-tab" data-bs-target="#nav-popular" data-bs-toggle="tab"
+          role="tab" aria-controls="nav-popular" aria-selected="true">लोकप्रिय समाचार</button>
+
+        <!-- <button style="width: 30% !important; font-size: 11px;" class="nav-link" id="nav-featured-tab" data-bs-target="#nav-featured" data-bs-toggle="tab" role="tab"
+          aria-controls="nav-featured" aria-selected="false">Ongoing Events</button> -->
+      </div>
+    </nav>
+
+    <!-- Tabs Content-->
+    <div class="tab-content" id="nav-tabContent">
+      <!-- upcoming_events-->
+      <div class="tab-pane fade show active" id="nav-newest" role="tabpanel" aria-labelledby="nav-newest-tab" tabindex="0">
+        {% for news in LatestNews %}
+        <div class="items_background d-flex border-bottom my-3 p-2">
+          <a style="display: flex;" href="/{{ news.newsfrom.slug }}/{{ news.post_cat.sub_cat.cat_slug }}/{{ news.slug }}">
+            <img style="object-fit: contain !important;" src="../upload/{{ news.post_image }}" />
+          </a>
+          <div class="text-left col-9">
+            <h6 class="mb-1">
+              <a  href="/{{ news.newsfrom.slug }}/{{ news.post_cat.sub_cat.cat_slug }}/{{ news.slug }}">
+                {{ news.post_title|truncatechars:45 }}
+              </a>
+            </h6>
+            <div class="meta">
+              <span>{{ news.schedule_date|date }} | {{ news.schedule_date|time }}</span>
+              <div style="--custom-bottom: 0px; --custom-right: 0px;">
+                {% include 'share.html' with posts=news %}
+              </div>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+
+      <!-- past_events-->
+      <div class="tab-pane fade " id="nav-popular" role="tabpanel" aria-labelledby="nav-popular-tab"
+        tabindex="0">
+        {% for news in trendpost %}
+        <div class="items_background d-flex border-bottom my-3 p-2">
+          <a style="display: flex;" href="/{{ news.newsfrom.slug }}/{{ news.post_cat.sub_cat.cat_slug }}/{{ news.slug }}">
+            <img style="object-fit: contain !important;" src="../upload/{{ news.post_image }}" />
+          </a>
+          <div class="text-left col-9">
+            <h6 class="mb-1">
+              <a  href="/{{ news.newsfrom.slug }}/{{ news.post_cat.sub_cat.cat_slug }}/{{ news.slug }}">
+                  {{ news.post_title|truncatechars:45 }}
+              </a>
+            </h6>
+            <div class="meta">
+              <span>{{ news.schedule_date|date }} | {{ news.schedule_date|time }}</span>
+              <div style="--custom-bottom: 0px; --custom-right: 0px;">
+                {% include 'share.html' with posts=news %}
+              </div>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+
+
+      <!-- ongoing_events -->
+      <!-- <div class="tab-pane fade" id="nav-featured" role="tabpanel" aria-labelledby="nav-featured-tab" tabindex="0">
+        {% for event in ongoing_events|slice:":6" %}
+        <div class="single-news-post d-flex align-items-center">
+          <div class="post-thumbnail">
+             <div class="video-icon">
+              <i class="ti ti-player-play"></i>
+            </div> -->
+            <img src="{{ event.post_image.url }}" alt="">
+    </div>
+    <div class="post-content">
+      <a class="post-title" href="/{{ event.newsfrom.slug }}/{{ event.post_cat.cat_slug }}/{{ event.slug }}">{{ event.post_title }}</a>
+      <div class="post-meta d-flex align-items-center">
+        <a href="catagory.html">{{ event.post_cat }}</a>
+        <a href="#">Start At{{ event.Event_date }}</a>
+      </div>
+    </div>
+  </div>
+        {% endfor %}
+</div>
+
+    </div>
+  </div>
+</div>
+<!-- Events End -->
+  {% include 'news2.html' %}
+<!-- Brand Partners -->
+{% include 'bp-logo.html' %}
+<!-- Brand Partners End-->
+
+<script>
+  // smooth scroll for arrows
+  function scrollMenu(amount) {
+    const menu = document.getElementById('menu-scroll');
+    menu.scrollBy({ left: amount, behavior: 'smooth' });
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    // find all dropdown containers inside menu-scroll
+    const dropdownWrappers = document.querySelectorAll('#menu-scroll .nav-item.dropdown');
+
+    dropdownWrappers.forEach(function(wrapper) {
+      const toggle = wrapper.querySelector('[data-bs-toggle="dropdown"]');
+      const origMenu = wrapper.querySelector('.dropdown-menu');
+
+      // create cloned menu appended to body
+      const clone = document.createElement('div');
+      clone.className = 'cloned-dropdown';
+      // copy inner HTML of original menu
+      clone.innerHTML = origMenu.innerHTML;
+      document.body.appendChild(clone);
+
+      // store reference
+      wrapper._clonedMenu = clone;
+
+      // prevent original menu from interfering / hide it from layout
+      origMenu.style.display = 'none';
+
+      // click handler
+      toggle.addEventListener('click', function(ev) {
+        ev.preventDefault();
+        ev.stopPropagation();
+
+        // close other open cloned menus
+        document.querySelectorAll('.cloned-dropdown.show').forEach(m => {
+          if (m !== clone) m.classList.remove('show');
+        });
+
+        // compute position of toggle (relative to viewport + scroll)
+        const rect = toggle.getBoundingClientRect();
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
+
+        // desired top-left for cloned menu (below toggle)
+        const top = rect.bottom + scrollTop + 6; // 6px gap
+        let left = rect.left + scrollLeft;
+
+        // ensure it doesn't overflow right edge
+        const menuWidth = Math.max(180, rect.width);
+        const viewportRight = scrollLeft + document.documentElement.clientWidth;
+        if (left + menuWidth > viewportRight - 8) {
+          left = Math.max(8, viewportRight - menuWidth - 8);
+        }
+
+        // place and toggle visibility
+        clone.style.minWidth = menuWidth + 'px';
+        clone.style.left = left + 'px';
+        clone.style.top = top + 'px';
+        clone.classList.toggle('show');
+
+        // update aria-expanded
+        const isOpen = clone.classList.contains('show');
+        toggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+      });
+
+      // close cloned menu when clicking an item (navigate) or clicking outside
+      clone.addEventListener('click', function(e){
+        // links will navigate naturally; close menu before navigation
+        clone.classList.remove('show');
+      });
+    });
+
+    // close when clicking outside any toggle/menu
+    document.addEventListener('click', function(e) {
+      document.querySelectorAll('.cloned-dropdown.show').forEach(m => m.classList.remove('show'));
+      // reset aria-expanded on toggles
+      document.querySelectorAll('#menu-scroll [data-bs-toggle="dropdown"]').forEach(t => t.setAttribute('aria-expanded', 'false'));
+    });
+
+    // close on Escape
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        document.querySelectorAll('.cloned-dropdown.show').forEach(m => m.classList.remove('show'));
+      }
+    });
+
+    // (optional) reposition on window resize / scroll to keep aligned
+    window.addEventListener('resize', function() {
+      document.querySelectorAll('.cloned-dropdown.show').forEach(function(m) {
+        // close on resize to avoid misplacement (or you can recompute)
+        m.classList.remove('show');
+      });
+    });
+  });
+</script>
+
+<style>
+ /* keep your existing styles but ensure dropdown pointer works */
+  #menu-scroll { overflow-x: auto; overflow-y: visible !important; position: relative; z-index: 2; scrollbar-width: thin; }
+  .menu-bar { background: #000; position: relative; white-space: nowrap; }
+  .scroll-btn { position: absolute; top: 37%; transform: translateY(-50%); background: rgba(0,0,0,0.8); color:#fff; border:none; padding:5px 10px; z-index:20; cursor:pointer; }
+  .scroll-btn:hover { background: rgba(0,0,0,1) !important; }
+  .left-btn{ left:0 } .right-btn{ right:0 }
+  /* The cloned menu appended to body */
+  .cloned-dropdown {
+    position: absolute;
+    max-width: 180px;
+    background: #000;
+    border: 1px solid rgba(0,0,0,0.08);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+    z-index: 99999;
+    display: none;
+  }
+  .cloned-dropdown.show { display:block; }
+  .cloned-dropdown .dropdown-item { color:#222; padding:8px 12px; display:block; text-decoration:none; }
+  .cloned-dropdown .dropdown-item:hover { background:#f5f5f5; color:#d0021b; text-decoration:none; }
+.dropdown-item{
+  min-width: 180px !important;
+}
+.ticker-wrap {
+  width: 100%;
+  overflow: hidden;
+  position: relative;
+  background: #f8f9fa;
+}
+
+.ticker {
+  display: inline-block;
+  white-space: nowrap;
+  animation: scroll-left 30s linear infinite;
+}
+.ticker a{
+  font-size: 22px !important;
+}
+.ticker-item {
+  display: inline-block;
+  font-size: 16px;
+  padding-right: 50px;
+  color: #000;
+}
+
+.ticker-item:hover {
+  text-decoration: underline;
+  color: #000;
+}
+
+.ticker:hover {
+  animation-play-state: paused;
+}
+
+@keyframes scroll-left {
+  0% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+
+  .small-font {
+  font-size: 0.8rem !important; 
+}
+  .breaking-news{
+    background: #000;
+  }
+  .marquee-wrapper {
+  width: 100%;
+  overflow: hidden;
+}
+
+.marquee-content {
+  display: inline-flex;
+  white-space: nowrap;
+  animation: scroll-left 10s linear infinite;
+}
+
+.marquee-content a {
+  text-decoration: none;
+  color: #fff;
+  margin-right: 2rem;
+  font-weight: 500;
+}
+
+/* Animation keyframes */
+@keyframes scroll-left {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+</style>
+
+{% endblock %}
+
