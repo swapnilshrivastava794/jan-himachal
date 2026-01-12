@@ -1187,91 +1187,77 @@ class UserProfileUpdateAPIView(APIView):
 
 
 class TopicListAPIView(ListAPIView):
-    """
-    GET /api/nanhe-patrakar/topics/
-    
-    Get list of all topics
-    
-    Query Parameters:
-    - page: Page number (default: 1)
-    - page_size: Items per page (default: 10, max: 100)
-    - is_active: Filter by active status (true/false)
-    - age_group: Filter by age group (A, B, C)
-    - search: Search in title
-    - ordering: Sort by field (title, -title, display_order, -display_order, created_at, -created_at)
-    
-    Examples:
-    - /api/nanhe-patrakar/topics/
-    - /api/nanhe-patrakar/topics/?is_active=true
-    - /api/nanhe-patrakar/topics/?age_group=A
-    - /api/nanhe-patrakar/topics/?search=environment
-    - /api/nanhe-patrakar/topics/?ordering=display_order
-    - /api/nanhe-patrakar/topics/?page=2&page_size=20
-    
-    Response:
-    {
-        "status": true,
-        "message": "Topics retrieved successfully",
-        "data": {
-            "count": 15,
-            "total_pages": 2,
-            "current_page": 1,
-            "page_size": 10,
-            "next": "...",
-            "previous": null,
-            "results": [
-                {
-                    "id": 1,
-                    "title": "Environment Day",
-                    "title_hindi": "पर्यावरण दिवस",
-                    "age_groups": "A,B,C",
-                    "age_groups_list": ["A", "B", "C"],
-                    "is_active": true,
-                    "display_order": 1,
-                    "created_at": "2025-01-09T10:30:00Z"
-                }
-            ]
-        }
-    }
-    """
     permission_classes = [AllowAny]
     serializer_class = TopicListSerializer
     pagination_class = DynamicPageNumberPagination
-    
+
     def get_queryset(self):
-        """Get filtered topics"""
         queryset = Topic.objects.all()
-        
-        # Active filter
-        is_active = self.request.query_params.get('is_active', None)
+
+        request = self.request
+        user = request.user
+
+        # -------------------------------------------------
+        # 1. AUTHENTICATED USER → DERIVE AGE GROUP FROM CHILD
+        # -------------------------------------------------
+        if user.is_authenticated:
+            parent_profile = getattr(user, 'parent_profile', None)
+
+            if parent_profile:
+                first_child = (
+                    parent_profile.children
+                    .order_by('id')
+                    .first()
+                )
+
+                if first_child and first_child.age_group:
+                    queryset = queryset.filter(
+                        age_groups__icontains=first_child.age_group
+                    )
+
+        # -------------------------------------------------
+        # 2. FALLBACK FILTERS (FOR ANONYMOUS USERS)
+        # -------------------------------------------------
+        if not user.is_authenticated:
+            age_group = request.query_params.get('age_group')
+            if age_group:
+                queryset = queryset.filter(
+                    age_groups__icontains=age_group.upper()
+                )
+
+        # -------------------------------------------------
+        # 3. ACTIVE FILTER
+        # -------------------------------------------------
+        is_active = request.query_params.get('is_active')
         if is_active is not None:
             if is_active.lower() in ['true', '1', 'yes']:
                 queryset = queryset.filter(is_active=True)
             elif is_active.lower() in ['false', '0', 'no']:
                 queryset = queryset.filter(is_active=False)
-        
-        # Age group filter
-        age_group = self.request.query_params.get('age_group', None)
-        if age_group:
-            queryset = queryset.filter(age_groups__icontains=age_group.upper())
-        
-        # Search filter
-        search = self.request.query_params.get('search', None)
+
+        # -------------------------------------------------
+        # 4. SEARCH
+        # -------------------------------------------------
+        search = request.query_params.get('search')
         if search:
             queryset = queryset.filter(
                 Q(title__icontains=search) |
                 Q(title_hindi__icontains=search)
             )
-        
-        # Ordering
-        ordering = self.request.query_params.get('ordering', 'display_order')
+
+        # -------------------------------------------------
+        # 5. ORDERING
+        # -------------------------------------------------
+        ordering = request.query_params.get('ordering', 'display_order')
         valid_ordering_fields = [
-            'title', '-title', 'display_order', '-display_order',
-            'created_at', '-created_at', 'id', '-id'
+            'title', '-title',
+            'display_order', '-display_order',
+            'created_at', '-created_at',
+            'id', '-id'
         ]
         if ordering in valid_ordering_fields:
             queryset = queryset.order_by(ordering)
-        
+
         return queryset
 
 
