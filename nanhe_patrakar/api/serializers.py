@@ -308,3 +308,137 @@ class ParentProfileUpdateSerializer(serializers.ModelSerializer):
         if ParentProfile.objects.exclude(pk=self.instance.pk).filter(mobile=value).exists():
             raise serializers.ValidationError("Mobile number already in use")
         return value
+
+
+class TopicListSerializer(serializers.ModelSerializer):
+    """Serializer for Topic list"""
+    age_groups_list = serializers.SerializerMethodField()
+    
+    class Meta:
+        model = Topic
+        fields = [
+            'id',
+            'title',
+            'title_hindi',
+            'age_groups',
+            'age_groups_list',
+            'is_active',
+            'display_order',
+            'created_at'
+        ]
+    
+    def get_age_groups_list(self, obj):
+        return obj.get_age_groups_list()
+
+
+class SubmissionListSerializer(serializers.ModelSerializer):
+    """Serializer for submission list"""
+    child_name = serializers.CharField(source='child.name', read_only=True)
+    child_age_group = serializers.CharField(source='child.age_group', read_only=True)
+    topic_title = serializers.CharField(source='topic.title', read_only=True)
+    topic_title_hindi = serializers.CharField(source='topic.title_hindi', read_only=True)
+    media_count = serializers.SerializerMethodField()
+    status_display = serializers.CharField(source='get_status_display', read_only=True)
+    content_type_display = serializers.CharField(source='get_content_type_display', read_only=True)
+    language_display = serializers.CharField(source='get_language_display', read_only=True)
+    
+    class Meta:
+        model = Submission
+        fields = [
+            'id',
+            'submission_id',
+            'child',
+            'child_name',
+            'child_age_group',
+            'topic',
+            'topic_title',
+            'topic_title_hindi',
+            'title',
+            'content_type',
+            'content_type_display',
+            'language',
+            'language_display',
+            'status',
+            'status_display',
+            'media_count',
+            'published_at',
+            'published_url',
+            'created_at',
+            'updated_at'
+        ]
+    
+    def get_media_count(self, obj):
+        return obj.media_files.count()
+
+
+class SubmissionDetailSerializer(serializers.ModelSerializer):
+    """Detailed serializer for single submission"""
+    child_details = serializers.SerializerMethodField()
+    topic_details = serializers.SerializerMethodField()
+    media_files = SubmissionMediaSerializer(many=True, read_only=True)
+    parent_info = serializers.SerializerMethodField()
+    status_display = serializers.CharField(source='get_status_display', read_only=True)
+    content_type_display = serializers.CharField(source='get_content_type_display', read_only=True)
+    language_display = serializers.CharField(source='get_language_display', read_only=True)
+    
+    class Meta:
+        model = Submission
+        fields = [
+            'id',
+            'submission_id',
+            'child',
+            'child_details',
+            'topic',
+            'topic_details',
+            'title',
+            'content_type',
+            'content_type_display',
+            'language',
+            'language_display',
+            'content_text',
+            'media_description',
+            'audio_file',
+            'video_file',
+            'status',
+            'status_display',
+            'revision_reason',
+            'editorial_notes',
+            'media_files',
+            'parent_info',
+            'created_at',
+            'updated_at',
+            'published_at',
+            'published_url',
+            'seo_tags'
+        ]
+    
+    def get_child_details(self, obj):
+        return {
+            'id': obj.child.id,
+            'name': obj.child.name,
+            'age': obj.child.age,
+            'age_group': obj.child.age_group,
+            'school': obj.child.school_name,
+            'district': obj.child.district.name if obj.child.district else None
+        }
+    
+    def get_topic_details(self, obj):
+        if obj.topic:
+            return {
+                'id': obj.topic.id,
+                'title': obj.topic.title,
+                'title_hindi': obj.topic.title_hindi,
+                'age_groups': obj.topic.age_groups,
+                'age_groups_list': obj.topic.get_age_groups_list()
+            }
+        return None
+    
+    def get_parent_info(self, obj):
+        parent = obj.child.parent
+        return {
+            'id': parent.id,
+            'name': parent.user.get_full_name(),
+            'mobile': parent.mobile,
+            'city': parent.city
+        }
+

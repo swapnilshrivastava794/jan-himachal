@@ -9,15 +9,19 @@ from .views import (
     ChildSubmissionsAPIView, FakePaymentSuccessAPIView,
     SubmissionCreateAPIView, EnrollToNanhePatrakarAPIView,
     ChildProfilesByRecentSubmissionsAPIView, 
-    DistrictListAPIView, ParentRegistrationAPIView
+    DistrictListAPIView, ParentRegistrationAPIView, TopicListAPIView, SubmissionListAPIView,
+    SubmissionDetailAPIView, SubmissionStatsAPIView
 )
 
 urlpatterns = [
     # Authentication
     path('login/', LoginView.as_view(), name='api_login'),
     
-    #User 
+    # User 
     path('user/update/', UserProfileUpdateAPIView.as_view(), name='user_update'),
+    
+    # Topic
+    path('topics/', TopicListAPIView.as_view(), name='topic-list'),
     
     
     # Parent Profile
@@ -35,6 +39,9 @@ urlpatterns = [
     # Submissions
     path('child-profiles/<int:child_id>/submissions/', ChildSubmissionsAPIView.as_view(), name='api_child_submissions'),
     path('submission/', SubmissionCreateAPIView.as_view(), name='api_submission_create'),
+    path('submissions/', SubmissionListAPIView.as_view(), name='submission-list'),
+    path('submissions/<int:pk>/', SubmissionDetailAPIView.as_view(), name='submission-detail'),
+    path('submissions/stats/', SubmissionStatsAPIView.as_view(), name='submission-stats'),
     
     path('districts/', DistrictListAPIView.as_view(), name='district-list'),
     

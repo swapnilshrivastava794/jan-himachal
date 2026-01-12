@@ -25,7 +25,8 @@ from .serializers import (
     ParentProfileSerializer, ChildProfileSerializer, ParentProfileUpdateSerializer,
     ChildProfileCreateSerializer, SubmissionSerializer, UserUpdateSerializer,
     SubmissionCreateSerializer, ChildProfileListSerializer, ParentFallbackUserSerializer,
-    CustomTokenObtainPairSerializer, DistrictSerializer, ParentRegistrationSerializer
+    CustomTokenObtainPairSerializer, DistrictSerializer, ParentRegistrationSerializer, TopicListSerializer,
+    TopicSerializer, SubmissionDetailSerializer, SubmissionListSerializer, SubmissionMediaSerializer
 )
 from .utils import success_response, error_response, build_nanhe_patrakar_program_info
 from .pagination import DynamicPageNumberPagination
@@ -1183,3 +1184,463 @@ class UserProfileUpdateAPIView(APIView):
                 error_response(str(e)),
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
+
+
+class TopicListAPIView(ListAPIView):
+    """
+    GET /api/nanhe-patrakar/topics/
+    
+    Get list of all topics
+    
+    Query Parameters:
+    - page: Page number (default: 1)
+    - page_size: Items per page (default: 10, max: 100)
+    - is_active: Filter by active status (true/false)
+    - age_group: Filter by age group (A, B, C)
+    - search: Search in title
+    - ordering: Sort by field (title, -title, display_order, -display_order, created_at, -created_at)
+    
+    Examples:
+    - /api/nanhe-patrakar/topics/
+    - /api/nanhe-patrakar/topics/?is_active=true
+    - /api/nanhe-patrakar/topics/?age_group=A
+    - /api/nanhe-patrakar/topics/?search=environment
+    - /api/nanhe-patrakar/topics/?ordering=display_order
+    - /api/nanhe-patrakar/topics/?page=2&page_size=20
+    
+    Response:
+    {
+        "status": true,
+        "message": "Topics retrieved successfully",
+        "data": {
+            "count": 15,
+            "total_pages": 2,
+            "current_page": 1,
+            "page_size": 10,
+            "next": "...",
+            "previous": null,
+            "results": [
+                {
+                    "id": 1,
+                    "title": "Environment Day",
+                    "title_hindi": "पर्यावरण दिवस",
+                    "age_groups": "A,B,C",
+                    "age_groups_list": ["A", "B", "C"],
+                    "is_active": true,
+                    "display_order": 1,
+                    "created_at": "2025-01-09T10:30:00Z"
+                }
+            ]
+        }
+    }
+    """
+    permission_classes = [AllowAny]
+    serializer_class = TopicListSerializer
+    pagination_class = DynamicPageNumberPagination
+    
+    def get_queryset(self):
+        """Get filtered topics"""
+        queryset = Topic.objects.all()
+        
+        # Active filter
+        is_active = self.request.query_params.get('is_active', None)
+        if is_active is not None:
+            if is_active.lower() in ['true', '1', 'yes']:
+                queryset = queryset.filter(is_active=True)
+            elif is_active.lower() in ['false', '0', 'no']:
+                queryset = queryset.filter(is_active=False)
+        
+        # Age group filter
+        age_group = self.request.query_params.get('age_group', None)
+        if age_group:
+            queryset = queryset.filter(age_groups__icontains=age_group.upper())
+        
+        # Search filter
+        search = self.request.query_params.get('search', None)
+        if search:
+            queryset = queryset.filter(
+                Q(title__icontains=search) |
+                Q(title_hindi__icontains=search)
+            )
+        
+        # Ordering
+        ordering = self.request.query_params.get('ordering', 'display_order')
+        valid_ordering_fields = [
+            'title', '-title', 'display_order', '-display_order',
+            'created_at', '-created_at', 'id', '-id'
+        ]
+        if ordering in valid_ordering_fields:
+            queryset = queryset.order_by(ordering)
+        
+        return queryset
+
+
+class SubmissionListAPIView(ListAPIView):
+    """
+    GET /api/nanhe-patrakar/submissions/
+    
+    Public API - Get list of all submissions with filters
+    No authentication required
+    
+    Query Parameters:
+    - page: Page number (default: 1)
+    - page_size: Items per page (default: 10, max: 100)
+    - child_id: Filter by child ID
+    - topic_id: Filter by topic ID
+    - status: Filter by status (DRAFT, SUBMITTED, APPROVED, REJECTED, PUBLISHED, etc.)
+    - content_type: Filter by content type (ARTICLE, POEM, EXPERIENCE, SPEECH)
+    - language: Filter by language (HINDI, ENGLISH, LOCAL)
+    - age_group: Filter by child's age group (A, B, C)
+    - search: Search in title or content
+    - ordering: Sort by field (created_at, -created_at, updated_at, -updated_at)
+    
+    Examples:
+    - /api/nanhe-patrakar/submissions/
+    - /api/nanhe-patrakar/submissions/?child_id=5
+    - /api/nanhe-patrakar/submissions/?topic_id=3
+    - /api/nanhe-patrakar/submissions/?child_id=5&topic_id=3
+    - /api/nanhe-patrakar/submissions/?status=PUBLISHED
+    - /api/nanhe-patrakar/submissions/?content_type=ARTICLE
+    - /api/nanhe-patrakar/submissions/?language=HINDI
+    - /api/nanhe-patrakar/submissions/?age_group=B
+    - /api/nanhe-patrakar/submissions/?search=environment
+    - /api/nanhe-patrakar/submissions/?page=2&page_size=20
+    
+    Response:
+    {
+        "status": true,
+        "message": "Submissions retrieved successfully",
+        "data": {
+            "count": 50,
+            "total_pages": 5,
+            "current_page": 1,
+            "page_size": 10,
+            "next": "...",
+            "previous": null,
+            "results": [...]
+        }
+    }
+    """
+    permission_classes = [AllowAny]
+    serializer_class = SubmissionListSerializer
+    pagination_class = DynamicPageNumberPagination
+    
+    def get_queryset(self):
+        """Get filtered submissions - public access"""
+        # Base queryset - all submissions
+        queryset = Submission.objects.all().select_related(
+            'child',
+            'topic',
+            'child__district'
+        ).prefetch_related('media_files')
+        
+        # Filter by child_id
+        child_id = self.request.query_params.get('child_id', None)
+        if child_id:
+            queryset = queryset.filter(child_id=child_id)
+        
+        # Filter by topic_id
+        topic_id = self.request.query_params.get('topic_id', None)
+        if topic_id:
+            queryset = queryset.filter(topic_id=topic_id)
+        
+        # Filter by status
+        status_filter = self.request.query_params.get('status', None)
+        if status_filter:
+            valid_statuses = [
+                'DRAFT', 'SUBMITTED', 'UNDER_REVIEW', 'REVISION_REQUESTED',
+                'RESUBMITTED', 'APPROVED', 'PUBLISHED', 'REJECTED', 'CERTIFICATE_ISSUED'
+            ]
+            if status_filter.upper() in valid_statuses:
+                queryset = queryset.filter(status=status_filter.upper())
+        
+        # Filter by content_type
+        content_type = self.request.query_params.get('content_type', None)
+        if content_type:
+            valid_types = ['ARTICLE', 'POEM', 'EXPERIENCE', 'SPEECH']
+            if content_type.upper() in valid_types:
+                queryset = queryset.filter(content_type=content_type.upper())
+        
+        # Filter by language
+        language = self.request.query_params.get('language', None)
+        if language:
+            valid_languages = ['HINDI', 'ENGLISH', 'LOCAL']
+            if language.upper() in valid_languages:
+                queryset = queryset.filter(language=language.upper())
+        
+        # Filter by age_group
+        age_group = self.request.query_params.get('age_group', None)
+        if age_group:
+            queryset = queryset.filter(child__age_group=age_group.upper())
+        
+        # Search filter
+        search = self.request.query_params.get('search', None)
+        if search:
+            queryset = queryset.filter(
+                Q(title__icontains=search) |
+                Q(content_text__icontains=search) |
+                Q(media_description__icontains=search) |
+                Q(child__name__icontains=search) |
+                Q(topic__title__icontains=search)
+            )
+        
+        # Ordering
+        ordering = self.request.query_params.get('ordering', '-created_at')
+        valid_ordering_fields = [
+            'created_at', '-created_at', 'updated_at', '-updated_at',
+            'title', '-title', 'status', '-status', 'published_at', '-published_at'
+        ]
+        if ordering in valid_ordering_fields:
+            queryset = queryset.order_by(ordering)
+        
+        return queryset
+
+
+class SubmissionDetailAPIView(APIView):
+    """
+    GET /api/nanhe-patrakar/submissions/<id>/
+    
+    Public API - Get detailed submission information
+    No authentication required
+    
+    Response:
+    {
+        "status": true,
+        "message": "Submission retrieved successfully",
+        "data": {
+            "id": 1,
+            "submission_id": "SUB-20250109-001",
+            "child": 5,
+            "child_details": {
+                "id": 5,
+                "name": "Rahul Kumar",
+                "age": 10,
+                "age_group": "B",
+                "school": "ABC School",
+                "district": "Shimla"
+            },
+            "topic": 3,
+            "topic_details": {
+                "id": 3,
+                "title": "Environment Day",
+                "title_hindi": "पर्यावरण दिवस",
+                "description": "..."
+            },
+            "title": "My Environment Story",
+            "content_type": "TEXT",
+            "content_type_display": "Text",
+            "language": "HINDI",
+            "language_display": "Hindi",
+            "content_text": "...",
+            "status": "PUBLISHED",
+            "status_display": "Published",
+            "media_files": [
+                {
+                    "id": 1,
+                    "media_type": "IMAGE",
+                    "file": "/media/submissions/...",
+                    "file_name": "photo.jpg",
+                    "display_order": 0
+                }
+            ],
+            "parent_info": {
+                "id": 10,
+                "name": "John Doe",
+                "mobile": "9876543210",
+                "city": "Shimla"
+            },
+            "created_at": "2025-01-09T10:30:00Z",
+            "updated_at": "2025-01-09T14:30:00Z"
+        }
+    }
+    """
+    permission_classes = [AllowAny]
+    
+    def get(self, request, pk):
+        try:
+            # Get submission - public access
+            submission = Submission.objects.select_related(
+                'child',
+                'topic',
+                'child__district',
+                'child__parent__user'
+            ).prefetch_related('media_files').get(id=pk)
+            
+            serializer = SubmissionDetailSerializer(submission)
+            
+            return Response(
+                success_response(
+                    serializer.data,
+                    'Submission retrieved successfully'
+                ),
+                status=status.HTTP_200_OK
+            )
+            
+        except Submission.DoesNotExist:
+            return Response(
+                error_response("Submission not found"),
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+
+class SubmissionStatsAPIView(APIView):
+    """
+    GET /api/nanhe-patrakar/submissions/stats/
+    
+    Public API - Get submission statistics
+    No authentication required
+    
+    Query Parameters:
+    - child_id: Get stats for specific child (optional)
+    - topic_id: Get stats for specific topic (optional)
+    - age_group: Get stats for specific age group (optional)
+    
+    Response:
+    {
+        "status": true,
+        "message": "Statistics retrieved successfully",
+        "data": {
+            "total_submissions": 25,
+            "by_status": {
+                "DRAFT": 3,
+                "SUBMITTED": 5,
+                "APPROVED": 10,
+                "REJECTED": 2,
+                "PUBLISHED": 5
+            },
+            "by_content_type": {
+                "ARTICLE": 15,
+                "POEM": 5,
+                "EXPERIENCE": 3,
+                "SPEECH": 2
+            },
+            "by_language": {
+                "HINDI": 18,
+                "ENGLISH": 5,
+                "LOCAL": 2
+            },
+            "by_age_group": {
+                "A": 8,
+                "B": 10,
+                "C": 7
+            },
+            "by_child": [
+                {
+                    "child_id": 5,
+                    "child_name": "Rahul Kumar",
+                    "submission_count": 15
+                }
+            ],
+            "by_topic": [
+                {
+                    "topic_id": 3,
+                    "topic_title": "Environment Day",
+                    "submission_count": 8
+                }
+            ]
+        }
+    }
+    """
+    permission_classes = [AllowAny]
+    
+    def get(self, request):
+        # Base queryset - all submissions
+        queryset = Submission.objects.all()
+        
+        # Filter by child if specified
+        child_id = request.query_params.get('child_id', None)
+        if child_id:
+            queryset = queryset.filter(child_id=child_id)
+        
+        # Filter by topic if specified
+        topic_id = request.query_params.get('topic_id', None)
+        if topic_id:
+            queryset = queryset.filter(topic_id=topic_id)
+        
+        # Filter by age_group if specified
+        age_group = request.query_params.get('age_group', None)
+        if age_group:
+            queryset = queryset.filter(child__age_group=age_group.upper())
+        
+        # Total submissions
+        total = queryset.count()
+        
+        # By status
+        by_status = {}
+        for status_choice in ['DRAFT', 'SUBMITTED', 'UNDER_REVIEW', 'REVISION_REQUESTED', 
+                             'RESUBMITTED', 'APPROVED', 'PUBLISHED', 'REJECTED', 'CERTIFICATE_ISSUED']:
+            count = queryset.filter(status=status_choice).count()
+            if count > 0:
+                by_status[status_choice] = count
+        
+        # By content type
+        by_content_type = {}
+        for content_type in ['ARTICLE', 'POEM', 'EXPERIENCE', 'SPEECH']:
+            count = queryset.filter(content_type=content_type).count()
+            if count > 0:
+                by_content_type[content_type] = count
+        
+        # By language
+        by_language = {}
+        for language in ['HINDI', 'ENGLISH', 'LOCAL']:
+            count = queryset.filter(language=language).count()
+            if count > 0:
+                by_language[language] = count
+        
+        # By age group
+        by_age_group = {}
+        for age_grp in ['A', 'B', 'C']:
+            count = queryset.filter(child__age_group=age_grp).count()
+            if count > 0:
+                by_age_group[age_grp] = count
+        
+        # By child
+        by_child = queryset.values(
+            'child__id',
+            'child__name'
+        ).annotate(
+            submission_count=Count('id')
+        ).order_by('-submission_count')[:10]  # Top 10 children
+        
+        by_child_data = [
+            {
+                'child_id': item['child__id'],
+                'child_name': item['child__name'],
+                'submission_count': item['submission_count']
+            }
+            for item in by_child
+        ]
+        
+        # By topic
+        by_topic = queryset.filter(
+            topic__isnull=False
+        ).values(
+            'topic__id',
+            'topic__title'
+        ).annotate(
+            submission_count=Count('id')
+        ).order_by('-submission_count')[:10]  # Top 10 topics
+        
+        by_topic_data = [
+            {
+                'topic_id': item['topic__id'],
+                'topic_title': item['topic__title'],
+                'submission_count': item['submission_count']
+            }
+            for item in by_topic
+        ]
+        
+        stats = {
+            'total_submissions': total,
+            'by_status': by_status,
+            'by_content_type': by_content_type,
+            'by_language': by_language,
+            'by_age_group': by_age_group,
+            'by_child': by_child_data,
+            'by_topic': by_topic_data
+        }
+        
+        return Response(
+            success_response(stats, 'Statistics retrieved successfully'),
+            status=status.HTTP_200_OK
+        )
