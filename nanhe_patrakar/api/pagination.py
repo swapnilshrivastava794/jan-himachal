@@ -24,7 +24,7 @@ class DynamicPageNumberPagination(PageNumberPagination):
         """
         return Response({
             'status': True,
-            'message': 'Districts retrieved successfully',
+            'message': getattr(self.request.resolver_match.func.view_class, 'pagination_message', 'Data retrieved successfully'),
             'data': {
                 'count': self.page.paginator.count,
                 'total_pages': self.page.paginator.num_pages,
