@@ -23,11 +23,11 @@ from nanhe_patrakar.models import (
 )
 from .serializers import (
     ParentProfileSerializer, ChildProfileSerializer, ParentProfileUpdateSerializer,
-    ChildProfileCreateSerializer, SubmissionSerializer, ParentUserUpdateSerializer,
+    ChildProfileCreateSerializer, SubmissionSerializer, UserUpdateSerializer,
     SubmissionCreateSerializer, ChildProfileListSerializer, ParentFallbackUserSerializer,
     CustomTokenObtainPairSerializer, DistrictSerializer, ParentRegistrationSerializer
 )
-from .utils import success_response, error_response
+from .utils import success_response, error_response, build_nanhe_patrakar_program_info
 from .pagination import DynamicPageNumberPagination
 
 class LoginView(TokenObtainPairView):
@@ -887,10 +887,9 @@ class EnrollToNanhePatrakarAPIView(APIView):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
-        # --------- SAFE TYPE CONVERSIONS ---------
+        # ---------- VALIDATIONS ----------
 
-        # Boolean
-        terms_accepted_raw = data.get('terms_accepted', '').lower()
+        terms_accepted_raw = str(data.get('terms_accepted', '')).lower()
         terms_accepted = terms_accepted_raw in ['true', '1', 'yes']
 
         if not terms_accepted:
@@ -899,7 +898,6 @@ class EnrollToNanhePatrakarAPIView(APIView):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
-        # Integer casting
         try:
             child_age = int(data.get('child_age'))
         except (TypeError, ValueError):
@@ -908,7 +906,6 @@ class EnrollToNanhePatrakarAPIView(APIView):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
-        # Date parsing (YYYY-MM-DD ONLY)
         try:
             child_dob = datetime.strptime(
                 data.get('child_date_of_birth'),
@@ -935,7 +932,7 @@ class EnrollToNanhePatrakarAPIView(APIView):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
-        # --------- CREATE OBJECTS ---------
+        # ---------- OBJECT CREATION ----------
 
         parent_profile = ParentProfile.objects.create(
             user=user,
@@ -968,12 +965,14 @@ class EnrollToNanhePatrakarAPIView(APIView):
             payment_status='PENDING'
         )
 
+        # ---------- RESPONSE PAYLOAD ----------
+
         return Response(
             success_response(
                 {
-                    "parent_profile_id": parent_profile.id,
-                    "child_profile_id": child_profile.id,
-                    "order_id": order.order_id
+                    "user_id": user.id,
+                    "user_type": "nanhe_patrakar",
+                    "program_info": build_nanhe_patrakar_program_info(parent_profile)
                 },
                 "Enrollment successful. Please proceed with payment."
             ),
@@ -1101,7 +1100,7 @@ class ParentProfileUpdateAPIView(APIView):
 
             user = request.user
 
-            user_serializer = ParentUserUpdateSerializer(
+            user_serializer = UserUpdateSerializer(
                 user,
                 data=request.data,
                 partial=True
@@ -1124,10 +1123,51 @@ class ParentProfileUpdateAPIView(APIView):
             return Response(
                 success_response(
                     {
-                        "user": ParentUserUpdateSerializer(user).data,
+                        "user": UserUpdateSerializer(user).data,
                         "parent_profile": ParentProfileSerializer(parent_profile).data
                     },
                     "Parent profile updated successfully"
+                ),
+                status=status.HTTP_200_OK
+            )
+
+        except serializers.ValidationError as ve:
+            return Response(
+                error_response(ve.detail),
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        except Exception as e:
+            return Response(
+                error_response(str(e)),
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
+
+class UserProfileUpdateAPIView(APIView):
+    """
+    PUT /api/nanhe-patrakar/user-profile/update/
+
+    Update logged-in user's basic details.
+    """
+    permission_classes = [IsAuthenticated]
+
+    def put(self, request):
+        try:
+            user = request.user
+
+            serializer = UserUpdateSerializer(
+                user,
+                data=request.data,
+                partial=True
+            )
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+
+            return Response(
+                success_response(
+                    serializer.data,
+                    "User profile updated successfully"
                 ),
                 status=status.HTTP_200_OK
             )

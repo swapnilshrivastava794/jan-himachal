@@ -276,20 +276,21 @@ class ParentRegistrationSerializer(serializers.Serializer):
         return value
 
 
-class ParentUserUpdateSerializer(serializers.ModelSerializer):
+class UserUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['username', 'first_name', 'last_name', 'email']
 
     def validate_username(self, value):
         if User.objects.exclude(pk=self.instance.pk).filter(username=value).exists():
-            raise serializers.ValidationError("Username already taken")
+            raise serializers.ValidationError("Username already exists")
         return value
 
     def validate_email(self, value):
         if User.objects.exclude(pk=self.instance.pk).filter(email=value).exists():
-            raise serializers.ValidationError("Email already in use")
+            raise serializers.ValidationError("Email already exists")
         return value
+
 
 
 class ParentProfileUpdateSerializer(serializers.ModelSerializer):

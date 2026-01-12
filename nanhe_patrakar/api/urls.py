@@ -3,7 +3,7 @@
 from django.urls import path
 from .views import (
     LoginView,
-    ParentProfileAPIView,
+    ParentProfileAPIView, UserProfileUpdateAPIView,
     ChildProfileAPIView, ParentProfileUpdateAPIView,
     ChildProfileDetailAPIView, PublicChildProfilesListAPIView,
     ChildSubmissionsAPIView, FakePaymentSuccessAPIView,
@@ -15,6 +15,10 @@ from .views import (
 urlpatterns = [
     # Authentication
     path('login/', LoginView.as_view(), name='api_login'),
+    
+    #User 
+    path('user/update/', UserProfileUpdateAPIView.as_view(), name='user_update'),
+    
     
     # Parent Profile
     path('register/', ParentRegistrationAPIView.as_view(), name='parent-register'),
