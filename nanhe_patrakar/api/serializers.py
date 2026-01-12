@@ -87,7 +87,7 @@ class ProgramSerializer(serializers.ModelSerializer):
 class ParentChildMinimalSerializer(serializers.ModelSerializer):
     class Meta:
         model = ChildProfile
-        fields = ['id', 'name']
+        fields = ['id', 'name', 'photo']
         
         
 class ParentProfileSerializer(serializers.ModelSerializer):
@@ -108,6 +108,12 @@ class ParentProfileSerializer(serializers.ModelSerializer):
         ]
 
 
+class ParentFallbackUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'email', 'first_name', 'last_name']
+
+
 class ChildProfileSerializer(serializers.ModelSerializer):
     """Child profile serializer"""
     parent = ParentProfileSerializer(read_only=True)
@@ -119,7 +125,7 @@ class ChildProfileSerializer(serializers.ModelSerializer):
         fields = [
             'id', 'parent', 'name', 'date_of_birth', 'age', 
             'age_group', 'age_group_display', 'gender', 'school_name', 
-            'district', 'photo', 'is_active', 'created_at'
+            'district', 'photo', 'is_active', 'created_at', 'id_proof'
         ]
         read_only_fields = ['age_group', 'created_at']
 
@@ -132,7 +138,7 @@ class ChildProfileCreateSerializer(serializers.ModelSerializer):
         model = ChildProfile
         fields = [
             'name', 'date_of_birth', 'age', 'gender', 
-            'school_name', 'district_id', 'photo'
+            'school_name', 'district_id', 'photo', 'id_proof'
         ]
     
     def validate_age(self, value):

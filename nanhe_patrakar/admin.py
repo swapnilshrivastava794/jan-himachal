@@ -145,7 +145,7 @@ class ChildProfileAdmin(admin.ModelAdmin):
             'fields': ('district', 'school_name')
         }),
         ('Photo & Status', {
-            'fields': ('photo', 'is_active')
+            'fields': ('photo', 'id_proof', 'is_active')
         }),
         ('Timestamps', {
             'fields': ('created_at', 'updated_at'),

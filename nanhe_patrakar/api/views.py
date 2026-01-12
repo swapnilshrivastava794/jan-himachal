@@ -24,7 +24,7 @@ from nanhe_patrakar.models import (
 from .serializers import (
     ParentProfileSerializer, ChildProfileSerializer,
     ChildProfileCreateSerializer, SubmissionSerializer,
-    SubmissionCreateSerializer, ChildProfileListSerializer,
+    SubmissionCreateSerializer, ChildProfileListSerializer, ParentFallbackUserSerializer,
     CustomTokenObtainPairSerializer, DistrictSerializer, ParentRegistrationSerializer
 )
 from .utils import success_response, error_response
@@ -95,23 +95,46 @@ class ParentProfileAPIView(APIView):
     """
     GET /api/nanhe-patrakar/parent-profile/
     
-    Get logged-in parent profile
+    Get logged-in parent profile.
+    If parent profile does not exist, return user details.
     """
     permission_classes = [IsAuthenticated]
-    
+
     def get(self, request):
         try:
-            parent_profile = request.user.parent_profile
-            serializer = ParentProfileSerializer(parent_profile)
-            
+            parent_profile = getattr(request.user, 'parent_profile', None)
+
+            # CASE 1: Parent profile exists
+            if parent_profile:
+                serializer = ParentProfileSerializer(parent_profile)
+                return Response(
+                    success_response(
+                        {
+                            "profile_exists": True,
+                            "parent_profile": serializer.data
+                        },
+                        "Parent profile retrieved"
+                    ),
+                    status=status.HTTP_200_OK
+                )
+
+            # CASE 2: Parent profile does not exist → fallback to user info
+            user_serializer = ParentFallbackUserSerializer(request.user)
             return Response(
-                success_response(serializer.data, "Parent profile retrieved"),
+                success_response(
+                    {
+                        "profile_exists": False,
+                        "user": user_serializer.data
+                    },
+                    "Parent profile not created yet"
+                ),
                 status=status.HTTP_200_OK
             )
-        except ParentProfile.DoesNotExist:
+
+        except Exception as e:
             return Response(
-                error_response("Parent profile not found"),
-                status=status.HTTP_404_NOT_FOUND
+                error_response(str(e)),
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
 
 
@@ -185,7 +208,8 @@ class ChildProfileAPIView(APIView):
                 gender=serializer.validated_data.get('gender'),
                 school_name=serializer.validated_data.get('school_name'),
                 district=district,
-                photo=serializer.validated_data.get('photo')
+                photo=serializer.validated_data.get('photo'),
+                id_proof=serializer.validated_data.get('id_proof'),
             )
             
             response_serializer = ChildProfileSerializer(child_profile)
