@@ -599,6 +599,7 @@ class DistrictListAPIView(ListAPIView):
     """
     serializer_class = DistrictSerializer
     pagination_class = DynamicPageNumberPagination
+    pagination_message = 'Districts retrieved successfully'
     
     def get_queryset(self):
         """
@@ -1237,6 +1238,7 @@ class TopicListAPIView(ListAPIView):
     permission_classes = [AllowAny]
     serializer_class = TopicListSerializer
     pagination_class = DynamicPageNumberPagination
+    pagination_message = 'Topics retrieved successfully'
     
     def get_queryset(self):
         """Get filtered topics"""
@@ -1324,6 +1326,7 @@ class SubmissionListAPIView(ListAPIView):
     permission_classes = [AllowAny]
     serializer_class = SubmissionListSerializer
     pagination_class = DynamicPageNumberPagination
+    pagination_message = 'Submissions retrieved successfully'
     
     def get_queryset(self):
         """Get filtered submissions - public access"""

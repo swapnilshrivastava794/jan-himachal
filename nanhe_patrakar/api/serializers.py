@@ -172,7 +172,7 @@ class SubmissionSerializer(serializers.ModelSerializer):
     status_display = serializers.CharField(source='get_status_display', read_only=True)
     content_type_display = serializers.CharField(source='get_content_type_display', read_only=True)
     language_display = serializers.CharField(source='get_language_display', read_only=True)
-    media_files = SubmissionMediaSerializer(many=True, read_only=True)  # NEW
+    media_files = SubmissionMediaSerializer(many=True, read_only=True)
     
     class Meta:
         model = Submission
@@ -180,7 +180,7 @@ class SubmissionSerializer(serializers.ModelSerializer):
             'id', 'submission_id', 'child', 'topic', 'title', 
             'content_type', 'content_type_display', 'language', 
             'language_display', 'content_text', 'audio_file', 
-            'video_file', 'media_description', 'media_files',  # NEW
+            'video_file', 'media_description', 'media_files',
             'status', 'status_display', 'revision_reason', 
             'published_at', 'published_url', 'created_at', 'updated_at'
         ]
@@ -341,6 +341,7 @@ class SubmissionListSerializer(serializers.ModelSerializer):
     status_display = serializers.CharField(source='get_status_display', read_only=True)
     content_type_display = serializers.CharField(source='get_content_type_display', read_only=True)
     language_display = serializers.CharField(source='get_language_display', read_only=True)
+    media_files = SubmissionMediaSerializer(many=True, read_only=True)
     
     class Meta:
         model = Submission
@@ -358,9 +359,9 @@ class SubmissionListSerializer(serializers.ModelSerializer):
             'content_type_display',
             'language',
             'language_display',
-            'status',
             'status_display',
             'media_count',
+            'media_files',
             'published_at',
             'published_url',
             'created_at',
