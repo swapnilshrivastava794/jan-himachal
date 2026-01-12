@@ -3,7 +3,7 @@
 from rest_framework.views import APIView
 from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
-from rest_framework import status
+from rest_framework import status, serializers
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -22,8 +22,8 @@ from nanhe_patrakar.models import (
     ParticipationOrder
 )
 from .serializers import (
-    ParentProfileSerializer, ChildProfileSerializer,
-    ChildProfileCreateSerializer, SubmissionSerializer,
+    ParentProfileSerializer, ChildProfileSerializer, ParentProfileUpdateSerializer,
+    ChildProfileCreateSerializer, SubmissionSerializer, ParentUserUpdateSerializer,
     SubmissionCreateSerializer, ChildProfileListSerializer, ParentFallbackUserSerializer,
     CustomTokenObtainPairSerializer, DistrictSerializer, ParentRegistrationSerializer
 )
@@ -239,7 +239,7 @@ class ChildProfileDetailAPIView(APIView):
     DELETE /api/nanhe-patrakar/child-profiles/<child_id>/
     Delete child profile
     """
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
     
     def get_child_profile(self, request, child_id):
         """Helper to get child profile and verify ownership"""
@@ -254,7 +254,8 @@ class ChildProfileDetailAPIView(APIView):
             return None
     
     def get(self, request, child_id):
-        child_profile = self.get_child_profile(request, child_id)
+        child_profile = ChildProfile.objects.filter(
+                id=child_id).first()
         
         if not child_profile:
             return Response(
@@ -347,7 +348,7 @@ class ChildSubmissionsAPIView(APIView):
     
     Get all submissions of a specific child
     """
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
     
     def get(self, request, child_id):
         try:
@@ -523,7 +524,7 @@ class ChildProfilesByRecentSubmissionsAPIView(APIView):
 
     Get child profiles ordered by most recent submissions (Paginated)
     """
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
 
     def get(self, request):
         try:
@@ -1053,3 +1054,92 @@ class FakePaymentSuccessAPIView(APIView):
                 status=status.HTTP_404_NOT_FOUND
             )
         
+
+class PublicChildProfilesListAPIView(APIView):
+    """
+    GET /api/nanhe-patrakar/child-profiles/
+    List all child profiles 
+    """
+    permission_classes = [AllowAny]
+    
+    def get(self, request):
+        try:
+
+            queryset = ChildProfile.objects.filter(is_active=True).select_related('district').order_by('-created_at')
+
+            paginator = DynamicPageNumberPagination()
+            paginated_qs = paginator.paginate_queryset(queryset, request)
+
+            serializer = ChildProfileSerializer(paginated_qs, many=True)
+
+            return paginator.get_paginated_response(serializer.data)
+
+        except ParentProfile.DoesNotExist:
+            return Response(
+                error_response("Parent profile not found"),
+                status=status.HTTP_404_NOT_FOUND
+            )
+            
+            
+class ParentProfileUpdateAPIView(APIView):
+    """
+    PUT /api/nanhe-patrakar/parent-profile/update/
+
+    Update parent profile and related user details.
+    """
+    permission_classes = [IsAuthenticated]
+
+    def put(self, request):
+        try:
+            parent_profile = getattr(request.user, 'parent_profile', None)
+
+            if not parent_profile:
+                return Response(
+                    error_response("Parent profile not found"),
+                    status=status.HTTP_404_NOT_FOUND
+                )
+
+            user = request.user
+
+            user_serializer = ParentUserUpdateSerializer(
+                user,
+                data=request.data,
+                partial=True
+            )
+
+            parent_serializer = ParentProfileUpdateSerializer(
+                parent_profile,
+                data=request.data,
+                partial=True
+            )
+
+            # Validate both before saving anything
+            user_serializer.is_valid(raise_exception=True)
+            parent_serializer.is_valid(raise_exception=True)
+
+            with transaction.atomic():
+                user_serializer.save()
+                parent_serializer.save()
+
+            return Response(
+                success_response(
+                    {
+                        "user": ParentUserUpdateSerializer(user).data,
+                        "parent_profile": ParentProfileSerializer(parent_profile).data
+                    },
+                    "Parent profile updated successfully"
+                ),
+                status=status.HTTP_200_OK
+            )
+
+        except serializers.ValidationError as ve:
+            return Response(
+                error_response(ve.detail),
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        except Exception as e:
+            return Response(
+                error_response(str(e)),
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )

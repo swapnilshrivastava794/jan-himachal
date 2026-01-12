@@ -104,7 +104,7 @@ class ParentProfileSerializer(serializers.ModelSerializer):
         model = ParentProfile
         fields = [
             'id', 'user', 'mobile', 'city', 'district', 
-            'program', 'children', 'status', 'created_at'
+            'program', 'children', 'status', 'created_at', 'id_proof'
         ]
 
 
@@ -273,4 +273,37 @@ class ParentRegistrationSerializer(serializers.Serializer):
     def validate_district_id(self, value):
         if not District.objects.filter(id=value, is_active=True).exists():
             raise serializers.ValidationError('अमान्य जिला / Invalid district')
+        return value
+
+
+class ParentUserUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['username', 'first_name', 'last_name', 'email']
+
+    def validate_username(self, value):
+        if User.objects.exclude(pk=self.instance.pk).filter(username=value).exists():
+            raise serializers.ValidationError("Username already taken")
+        return value
+
+    def validate_email(self, value):
+        if User.objects.exclude(pk=self.instance.pk).filter(email=value).exists():
+            raise serializers.ValidationError("Email already in use")
+        return value
+
+
+class ParentProfileUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ParentProfile
+        fields = [
+            'mobile',
+            'city',
+            'district',
+            'id_proof',
+            'terms_accepted'
+        ]
+
+    def validate_mobile(self, value):
+        if ParentProfile.objects.exclude(pk=self.instance.pk).filter(mobile=value).exists():
+            raise serializers.ValidationError("Mobile number already in use")
         return value

@@ -4,8 +4,8 @@ from django.urls import path
 from .views import (
     LoginView,
     ParentProfileAPIView,
-    ChildProfileAPIView,
-    ChildProfileDetailAPIView,
+    ChildProfileAPIView, ParentProfileUpdateAPIView,
+    ChildProfileDetailAPIView, PublicChildProfilesListAPIView,
     ChildSubmissionsAPIView, FakePaymentSuccessAPIView,
     SubmissionCreateAPIView, EnrollToNanhePatrakarAPIView,
     ChildProfilesByRecentSubmissionsAPIView, 
@@ -20,9 +20,11 @@ urlpatterns = [
     path('register/', ParentRegistrationAPIView.as_view(), name='parent-register'),
     path('enrollment/', EnrollToNanhePatrakarAPIView.as_view(), name='enrollment'),
     path('parent-profile/', ParentProfileAPIView.as_view(), name='api_parent_profile'),
+    path('update/parent-profile/', ParentProfileUpdateAPIView.as_view(), name='api_parent_profile'),
     
     # Child Profiles
     path('child-profiles/', ChildProfileAPIView.as_view(), name='api_child_profiles'),
+    path('child-profiles/list/', PublicChildProfilesListAPIView.as_view(), name='api_child_profiles_list'),
     path('child-profiles/<int:child_id>/', ChildProfileDetailAPIView.as_view(), name='api_child_profile_detail'),
     path('child-profiles/by-recent-submissions/', ChildProfilesByRecentSubmissionsAPIView.as_view(), name='api_children_by_submissions'),
     
