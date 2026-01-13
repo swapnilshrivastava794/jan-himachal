@@ -17,6 +17,9 @@ pymysql.install_as_MySQLdb()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
 # Quick-start development settings - unsuitable for production
@@ -293,3 +296,6 @@ SIMPLE_JWT = {
     'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(days=1),
 }
 
+RAZORPAY_KEY_ID= os.environ.get('RAZORPAY_KEY_ID','')
+RAZORPAY_KEY_SECRET= os.environ.get('RAZORPAY_KEY_SECRET','')
+RAZORPAY_CURRENCY = 'INR'

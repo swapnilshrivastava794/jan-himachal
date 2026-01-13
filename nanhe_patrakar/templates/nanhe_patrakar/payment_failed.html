@@ -1,0 +1,112 @@
+{% extends 'nanhe_patrakar/base.html' %}
+{% block title %}भुगतान विफल - {{ program.name_hindi }} - जन हिमाचल{% endblock %}
+
+{% block extra_css %}
+<style>
+  .failed-page {
+    padding: 60px 0;
+    background: #f8f9fa;
+    min-height: 70vh;
+    display: flex;
+    align-items: center;
+  }
+
+  .failed-card {
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  .error-icon {
+    width: 120px;
+    height: 120px;
+    background: #dc3545;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 30px;
+    font-size: 60px;
+    color: #fff;
+    animation: shake 0.5s ease;
+  }
+
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-10px); }
+    75% { transform: translateX(10px); }
+  }
+
+  .failed-message {
+    text-align: center;
+    margin-bottom: 30px;
+  }
+
+  .failed-message h2 {
+    color: #dc3545;
+    font-weight: 700;
+    margin-bottom: 15px;
+  }
+
+  .retry-button {
+    width: 100%;
+    padding: 15px;
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 10px;
+  }
+
+  .help-box {
+    background: #fff3cd;
+    border-left: 3px solid #ffc107;
+    padding: 20px;
+    border-radius: 3px;
+    margin-top: 30px;
+  }
+
+  .help-box h6 {
+    color: #856404;
+    margin-bottom: 15px;
+    font-weight: 700;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="failed-page">
+  <div class="container">
+    <div class="failed-card">
+      <div class="card">
+        <div class="card-body p-5">
+          <div class="error-icon">
+            <i class="fas fa-times"></i>
+          </div>
+          
+          <div class="failed-message">
+            <h2>भुगतान विफल! ❌</h2>
+            <h3>Payment Failed!</h3>
+            <p class="lead">आपका भुगतान पूरा नहीं हो सका। कृपया पुनः प्रयास करें।</p>
+            <p>Your payment could not be completed. Please try again.</p>
+          </div>
+
+          <a href="{% url 'nanhe_patrakar:payment' %}" class="btn btn-primary retry-button">
+            <i class="fas fa-redo me-2"></i>पुनः भुगतान करें / Retry Payment
+          </a>
+
+          <a href="{% url 'nanhe_patrakar:landing' %}" class="btn btn-outline-secondary retry-button">
+            <i class="fas fa-home me-2"></i>होम पर वापस जाएं / Back to Home
+          </a>
+
+          <div class="help-box">
+            <h6><i class="fas fa-question-circle me-2"></i>सहायता चाहिए? / Need Help?</h6>
+            <p class="mb-2">यदि समस्या बनी रहती है, तो कृपया हमसे संपर्क करें:</p>
+            <p class="mb-0">
+              <i class="fas fa-envelope me-2"></i><strong>Email:</strong> support@janhimachal.com<br>
+              <i class="fas fa-phone me-2"></i><strong>Phone:</strong> +91-XXXXXXXXXX
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
