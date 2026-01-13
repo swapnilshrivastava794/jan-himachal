@@ -293,3 +293,7 @@ SIMPLE_JWT = {
     'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(days=1),
 }
 
+# Razorpay Settings
+# RAZORPAY_KEY_ID = 'rzp_test_RCgVrVrmvJdgXN'  # Test Key
+RAZORPAY_KEY_ID = 'rzp_live_S3LMixUxynuMXm'  # Live Key
+RAZORPAY_KEY_SECRET = 'liugueOkM2vtV1cQghhV91WJ'   # Replace with your Razorpay Key Secret
