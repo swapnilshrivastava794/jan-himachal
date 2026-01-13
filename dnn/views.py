@@ -2132,3 +2132,48 @@ def Reporters(request):
         'is_mobile': is_mobile,
     }
     return render(request, 'reporters.html', data)
+
+
+def user_login_view(request):
+    """
+    User Login View (Username or Email)
+    """
+    if request.user.is_authenticated:
+        return redirect("/")
+
+    if request.method == "GET":
+        return render(request, "user_login.html")
+
+    username_or_email = request.POST.get("login_input")
+    password = request.POST.get("password")
+
+    if not username_or_email or not password:
+        return JsonResponse({
+            "status": "error",
+            "message": "Both fields are required"
+        })
+
+    user = authenticate(
+        request,
+        username=username_or_email,
+        password=password
+    )
+
+    if user is None:
+        return JsonResponse({
+            "status": "error",
+            "message": "Invalid credentials"
+        })
+
+    login(request, user)
+
+    return JsonResponse({
+        "status": "success",
+        "message": "Login successful",
+        "redirect_url": "/"
+    })
+
+
+def user_logout_view(request):
+    logout(request)
+    return redirect("/")
