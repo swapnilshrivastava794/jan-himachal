@@ -61,7 +61,7 @@
                                 class="far fa-eye mr-2"></i>{{Vnews.counter|add:Vnews.viewcounter}}</small>
                     </div>
                     {% for tag in Vnews.tags.all %}
-                        <a href="{{ tag.get_absolute_url }}" class="badge bg-secondary">#{{ tag.name }}</a>
+                        <a href="{{ tag.get_absolute_url }}" class="badge bg-primary-subtle">#{{ tag.name }}</a>
                     {% endfor %}
                 </div>
             </div>
