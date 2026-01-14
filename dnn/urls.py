@@ -73,7 +73,7 @@ urlpatterns = [
     #for apk
    path('api/', include('post_management.api.urls')),
    
-   path('nanhe_patrakar/', include('nanhe_patrakar.urls')),
+   path('nanhe-patrakar/', include('nanhe_patrakar.urls')),
    path('api/nanhe-patrakar/', include('nanhe_patrakar.api.urls')),
     
     #path('sitemap.xml',sitemap,{'sitemaps':sitemaps},name='django.contrib.sitemaps.views.sitemap'),

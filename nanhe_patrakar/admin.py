@@ -102,7 +102,7 @@ class ParticipationOrderAdmin(admin.ModelAdmin):
             'fields': ('razorpay_order_id', 'razorpay_payment_id', 'razorpay_signature', 'payment_method')
         }),
         ('Invoice', {
-            'fields': ('invoice_number', 'invoice_url', 'payment_date')
+            'fields': ('invoice_number', 'payment_date')
         }),
         ('Timestamps', {
             'fields': ('created_at', 'updated_at'),
@@ -167,18 +167,18 @@ class ChildProfileAdmin(admin.ModelAdmin):
     age_group_badge.short_description = 'Age Group'
 
 
-@admin.register(ParentConsent)
-class ParentConsentAdmin(admin.ModelAdmin):
-    list_display = ['child', 'all_consents_given', 'consent_given_at', 'ip_address']
-    list_filter = ['parent_guidance_agreed', 'publication_consent', 'data_usage_agreed', 'consent_given_at']
-    search_fields = ['child__name']
-    readonly_fields = ['consent_given_at', 'ip_address']
+# @admin.register(ParentConsent)
+# class ParentConsentAdmin(admin.ModelAdmin):
+#     list_display = ['child', 'all_consents_given', 'consent_given_at', 'ip_address']
+#     list_filter = ['parent_guidance_agreed', 'publication_consent', 'data_usage_agreed', 'consent_given_at']
+#     search_fields = ['child__name']
+#     readonly_fields = ['consent_given_at', 'ip_address']
     
-    def all_consents_given(self, obj):
-        if obj.parent_guidance_agreed and obj.publication_consent and obj.data_usage_agreed:
-            return format_html('<span style="color: green;">✓ All Consents Given</span>')
-        return format_html('<span style="color: red;">✗ Incomplete</span>')
-    all_consents_given.short_description = 'Consent Status'
+#     def all_consents_given(self, obj):
+#         if obj.parent_guidance_agreed and obj.publication_consent and obj.data_usage_agreed:
+#             return format_html('<span style="color: green;">✓ All Consents Given</span>')
+#         return format_html('<span style="color: red;">✗ Incomplete</span>')
+#     all_consents_given.short_description = 'Consent Status'
 
 
 @admin.register(Topic)
@@ -261,18 +261,18 @@ class SubmissionAdmin(admin.ModelAdmin):
     publish_submissions.short_description = 'Publish selected submissions'
 
 
-@admin.register(Certificate)
-class CertificateAdmin(admin.ModelAdmin):
-    list_display = ['certificate_id', 'child_name', 'age_group', 'issued_at', 'emailed_status']
-    list_filter = ['age_group', 'emailed_to_parent', 'issued_at']
-    search_fields = ['certificate_id', 'child_name', 'verification_code']
-    readonly_fields = ['certificate_id', 'verification_code', 'issued_at', 'email_sent_at']
+# @admin.register(Certificate)
+# class CertificateAdmin(admin.ModelAdmin):
+#     list_display = ['certificate_id', 'child_name', 'age_group', 'issued_at', 'emailed_status']
+#     list_filter = ['age_group', 'emailed_to_parent', 'issued_at']
+#     search_fields = ['certificate_id', 'child_name', 'verification_code']
+#     readonly_fields = ['certificate_id', 'verification_code', 'issued_at', 'email_sent_at']
     
-    def emailed_status(self, obj):
-        if obj.emailed_to_parent:
-            return format_html('<span style="color: green;">✓ Sent on {}</span>', obj.email_sent_at.strftime('%d %b %Y'))
-        return format_html('<span style="color: orange;">⏳ Pending</span>')
-    emailed_status.short_description = 'Email Status'
+#     def emailed_status(self, obj):
+#         if obj.emailed_to_parent:
+#             return format_html('<span style="color: green;">✓ Sent on {}</span>', obj.email_sent_at.strftime('%d %b %Y'))
+#         return format_html('<span style="color: orange;">⏳ Pending</span>')
+#     emailed_status.short_description = 'Email Status'
 
 
 @admin.register(District)

@@ -896,7 +896,7 @@ class EnrollToNanhePatrakarAPIView(APIView):
 
         if not terms_accepted:
             return Response(
-                error_response("Terms must be accepted"),
+                error_response("Terms must be accepted"), 
                 status=status.HTTP_400_BAD_REQUEST
             )
 
