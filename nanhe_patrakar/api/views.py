@@ -1,5 +1,5 @@
-# nanhe_patrakar/api/views.py
-
+import razorpay
+from django.conf import settings
 from rest_framework.views import APIView
 from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
@@ -981,6 +981,164 @@ class EnrollToNanhePatrakarAPIView(APIView):
             status=status.HTTP_201_CREATED
         )
 
+
+
+class CreateRazorpayOrderAPI(APIView):
+    """
+    POST /api/nanhe-patrakar/payment/create-order/
+    
+    Creates a Razorpay order for the pending participation order.
+    """
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        try:
+            parent_profile = request.user.parent_profile
+            
+            # Find the latest pending order
+            order = ParticipationOrder.objects.filter(
+                parent=parent_profile,
+                payment_status='PENDING'
+            ).first()
+
+            if not order:
+                return Response(
+                    error_response("No pending order found for this user."),
+                    status=status.HTTP_404_NOT_FOUND
+                )
+
+            # Initialize Razorpay client
+            client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
+
+            # Razorpay amount is in paise (1 INR = 100 paise)
+            razorpay_order_data = {
+                'amount': int(order.amount * 100),
+                'currency': 'INR',
+                'receipt': order.order_id,
+                'payment_capture': 1  # Auto capture
+            }
+
+            razorpay_order = client.order.create(data=razorpay_order_data)
+            
+            # Update local order with Razorpay order ID
+            order.razorpay_order_id = razorpay_order['id']
+            order.save()
+
+            data = {
+                "razorpay_order_id": razorpay_order['id'],
+                "razorpay_key_id": settings.RAZORPAY_KEY_ID,
+                "amount": int(order.amount * 100),  # send paise,
+                "currency": "INR",
+                "name": "Jan Himachal",
+                "description": f"Participation Fee for {order.program.name}",
+                "order_id": order.order_id,
+                "prefill": {
+                    "name": f"{request.user.first_name} {request.user.last_name}",
+                    "email": request.user.email,
+                    "contact": parent_profile.mobile
+                }
+            }
+
+            return Response(
+                success_response(data, "Razorpay order created successfully"),
+                status=status.HTTP_200_OK
+            )
+
+        except ParentProfile.DoesNotExist:
+            return Response(
+                error_response("Parent profile not found."),
+                status=status.HTTP_404_NOT_FOUND
+            )
+        except Exception as e:
+            return Response(
+                error_response(f"Failed to create Razorpay order: {str(e)}"),
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
+
+class VerifyRazorpayPaymentAPI(APIView):
+    """
+    POST /api/nanhe-patrakar/payment/verify/
+    
+    Verifies the Razorpay payment signature and updates order status.
+    
+    Request Body:
+    {
+        "razorpay_order_id": "order_...",
+        "razorpay_payment_id": "pay_...",
+        "razorpay_signature": "sig_..."
+    }
+    """
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        try:
+            razorpay_order_id = request.data.get('razorpay_order_id')
+            razorpay_payment_id = request.data.get('razorpay_payment_id')
+            razorpay_signature = request.data.get('razorpay_signature')
+
+            if not all([razorpay_order_id, razorpay_payment_id, razorpay_signature]):
+                return Response(
+                    error_response("Missing required payment details."),
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+
+            # Find the order
+            try:
+                order = ParticipationOrder.objects.get(razorpay_order_id=razorpay_order_id)
+            except ParticipationOrder.DoesNotExist:
+                return Response(
+                    error_response("Order not found or razorpay_order_id mismatch."),
+                    status=status.HTTP_404_NOT_FOUND
+                )
+
+            # Verify signature
+            client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
+            
+            params_dict = {
+                'razorpay_order_id': razorpay_order_id,
+                'razorpay_payment_id': razorpay_payment_id,
+                'razorpay_signature': razorpay_signature
+            }
+
+            try:
+                client.utility.verify_payment_signature(params_dict)
+            except Exception:
+                order.payment_status = 'FAILED'
+                order.save()
+                return Response(
+                    error_response("Payment verification failed! Invalid signature."),
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+
+            # Update Order
+            order.payment_status = 'SUCCESS'
+            order.razorpay_payment_id = razorpay_payment_id
+            order.razorpay_signature = razorpay_signature
+            order.payment_date = timezone.now()
+            order.save()
+
+            # Update Parent Profile Status
+            parent_profile = order.parent
+            parent_profile.status = 'PAYMENT_COMPLETED'
+            parent_profile.save()
+
+            return Response(
+                success_response(
+                    {
+                        "order_id": order.order_id,
+                        "payment_status": "SUCCESS"
+                    }, 
+                    "Payment verified and completed successfully"
+                ),
+                status=status.HTTP_200_OK
+            )
+
+        except Exception as e:
+            return Response(
+                error_response(f"Payment verification failed: {str(e)}"),
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
 
 class FakePaymentSuccessAPIView(APIView):
