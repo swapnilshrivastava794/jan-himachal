@@ -103,6 +103,8 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
                 'setting.context.setting_context',
                 'setting.context.cms_context',
+                
+                'nanhe_patrakar.context_processors.navigation.blog_categories',
             ],
         },
     },
