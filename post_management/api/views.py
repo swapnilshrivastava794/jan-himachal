@@ -3,7 +3,7 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from post_management.models import category , NewsPost , VideoNews, AppUser
 from .serializers import CategorySerializer , NewsListSerializer, SearchNewsSerializer, SearchVideoSerializer , VideoListSerializer, AppUserSignupSerializer, AppUserLoginSerializer, AppUserUpdateSerializer
 from rest_framework.pagination import PageNumberPagination
-from django.db.models import Q
+from django.db.models import Q, F
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -88,6 +88,16 @@ class NewsDetailAPI(RetrieveAPIView):
             is_active=True
         )
 
+    def retrieve(self, request, *args, **kwargs):
+        """Override retrieve to increment view counter when news is accessed"""
+        instance = self.get_object()
+        # Increment viewcounter atomically using F() expression
+        NewsPost.objects.filter(pk=instance.pk).update(viewcounter=F('viewcounter') + 1)
+        # Refresh from database to get updated count
+        instance.refresh_from_db()
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data)
+
 class VideoListAPI(ListAPIView):
     permission_classes = [AllowAny]
     serializer_class = VideoListSerializer
@@ -146,6 +156,16 @@ class VideoDetailAPI(RetrieveAPIView):
 
     def get_queryset(self):
         return VideoNews.objects.filter(is_active='active')
+
+    def retrieve(self, request, *args, **kwargs):
+        """Override retrieve to increment view counter when video is accessed"""
+        instance = self.get_object()
+        # Increment viewcounter atomically using F() expression
+        VideoNews.objects.filter(pk=instance.pk).update(viewcounter=F('viewcounter') + 1)
+        # Refresh from database to get updated count
+        instance.refresh_from_db()
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data)
     
 
 class GlobalSearchAPI(APIView):
