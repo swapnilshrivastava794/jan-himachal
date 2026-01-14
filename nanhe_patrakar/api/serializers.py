@@ -114,20 +114,75 @@ class ParentFallbackUserSerializer(serializers.ModelSerializer):
         fields = ['id', 'username', 'email', 'first_name', 'last_name']
 
 
+class ApprovedSubmissionSerializer(serializers.ModelSerializer):
+    """Serializer for approved submission data"""
+    content_type_display = serializers.CharField(source='get_content_type_display', read_only=True)
+    language_display = serializers.CharField(source='get_language_display', read_only=True)
+    status_display = serializers.CharField(source='get_status_display', read_only=True)
+    
+    class Meta:
+        model = Submission
+        fields = [
+            'id', 'submission_id', 'title', 'content_type', 'content_type_display',
+            'language', 'language_display', 'content_text', 'status', 'status_display',
+            'published_at', 'published_url', 'created_at'
+        ]
+
+
 class ChildProfileSerializer(serializers.ModelSerializer):
-    """Child profile serializer"""
+    """Child profile serializer with certificate_ready status"""
     parent = ParentProfileSerializer(read_only=True)
     district = DistrictSerializer(read_only=True)
     age_group_display = serializers.CharField(source='get_age_group_display', read_only=True)
+    certificate_ready = serializers.SerializerMethodField()
+    first_approved_post = serializers.SerializerMethodField()
     
     class Meta:
         model = ChildProfile
         fields = [
             'id', 'parent', 'name', 'date_of_birth', 'age', 
             'age_group', 'age_group_display', 'gender', 'school_name', 
-            'district', 'photo', 'is_active', 'created_at', 'id_proof'
+            'district', 'photo', 'is_active', 'created_at', 'id_proof',
+            'certificate_ready', 'first_approved_post'
         ]
-        read_only_fields = ['age_group', 'created_at']
+        read_only_fields = ['age_group', 'created_at', 'certificate_ready', 'first_approved_post']
+    
+    def get_certificate_ready(self, obj):
+        """
+        Check if certificate is ready:
+        - Parent must have completed payment
+        - Child must have at least one approved post
+        """
+        # Check parent payment status
+        if obj.parent.status != 'PAYMENT_COMPLETED':
+            return False
+        
+        # Check if child has any approved posts
+        approved_posts = Submission.objects.filter(
+            child=obj,
+            status='APPROVED'
+        ).exists()
+        
+        return approved_posts
+    
+    def get_first_approved_post(self, obj):
+        """
+        Return the first approved post if certificate is ready
+        """
+        # Only return post data if certificate is ready
+        if obj.parent.status != 'PAYMENT_COMPLETED':
+            return None
+        
+        # Get first approved post
+        first_approved = Submission.objects.filter(
+            child=obj,
+            status__in=['APPROVED', 'PUBLISHED', 'CERTIFICATE_ISSUED']
+        ).order_by('created_at').first()
+        
+        if first_approved:
+            return ApprovedSubmissionSerializer(first_approved).data
+        
+        return None
 
 
 class ChildProfileCreateSerializer(serializers.ModelSerializer):

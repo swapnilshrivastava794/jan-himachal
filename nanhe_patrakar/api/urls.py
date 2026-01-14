@@ -10,7 +10,7 @@ from .views import (
     SubmissionCreateAPIView, EnrollToNanhePatrakarAPIView,
     ChildProfilesByRecentSubmissionsAPIView, 
     DistrictListAPIView, ParentRegistrationAPIView, TopicListAPIView, SubmissionListAPIView,
-    SubmissionDetailAPIView, SubmissionStatsAPIView
+    SubmissionDetailAPIView, SubmissionStatsAPIView, CertificateCheckAPIView
 )
 
 urlpatterns = [
@@ -35,6 +35,7 @@ urlpatterns = [
     path('child-profiles/list/', PublicChildProfilesListAPIView.as_view(), name='api_child_profiles_list'),
     path('child-profiles/<int:child_id>/', ChildProfileDetailAPIView.as_view(), name='api_child_profile_detail'),
     path('child-profiles/by-recent-submissions/', ChildProfilesByRecentSubmissionsAPIView.as_view(), name='api_children_by_submissions'),
+    path('certificate-check/<int:child_id>/', CertificateCheckAPIView.as_view(), name='certificate_check'),
     
     # Submissions
     path('child-profiles/<int:child_id>/submissions/', ChildSubmissionsAPIView.as_view(), name='api_child_submissions'),

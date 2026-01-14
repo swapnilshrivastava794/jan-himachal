@@ -1633,3 +1633,93 @@ class SubmissionStatsAPIView(APIView):
             success_response(stats, 'Statistics retrieved successfully'),
             status=status.HTTP_200_OK
         )
+        
+
+class CertificateCheckAPIView(APIView):
+    """
+    Simple API to check if child's certificate is ready
+    Returns certificate_ready status and first approved post data
+    """
+    permission_classes = [IsAuthenticated]
+    
+    def get(self, request, child_id):
+        """
+        GET /api/nanhe-patrakar/certificate-check/{child_id}/
+        
+        Returns:
+        {
+            "success": true,
+            "message": "Certificate is ready",
+            "certificate_ready": true,
+            "child": {
+                "id": 1,
+                "name": "Child Name",
+                ...
+            },
+            "first_approved_post": {
+                "id": 1,
+                "submission_id": "SUB20250114ABC123",
+                "title": "My First Article",
+                ...
+            }
+        }
+        """
+        try:
+            # Get child profile
+            child = ChildProfile.objects.select_related(
+                'parent', 
+                'parent__user',
+                'district'
+            ).get(id=child_id)
+            
+            # Check if user has access to this child
+            if not hasattr(request.user, 'parent_profile') or child.parent != request.user.parent_profile:
+                return Response(
+                    {
+                        'success': False,
+                        'message': 'You do not have access to this child profile'
+                    },
+                    status=status.HTTP_403_FORBIDDEN
+                )
+            
+            # Serialize child data with certificate_ready status
+            serializer = ChildProfileSerializer(child)
+            child_data = serializer.data
+            
+            certificate_ready = child_data.get('certificate_ready', False)
+            first_approved_post = child_data.get('first_approved_post')
+            
+            # Build response
+            response_data = {
+                'success': True,
+                'certificate_ready': certificate_ready,
+                # 'child': child_data,
+                'first_approved_post': first_approved_post
+            }
+            
+            # Add appropriate message
+            if certificate_ready and first_approved_post:
+                response_data['message'] = 'Certificate is ready! आपका प्रमाणपत्र तैयार है!'
+            elif not certificate_ready and child.parent.status != 'PAYMENT_COMPLETED':
+                response_data['message'] = 'Payment not completed. भुगतान पूर्ण नहीं है।'
+            else:
+                response_data['message'] = 'No approved posts yet. अभी तक कोई स्वीकृत पोस्ट नहीं है।'
+            
+            return Response(response_data, status=status.HTTP_200_OK)
+            
+        except ChildProfile.DoesNotExist:
+            return Response(
+                {
+                    'success': False,
+                    'message': 'Child profile not found'
+                },
+                status=status.HTTP_404_NOT_FOUND
+            )
+        except Exception as e:
+            return Response(
+                {
+                    'success': False,
+                    'message': f'Error: {str(e)}'
+                },
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
