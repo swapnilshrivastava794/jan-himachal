@@ -1,5 +1,5 @@
 {% extends 'nanhe_patrakar/base.html' %}
-{% block title %}पंजीकरण - नन्हे पत्रकार - जन हिमाचल{% endblock %}
+{% block title %}पंजीकरण - {{ program.name }} - जन हिमाचल{% endblock %}
 
 {% block extra_css %}
 <style>
@@ -116,6 +116,40 @@
   .password-toggle:hover {
     color: var(--primary-color);
   }
+
+  .age-groups-info {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 5px;
+    margin-bottom: 15px;
+  }
+
+  .age-groups-info h6 {
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 10px;
+    color: #333;
+  }
+
+  .age-group-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 5px 0;
+    font-size: 13px;
+  }
+
+  .age-group-name {
+    font-weight: 600;
+    color: var(--primary-color);
+  }
+
+  .age-group-range {
+    color: #666;
+  }
+
+  .form-check-input{
+    border-color: black;
+  }
 </style>
 {% endblock %}
 
@@ -130,12 +164,11 @@
           माता-पिता पंजीकरण / Parent Registration
         </div>
         <div class="card-body">
-          <p class="text-center mb-0">
-            अपने बच्चे को नन्हे पत्रकार कार्यक्रम में नामांकित करने के लिए
-            पंजीकरण करें
+          <p class="text-center mb-2">
+            अपने बच्चे को {{ program.name }} में नामांकित करने के लिए पंजीकरण करें
           </p>
           <p class="text-center text-muted mb-0">
-            <small>Register to enroll your child in Nanhe Patrakar program</small>
+            <small>Register to enroll your child in {{ program.name }}</small>
           </p>
         </div>
       </div>
@@ -147,7 +180,7 @@
         </h6>
         <ul>
           <li>
-            <strong>आयु सीमा:</strong> बच्चे की आयु 8-16 वर्ष के बीच होनी चाहिए
+            <strong>आयु सीमा:</strong> बच्चे की आयु {{ program.min_age }}-{{ program.max_age }} वर्ष के बीच होनी चाहिए
           </li>
           <li>
             <strong>निवास:</strong> हिमाचल प्रदेश का निवासी होना आवश्यक है
@@ -156,8 +189,37 @@
             <strong>माता-पिता की सहमति:</strong> माता-पिता/अभिभावक की पूर्ण सहमति आवश्यक है
           </li>
         </ul>
+
+        <!-- Age Groups Info -->
+        {% if program.age_group_a_min and program.age_group_a_max %}
+        <div class="age-groups-info">
+          <h6><i class="fas fa-users me-1"></i>आयु समूह / Age Groups:</h6>
+          
+          {% if program.age_group_a_min and program.age_group_a_max %}
+          <div class="age-group-item">
+            <span class="age-group-name">समूह अ / Group A:</span>
+            <span class="age-group-range">{{ program.age_group_a_min }}-{{ program.age_group_a_max }} वर्ष / years</span>
+          </div>
+          {% endif %}
+          
+          {% if program.age_group_b_min and program.age_group_b_max %}
+          <div class="age-group-item">
+            <span class="age-group-name">समूह ब / Group B:</span>
+            <span class="age-group-range">{{ program.age_group_b_min }}-{{ program.age_group_b_max }} वर्ष / years</span>
+          </div>
+          {% endif %}
+          
+          {% if program.age_group_c_min and program.age_group_c_max %}
+          <div class="age-group-item">
+            <span class="age-group-name">समूह स / Group C:</span>
+            <span class="age-group-range">{{ program.age_group_c_min }}-{{ program.age_group_c_max }} वर्ष / years</span>
+          </div>
+          {% endif %}
+        </div>
+        {% endif %}
+
         <div class="fee">
-          <i class="fas fa-rupee-sign me-1"></i>599 - एकमुश्त भागीदारी शुल्क
+          <i class="fas fa-rupee-sign me-1"></i>{{ program.price }} - एकमुश्त भागीदारी शुल्क
         </div>
       </div>
 

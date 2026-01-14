@@ -43,6 +43,8 @@ admin.site.index_title="Dasboard"
 urlpatterns = [
     path('', views.home, name="home"),
     path('auth/', include('journalist.urls')),
+    path("user-login/", views.user_login_view, name="user-login"),
+    path("user-logout/", views.user_logout_view, name="user-logout"),
     # Canonical tag route
     path('tags/<slug:slug>', views.posts_by_tag, name='posts_by_tag'),
     # Legacy topic route -> 301 redirect to canonical tags route
