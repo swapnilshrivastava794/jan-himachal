@@ -1,0 +1,155 @@
+<footer id="uc-footer" class="bg-dark text-white pt-5 pb-3">
+  <div class="container">
+    <div class="row">
+
+      <!-- Logo & Social -->
+      <div class="col-lg-4 col-md-12 mb-4">
+        <a href="/">
+          <img src="{{ profile_setting.logo_light.url }}" alt="Logo" class="img-fluid mb-3" style="max-width: 250px;">
+        </a>
+        <p class="small">
+         हिमाचल न्यूज़ — पहाड़ों की आवाज़, हिमाचल की धड़कन।
+        शिमला से स्पीति, कुल्लू से कांगड़ा तक — हम लाते हैं बेबाक रिपोर्टिंग, ज़मीनी कहानियां और सांस्कृतिक कथाएं, हिमाचल प्रदेश के दिल से — और उससे आगे।
+        हम उन राष्ट्रीय घटनाक्रमों को भी कवर करते हैं जो राज्य को प्रभावित करते हैं — चाहे वह पर्यटन हो, पर्यावरण, अवसंरचना या शासन।
+        हम सहयोग, पीआर कैंपेन और नैतिक ब्रांड साझेदारियों के लिए खुले हैं।
+
+        हिमाचल न्यूज़ — पहाड़ों से, जनता के लिए।
+
+        </p>
+        <div class="d-flex gap-2">
+          <ul class="list-unstyled d-flex  gap-3">
+            {% if profile_setting.facbook %}
+              <li class="">
+                <a href="{{ profile_setting.facbook }}" target="_blank" class="nav-link text-white fs-4">
+                  <i class="bi bi-facebook"></i>
+                </a>
+              </li>
+            {% endif %}
+            {% if profile_setting.twitter %}
+              <li class="">
+                <a href="{{ profile_setting.twitter }}" target="_blank" class="nav-link text-white fs-4">
+                  <i class="bi bi-twitter"></i>
+                </a>
+              </li>
+            {% endif %}
+            {% if profile_setting.instagram %}
+              <li class="">
+                <a href="{{ profile_setting.instagram }}" target="_blank" class="nav-link text-white fs-4">
+                  <i class="bi bi-instagram"></i>
+                </a>
+              </li>
+            {% endif %}
+            {% if profile_setting.youtube %}
+              <li class="">
+                <a href="{{ profile_setting.youtube }}" target="_blank" class="nav-link text-white fs-4">
+                  <i class="bi bi-youtube"></i>
+                </a>
+              </li>
+            {% endif %}
+            {% if profile_setting.linkedin %}
+              <li class="">
+                <a href="{{ profile_setting.linkedin }}" target="_blank" class="nav-link text-white fs-4">
+                  <i class="bi bi-linkedin"></i>
+                </a>
+              </li>
+            {% endif %}
+          </ul>
+        </div>
+      </div>
+
+      <!-- Articles -->
+          <div class="col-lg-5 col-md-12 col-sm-12 mb-3 px-5">
+              <div class="widget links-widget vstack gap-3">
+                <div class="widgt-title">
+                  <h3 class="fs-5 text-left m-0 text-white">अनुच्छेद</h3>
+                </div>
+
+                <!-- Reduce gutter (gap) -->
+                <div class="row gx-3 gy-2 d-flex "> <!-- Changed from g-4 to g-2 -->
+                  {% for article in Articale|slice:":12" %}
+                  <div class=" col-md-3"> <!-- Reduced padding -->
+                    <a class="text-decoration-none" href="/{{ article.newsfrom.slug }}/{{ article.post_cat.sub_cat.cat_slug }}/{{ article.slug }}">
+                      <div class="rounded border-0 text-start">
+                        <img src="{{ article.post_image.url }}" alt="{{ article.post_title }}"
+                          title="{{ article.post_title }}" class="img-fluid rounded w-100px h-auto" loading="lazy" />
+                       
+                      </div>
+                    </a>
+                  </div>
+                  {% endfor %}
+                </div>
+              </div>
+            </div>
+
+      <!-- Quick Links -->
+      <div class="col-lg-3 col-md-12 mb-4">
+        <h5 class="text-uppercase">महत्वपूर्ण लिंक</h5>
+        <ul class="list-unstyled small">
+          {% for page in pages %}
+          <li><a href="{% url 'cms' page.slug %}" class="text-white text-decoration-none">{{ page.pagename }}</a></li>
+          {% endfor %}
+          <li><a href="{% url 'sitemap' %}" class="text-white text-decoration-none">साइट मानचित्र</a></li>
+        </ul>
+      </div>
+
+    </div>
+
+    <hr class="border-light">
+    
+    <!-- Footer Bottom -->
+    <div class="text-center small">
+
+      <p class="mb-0">&copy; <script>document.write(new Date().getFullYear())</script> {{ profile_setting.copyright|default:"janhimachal. All rights reserved." }}</p>
+    
+    </div>
+
+  </div>
+  <a href="/" class="floating-home-btn" title="Go to Home">
+    <i class="fas fa-home"></i>
+</a>
+    <button onclick="scrollToTop()" class="scroll-up-button" id="scrollTopBtn">
+    <i class="fas fa-arrow-up"></i>
+</button>
+
+</footer>
+<script>
+
+    // Show Scroll Button When Scrolled
+
+    window.onscroll = function () {
+
+        var scrollBtn = document.getElementById("scrollTopBtn");
+
+        if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
+
+            scrollBtn.style.display = "block";
+
+        } else {
+
+            scrollBtn.style.display = "none";
+
+        }
+
+    };
+
+
+
+    // Scroll to Top Smoothly
+
+    function scrollToTop() {
+
+        window.scrollTo({
+
+            top: 0,
+
+            behavior: "smooth"
+
+        });
+
+    }
+
+</script>
+<style>
+    .nav-link:hover {
+        color: #ee3309 !important;
+    } 

@@ -365,7 +365,7 @@
     </div>
 
     <!-- Footer -->
-    <footer class="footer">
+    {% comment %} <footer class="footer">
         <div class="container">
             <div class="row">
                 <div class="col-md-4">
@@ -393,7 +393,9 @@
         <div class="footer-bottom">
             <p class="mb-0">&copy; 2025 जन हिमाचल। सर्वाधिकार सुरक्षित।</p>
         </div>
-    </footer>
+    </footer> {% endcomment %}
+    {% include "footer.html" %}
+
 
     <!-- Bootstrap 5 JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
