@@ -294,19 +294,6 @@ class slider(models.Model):
     status = models.CharField(max_length=8, choices=STATUS_CHOICES, default='active')
     author = models.ForeignKey(User, on_delete=models.CASCADE, default=1) 
     
-    def get_absolute_url(self):
-         return reverse('slider', args=[self.slug])
-
-class AppUser(models.Model):
-    name = models.CharField(max_length=255)
-    email = models.EmailField(unique=True)
-    password = models.CharField(max_length=255)  # Stored as hashed password
-    phone = models.CharField(max_length=20, null=True, blank=True)
-    city = models.CharField(max_length=100, null=True, blank=True)
-    country = models.CharField(max_length=100, null=True, blank=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
     def __str__(self):
-        return self.name
+        return self.slidercat
     

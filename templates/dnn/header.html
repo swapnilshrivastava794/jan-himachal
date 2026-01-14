@@ -1,6 +1,19 @@
 {% load i18n %}
 {% load static %}
 <div class="container  m-0 p-0 " style="max-width: 100%;">
+  <!-- Breaking News Ticker -->
+  <!-- <div class="breaking-news small bg-dark text-white d-flex align-items-center" style="height: 40px;">
+        <div class="breaking-label text-white px-3 py-2 fw-bold">
+          ताज़ा खबर
+        </div>
+        <marquee behavior="scroll" direction="left" scrollamount="5" class="px-3">
+         {% for CatVid in videos|slice:":2" %}
+            <a style="color: #fff !important; text-decoration:none;" href="/video/{{CatVid.slug}}">
+               {{ CatVid.video_title }}!
+            </a>
+            {% endfor %}
+        </marquee>
+      </div> -->
   <!-- top nav end -->
   <div class="container m-auto row header my-2">
     <div class="col-lg-4 col-md-4 col-sm-12 row-content">
@@ -18,9 +31,9 @@
           <i class="bi bi-calendar-date-fill mr-2"></i>
           <span class="calender-text" id="currentDate"></span>
         </a>
+
       </div>
     </div>
-    
     <div class="col-lg-4 col-md-6 col-sm-12 row-content d-flex align-items-center justify-content-center">
       <div class="text-center">
         <a href="/" class="text-center">
@@ -29,67 +42,47 @@
         </a>
       </div>
     </div>
-    
     <div class="col-lg-4 col-md-12 col-sm-12 row-content">
-      <ul class="list-unstyled d-flex align-items-center gap-2 mb-0 justify-content-end">
-        {% if request.user.is_authenticated %}
-            <!-- USER LOGGED IN -->
-            <li>
-                <a href="#" class="nav-link">Hi, {{ request.user.username }}</a>
-            </li>
-            <li>
-                <a href="{% url 'user-logout' %}" class="btn login-btn">
-                    Logout
-                </a>
-            </li>
-
-        {% elif request.session.journalist_id %}
-            <!-- REPORTER LOGGED IN -->
-            <li>
-                <a class="nav-link p-0" href="{% url 'dashboard' %}">
-                    Dashboard
-                </a>
-            </li>
-            <li>
-                <a href="{% url 'logout-user' %}" class="btn login-btn">
-                    Logout
-                </a>
-            </li>
-
-        {% else %}
-            <!-- NO LOGIN -->
-            <li>
-                <a href="{% url 'user-login' %}" class="btn login-btn">
-                    Login
-                </a>
-            </li>
-            <li>
-                <a href="/auth/sign-in" class="btn login-btn">
-                    Report Login
-                </a>
-            </li>
-        {% endif %}
-
+      <ul class=" list-unstyled d-flex align-items-center gap-3 mb-0 justify-content-end">
+        {% if request.session.journalist_id %}
         <li>
-          <div class="language-button-wrapper">
-              <i class="bi bi-translate"></i>
-              <span>English</span>
-              <i class="bi bi-chevron-down"></i>
-              <div id="google_translate_element"></div>
-          </div>
+          <a class="nav-link p-0" href="{% url 'dashboard' %}">Dashboard</a>
         </li>
+        <li>
+          <a href="{% url 'logout-user' %}" class="nav-link p-0" style="color: #d91c1c !important;">
+            Logout
+          </a>
+        </li>
+        {% else %}
+        <li>
+          <a href="/auth/sign-in" class="btn btn-danger login-btn">
+            Report Login
+          </a>
+        </li>
+        
+        <div class="language-button-wrapper">
+            <i class="bi bi-translate" style="font-size:20px; margin-right:5px;"></i>
+            <span>English</span>
+            <i class="bi bi-chevron-down" style="margin-left:5px;"></i>
+            <div id="google_translate_element"></div>
+          </div>
+        {% endif %}
       </ul>
     </div>
   </div>
-  
   <div class="nav-border">
     <nav class="navbar navbar-expand-lg navbar-dark py-2 py-lg-0" style="background-color: #000;">
       <div class="container">
+
+        <!-- Toggler Button -->
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
           <span class="navbar-toggler-icon"></span>
         </button>
 
+        <!-- Collapsible Content -->
         <div class="collapse navbar-collapse w-100" id="navbarCollapse">
+
+          <!-- Left Navigation -->
           <div class="navbar-nav">
             {% for link in Blogcat %}
             <div class="nav-item dropdown">
@@ -106,21 +99,25 @@
                 {% endfor %}
               </div>
             </div>
-            {% endfor %}
             
+            {% endfor %}
             <div class="nav-item">
-              <a href="/reporters" class="nav-link text-white">Our Reporters</a>
-            </div>
-            <div class="nav-item">
-              <a href="/nanhe-patrakar" class="nav-link text-white">Nanhe Patrakar</a>
-            </div>
+              <a href="/reporters" class="nav-link text-white">
+                Our Reporters
+              </a>
+              </div>
           </div>
 
+          <!-- Right Icons -->
           <div class="d-flex align-items-center gap-3 ms-auto mt-2 mt-lg-0">
-            <a type="button" class="d-flex align-items-center mt-2" data-bs-toggle="modal" data-bs-target="#ModalSearch">
+
+            <!-- Search Icon -->
+            <a type="button" class="d-flex align-items-center mt-2" data-bs-toggle="modal"
+              data-bs-target="#ModalSearch">
               <i class="bi bi-search text-white" style="font-size: 18px;"></i>
             </a>
 
+            <!-- Theme Toggle -->
             <div class="theme-toggle">
               <input type="checkbox" id="theme-toggle" />
               <label for="theme-toggle" class="switch">
@@ -129,38 +126,46 @@
               </label>
             </div>
           </div>
+
         </div>
       </div>
     </nav>
   </div>
 
-  <!-- Search Modal -->
+
   <div class="modal fade" id="ModalSearch" tabindex="-1" aria-labelledby="ModalSearchLabel" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title" id="ModalSearchLabel">खोजें</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+            style="color: #d91c1c; font-weight: bold; background-color: transparent; border: none; width: 40px; height: 40px; padding: 0px;">
+          </button>
         </div>
         <div class="modal-body">
           <form action="{% url 'search' %}" method="get">
             <input type="text" name="title" class="form-control" placeholder="Search for posts..." required>
-            <button type="submit" class="btn btn-primary mt-3 w-100" style="background-color: #d91c1c; border: none;">खोजें</button>
+            <button type="submit" class="btn btn-primary mt-3 w-100"
+              style="background-color: #d91c1c; border: none;">खोजें</button>
           </form>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Sticky Navigation -->
   <div class="nav-border sticky-nav" id="stickyNav">
     <nav class="navbar navbar-expand-lg navbar-dark py-2 py-lg-0" style="background-color: #000;">
       <div class="container">
+
+        <!-- Toggler Button -->
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
           <span class="navbar-toggler-icon"></span>
         </button>
 
+        <!-- Collapsible Content -->
         <div class="collapse navbar-collapse w-100" id="navbarCollapse">
+
+          <!-- Left Navigation -->
           <div class="navbar-nav">
             {% for link in Blogcat %}
             <div class="nav-item dropdown">
@@ -178,20 +183,17 @@
               </div>
             </div>
             {% endfor %}
-            
-            <div class="nav-item">
-              <a href="/reporters" class="nav-link text-white">Our Reporters</a>
-            </div>
-            <div class="nav-item">
-              <a href="/nanhe-patrakar" class="nav-link text-white">Nanhe Patrakar</a>
-            </div>
           </div>
 
+          <!-- Right Icons -->
           <div class="d-flex align-items-center gap-3 ms-auto mt-2 mt-lg-0">
+
+            <!-- Search Icon -->
             <a type="button" class="d-flex align-items-center" data-bs-toggle="modal" data-bs-target="#ModalSearch">
               <i class="bi bi-search text-white" style="font-size: 18px;"></i>
             </a>
 
+            <!-- Theme Toggle -->
             <div class="theme-toggle">
               <input type="checkbox" id="theme-toggle" />
               <label for="theme-toggle" class="switch">
@@ -200,30 +202,31 @@
               </label>
             </div>
           </div>
+
         </div>
       </div>
     </nav>
   </div>
 </div>
-
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+<!-- Load Google Translate API -->
 <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 
 <script>
   function applyCustomTranslateStyles() {
-    const combo = document.querySelector('.goog-te-combo');
-    if (combo) {
-      combo.style.backgroundColor = 'black';
-      combo.style.color = 'white';
-      combo.style.border = '1px solid #444';
-      combo.style.padding = '16px';
-      combo.style.borderRadius = '6px';
-    }
+  const combo = document.querySelector('.goog-te-combo');
+  if (combo) {
+    combo.style.backgroundColor = 'black';
+    combo.style.color = 'white';
+    combo.style.border = '1px solid #444';
+    combo.style.padding = '16px';
+    combo.style.borderRadius = '6px';
   }
+}
 
-  setTimeout(applyCustomTranslateStyles, 1000);
-
+// Wait for the widget to load
+setTimeout(applyCustomTranslateStyles, 1000);
   function googleTranslateElementInit() {
     new google.translate.TranslateElement({
       pageLanguage: 'en',
@@ -240,11 +243,13 @@
     });
   }
 
+  // Run once on load
   hideTranslateBanner();
+
+  // Watch for future changes (Google injects banner after load)
   const observer = new MutationObserver(hideTranslateBanner);
   observer.observe(document.body, { childList: true, subtree: true });
 </script>
-
 <script>
   window.addEventListener("scroll", function () {
     var stickyNav = document.getElementById("stickyNav");
@@ -262,17 +267,18 @@
   };
   document.getElementById('currentDate').innerText = getFormattedDate();
 </script>
-
 <script>
   const toggleSwitch = document.getElementById("theme-toggle");
   const body = document.body;
 
+  // Load stored theme
   const currentTheme = localStorage.getItem("theme");
   if (currentTheme === "dark") {
     body.classList.add("dark-theme");
     toggleSwitch.checked = true;
   }
 
+  // Toggle theme
   toggleSwitch.addEventListener("change", function () {
     if (this.checked) {
       body.classList.add("dark-theme");
@@ -285,99 +291,79 @@
 </script>
 
 <style>
-  /* Language Button - Matching Login Button Style */
-  .language-button-wrapper {
-    position: relative;
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    background-color: #222;
-    color: white;
-    padding: 6px 15px;
-    border-radius: 6px;
-    font-size: 14px;
-    font-weight: 400;
-    cursor: pointer;
-    overflow: hidden;
-    transition: 0.3s;
-    height: 36px;
-  }
+   .language-button-wrapper {
+        position: relative;
+        display: inline-block;
+        background-color: #222;
+        color: white;
+        padding: 6px 15px 2px;
+        border-radius: 5px;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        overflow: hidden;
+        margin:10px;
+    }
+    #google_translate_element {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        opacity: 0;
+    }
 
-  .language-button-wrapper:hover {
-    background-color: #000;
-  }
+     #google_translate_element_sticky{
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        opacity: 0;
+    }
 
-  .language-button-wrapper i {
-    font-size: 14px;
-  }
+    #google_translate_element select {
+        width: 100%;
+        height: 100%;
+        cursor: pointer;
+    }
+     #google_translate_element_sticky select {
+        width: 100%;
+        height: 100%;
+        cursor: pointer;
+    } 
+  .language-button-wrapper img {
+    height: 16px;
+    width: 16px;
+    color:white !important;
+   }
 
-  #google_translate_element {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    opacity: 0;
-    cursor: pointer;
-  }
 
-  #google_translate_element select {
-    width: 100%;
-    height: 100%;
-    cursor: pointer;
-  }
+  /* Hide ANY Google Translate banner iframe */
 
-  /* Login Button - Standardized Style */
-  .login-btn {
-    padding: 6px 20px;
-    background: #222;
-    color: white !important;
-    border: none;
-    border-radius: 6px;
-    font-size: 14px;
-    font-weight: 400;
-    cursor: pointer;
-    transition: 0.3s;
-    box-shadow: none;
-    text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    height: 36px;
-    white-space: nowrap;
-  }
-
-  .login-btn:hover {
-    background: #000 !important;
-    color: white !important;
-    box-shadow: none !important;
-  }
-
-  /* Hide Google Translate Banner */
   .goog-te-banner-frame.skiptranslate {
-    display: none !important;
-  }
+      display: none !important;
+  } 
 
   body {
-    top: 0px !important;
+      top: 0px !important;  /* reset body position */
   }
+  /* Style the dropdown container */
+.goog-te-combo {
+  background-color: black !important;
+  color: white !important;
+  border: 1px solid #444 !important;
+  padding: 16px !important;
+  border-radius: 6px;
+  font-family: Arial, sans-serif;
+  width: 100% !important;
+}
 
-  .goog-te-combo {
-    background-color: black !important;
-    color: white !important;
-    border: 1px solid #444 !important;
-    padding: 16px !important;
-    border-radius: 6px;
-    font-family: Arial, sans-serif;
-    width: 100% !important;
-  }
-
-  .goog-te-combo option {
-    background-color: black;
-    color: white;
-  }
-
-  /* Theme Toggle */
+/* Optional: Style the dropdown arrow */
+.goog-te-combo option {
+  background-color: black;
+  color: white;
+}
   .theme-toggle {
     display: flex;
     align-items: center;
@@ -399,6 +385,20 @@
     top: 4px;
   }
 
+  .slider {
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 26px;
+    height: 26px;
+    background-color: #fff;
+    border-radius: 50%;
+    transition: all 0.4s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
   .icon {
     font-size: 16px;
     position: absolute;
@@ -417,15 +417,36 @@
     opacity: 1;
   }
 
-  input:checked + .switch .sun {
+  input:checked+.switch .slider {
+    transform: translateX(28px);
+  }
+
+  input:checked+.switch .sun {
     opacity: 1;
   }
 
-  input:checked + .switch .moon {
+  input:checked+.switch .moon {
     opacity: 0;
   }
 
-  /* Dark Theme */
+  .login-btn {
+    padding: 6px 30px;
+    background: #222;
+    color: white !important;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.3s;
+    box-shadow: 0 0 0 transparent;
+  }
+
+  .login-btn:hover {
+    background: #000 !important;
+    color: white !important;
+    box-shadow: none !important;
+  }
+
   .dark-theme {
     background-color: #111;
     color: #fff;
