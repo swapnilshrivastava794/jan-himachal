@@ -10,7 +10,8 @@ from .views import (
     SubmissionCreateAPIView, EnrollToNanhePatrakarAPIView,
     ChildProfilesByRecentSubmissionsAPIView, 
     DistrictListAPIView, ParentRegistrationAPIView, TopicListAPIView, SubmissionListAPIView,
-    SubmissionDetailAPIView, SubmissionStatsAPIView, CertificateCheckAPIView
+    SubmissionDetailAPIView, SubmissionStatsAPIView,
+    CreateRazorpayOrderAPI, VerifyRazorpayPaymentAPI, CertificateCheckAPIView
 )
 
 urlpatterns = [
@@ -46,6 +47,10 @@ urlpatterns = [
     
     path('districts/', DistrictListAPIView.as_view(), name='district-list'),
     
+    # Razorpay Payment APIs
+    path('payment/create-order/', CreateRazorpayOrderAPI.as_view(), name='razorpay-create-order'),
+    path('payment/verify/', VerifyRazorpayPaymentAPI.as_view(), name='razorpay-verify-payment'),
+
     #Fake Payment API 
     path('fake/payment/', FakePaymentSuccessAPIView.as_view()),
 
