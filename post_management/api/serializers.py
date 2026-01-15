@@ -39,6 +39,7 @@ class CategorySerializer(serializers.ModelSerializer):
 
 class NewsListSerializer(serializers.ModelSerializer):
     image = serializers.SerializerMethodField()
+    share_url = serializers.SerializerMethodField()
     posted_by = serializers.CharField(source='get_posted_by', read_only=True)
 
     # 🔹 Existing (names)
@@ -61,6 +62,16 @@ class NewsListSerializer(serializers.ModelSerializer):
         read_only=True
     )
 
+    # 🔹 Share URL ke liye slugs
+    newsfrom_slug = serializers.CharField(
+        source='newsfrom.slug',
+        read_only=True
+    )
+    cat_slug = serializers.CharField(
+        source='post_cat.sub_cat.cat_slug',
+        read_only=True
+    )
+
     class Meta:
         model = NewsPost
         fields = [
@@ -70,12 +81,17 @@ class NewsListSerializer(serializers.ModelSerializer):
             'post_short_des',
             'image',
             'post_des',
+            'share_url',
 
             # 👇 NEW
             'subcategory_id',
             'subcategory',
             'category_id',
             'category',
+
+            # 👇 Share URL slugs
+            'newsfrom_slug',
+            'cat_slug',
 
             'posted_by',
             'post_date',
@@ -90,9 +106,24 @@ class NewsListSerializer(serializers.ModelSerializer):
             return request.build_absolute_uri(obj.post_image.url)
         return None
 
+    def get_share_url(self, obj):
+        """
+        Generate shareable URL for the news article.
+        Format: https://janhimachal.com/{newsfrom_slug}/{category_slug}/{news_slug}
+        """
+        base_url = "https://janhimachal.com"
+        try:
+            newsfrom_slug = obj.newsfrom.slug if obj.newsfrom else 'news'
+            category_slug = obj.post_cat.sub_cat.cat_slug if obj.post_cat and obj.post_cat.sub_cat else 'general'
+            news_slug = obj.slug or str(obj.id)
+            return f"{base_url}/{newsfrom_slug}/{category_slug}/{news_slug}"
+        except Exception:
+            return f"{base_url}/news/{obj.id}"
+
 
 class VideoListSerializer(serializers.ModelSerializer):
     thumbnail = serializers.SerializerMethodField()
+    share_url = serializers.SerializerMethodField()
     posted_by = serializers.CharField(source='get_posted_by', read_only=True)
 
     # 🔹 Existing (names)
@@ -125,6 +156,7 @@ class VideoListSerializer(serializers.ModelSerializer):
             'video_url',
             'video_des',
             'thumbnail',
+            'share_url',
 
             # 👇 NEW
             'subcategory_id',
@@ -144,6 +176,17 @@ class VideoListSerializer(serializers.ModelSerializer):
             request = self.context.get('request')
             return request.build_absolute_uri(obj.video_thumbnail.url)
         return None
+
+    def get_share_url(self, obj):
+        """
+        Generate shareable URL for the video.
+        Format: https://janhimachal.com/video/{video_id}
+        """
+        base_url = "https://janhimachal.com"
+        try:
+            return f"{base_url}/video/{obj.id}"
+        except Exception:
+            return f"{base_url}/video/{obj.id}"
 
 
 class SearchNewsSerializer(serializers.ModelSerializer):
