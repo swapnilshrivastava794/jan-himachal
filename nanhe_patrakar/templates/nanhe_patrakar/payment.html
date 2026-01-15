@@ -207,29 +207,8 @@
       "name": "जन हिमाचल",
       "description": "{{ program.name_hindi }}",
       "order_id": "{{ razorpay_order_id }}",
-      "handler": function (response) {
-        // Create form and submit
-        var form = document.createElement('form');
-        form.method = 'POST';
-        form.action = '{{ callback_url }}';
-        
-        var inputs = {
-          'razorpay_payment_id': response.razorpay_payment_id,
-          'razorpay_order_id': response.razorpay_order_id,
-          'razorpay_signature': response.razorpay_signature
-        };
-        
-        for (var key in inputs) {
-          var input = document.createElement('input');
-          input.type = 'hidden';
-          input.name = key;
-          input.value = inputs[key];
-          form.appendChild(input);
-        }
-        
-        document.body.appendChild(form);
-        form.submit();
-      },
+      "callback_url": "{{ callback_url }}",
+      "redirect": true,
       "prefill": {
         "name": "{{ parent.user.get_full_name }}",
         "email": "{{ parent.user.email }}",
