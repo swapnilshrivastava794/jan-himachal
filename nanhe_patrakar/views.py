@@ -298,32 +298,4 @@ class DownloadAppView(LoginRequiredMixin, View):
         except ParentProfile.DoesNotExist:
             messages.error(request, 'कृपया पहले पंजीकरण करें / Please register first')
             return redirect('nanhe_patrakar:register')
-    """App download page with instructions"""
-    template_name = 'nanhe_patrakar/download_app.html'
-    login_url = '/nanhe-patrakar/register/'
-
-    def get(self, request):
-        try:
-            parent_profile = request.user.parent_profile
-            program = parent_profile.program
-            
-            # Check if payment is completed
-            if parent_profile.status != 'PAYMENT_COMPLETED':
-                messages.warning(request, 'कृपया पहले भुगतान पूरा करें / Please complete payment first')
-                return redirect('nanhe_patrakar:payment')
-            
-            context = {
-                'parent': parent_profile,
-                'program': program,
-                'order': ParticipationOrder.objects.filter(
-                    parent=parent_profile,
-                    payment_status='SUCCESS'
-                ).first()
-            }
-            
-            return render(request, self.template_name, context)
-            
-        except ParentProfile.DoesNotExist:
-            messages.error(request, 'कृपया पहले पंजीकरण करें / Please register first')
-            return redirect('nanhe_patrakar:register')
         
