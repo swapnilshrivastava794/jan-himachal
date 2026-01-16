@@ -4,281 +4,441 @@
 {% block extra_css %}
 <style>
   :root {
-    --primary-gradient: linear-gradient(135deg, #FF6B6B 0%, #D32F2F 100%);
-    --bg-pattern: radial-gradient(#e0e0e0 1px, transparent 1px);
-    --card-shadow: 0 10px 30px rgba(0,0,0,0.08);
+    --primary-gradient: linear-gradient(135deg, #000000 0%, #333333 100%);
+    --accent-color: #000000;
+    --card-shadow: 0 20px 60px rgba(0,0,0,0.1);
   }
 
   .registration-page {
-    background-color: #f8f9fa;
-    background-image: var(--bg-pattern);
-    background-size: 20px 20px;
-    padding: 60px 0;
+    background: linear-gradient(135deg, #f5f7fa 0%, #e4e8eb 100%);
     min-height: 100vh;
+    padding: 40px 0;
   }
 
-  .registration-card {
-    max-width: 800px;
-    margin: 0 auto;
-  }
-
-  /* Header Card */
-  .card {
-    border: none;
-    border-radius: 15px;
+  .main-card {
+    background: #fff;
+    border-radius: 24px;
     box-shadow: var(--card-shadow);
     overflow: hidden;
-    margin-bottom: 30px !important;
+    max-width: 900px;
+    margin: 0 auto;
+    border: 1px solid #eee;
   }
 
-  .card-header {
-    background: var(--primary-gradient) !important;
-    color: #fff !important;
+  /* Header */
+  .form-header {
+    background: linear-gradient(135deg, #d91c1c 0%, #b71c1c 100%);
+    padding: 40px 30px;
     text-align: center;
-    font-size: 24px;
-    font-weight: 700;
-    padding: 25px;
-    border: none !important;
-  }
-  
-  .card-body {
-    padding: 25px;
+    color: #fff;
+    position: relative;
+    overflow: hidden;
   }
 
-  /* Requirements Box */
-  .requirements-box {
-    background: #fff;
-    border-left: 5px solid var(--primary-color);
-    padding: 30px;
-    border-radius: 15px;
-    margin-bottom: 30px;
-    box-shadow: var(--card-shadow);
-    transition: transform 0.3s ease;
-  }
-  
-  .requirements-box:hover {
-    transform: translateY(-5px);
+  .form-header::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 60%);
+    animation: pulse 4s ease-in-out infinite;
   }
 
-  .requirements-box h6 {
-    color: #333;
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); opacity: 0.5; }
+    50% { transform: scale(1.1); opacity: 0.3; }
+  }
+
+  .form-header h1 {
+    font-size: 28px;
     font-weight: 800;
-    margin-bottom: 20px;
-    font-size: 18px;
+    margin-bottom: 10px;
+    position: relative;
+  }
+
+  .form-header p {
+    opacity: 0.9;
+    font-size: 15px;
+    margin: 0;
+    position: relative;
+  }
+
+  .header-icon {
+    width: 80px;
+    height: 80px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 50%;
     display: flex;
     align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+    font-size: 36px;
+    backdrop-filter: blur(10px);
   }
 
-  .requirements-box ul {
-    margin-bottom: 15px;
+  /* Info Banner */
+  .info-banner {
+    background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
+    border-left: 4px solid #ff9800;
+    padding: 20px 25px;
+    margin: 25px;
+    border-radius: 12px;
+  }
+
+  .info-banner h6 {
+    color: #e65100;
+    font-weight: 700;
+    margin-bottom: 12px;
+    font-size: 16px;
+  }
+
+  .info-banner ul {
+    margin: 0;
     padding-left: 0;
     list-style: none;
   }
 
-  .requirements-box li {
-    margin-bottom: 12px;
-    line-height: 1.6;
-    position: relative;
-    padding-left: 25px;
-    font-size: 15px;
-  }
-  
-  .requirements-box li::before {
-    content: '✓';
-    position: absolute;
-    left: 0;
-    color: var(--primary-color);
-    font-weight: bold;
+  .info-banner li {
+    padding: 6px 0;
+    color: #5d4037;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
   }
 
-  .requirements-box .fee {
-    background: var(--primary-gradient);
+  .info-banner li i {
+    color: #ff9800;
+  }
+
+  .fee-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #d91c1c;
     color: #fff;
-    padding: 12px 25px;
+    padding: 10px 20px;
     border-radius: 50px;
-    display: inline-block;
     font-weight: 700;
     margin-top: 15px;
-    box-shadow: 0 5px 15px rgba(211, 47, 47, 0.3);
+    font-size: 15px;
   }
 
-  /* Form Section */
-  .form-section {
-    background: #fff;
-    padding: 40px;
-    border-radius: 20px;
-    box-shadow: var(--card-shadow);
-    border: none;
+  /* Form Body */
+  .form-body {
+    padding: 30px 40px 40px;
   }
 
-  .section-title {
-    font-size: 18px;
-    font-weight: 800;
-    color: #333;
+  /* Section Headers */
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
     margin-bottom: 25px;
-    padding-bottom: 12px;
+    padding-bottom: 15px;
     border-bottom: 2px solid #f0f0f0;
+  }
+
+  .section-icon {
+    width: 45px;
+    height: 45px;
+    background: linear-gradient(135deg, #000 0%, #333 100%);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 18px;
+  }
+
+  .section-header h5 {
+    margin: 0;
+    font-weight: 700;
+    color: #000;
+    font-size: 18px;
+  }
+
+  .section-header small {
+    display: block;
+    color: #666;
+    font-weight: 400;
+    font-size: 13px;
+    margin-top: 2px;
+  }
+
+  /* Form Fields */
+  .form-floating {
+    margin-bottom: 20px;
+  }
+
+  .form-floating > .form-control,
+  .form-floating > .form-select {
+    height: 58px;
+    border-radius: 12px;
+    border: 2px solid #e8e8e8;
+    padding: 1rem 1rem;
+    font-size: 15px;
+    background: #fafafa;
+    transition: all 0.3s ease;
+  }
+
+  .form-floating > .form-control:focus,
+  .form-floating > .form-select:focus {
+    border-color: #000;
+    box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.1);
+    background: #fff;
+  }
+
+  .form-floating > label {
+    padding: 1rem 1rem;
+    color: #888;
+    font-size: 14px;
+  }
+
+  .form-floating > .form-control:focus ~ label,
+  .form-floating > .form-control:not(:placeholder-shown) ~ label {
+    color: #000;
+    font-weight: 600;
+  }
+
+  /* Input Icons */
+  .input-icon-wrapper {
     position: relative;
   }
-  
-  .section-title::after {
-    content: '';
+
+  .input-icon-wrapper .form-control {
+    padding-left: 45px;
+  }
+
+  .input-icon-wrapper .input-icon {
     position: absolute;
-    bottom: -2px;
-    left: 0;
-    width: 60px;
-    height: 2px;
-    background: var(--primary-color);
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #aaa;
+    font-size: 16px;
+    z-index: 5;
+  }
+
+  .input-icon-wrapper .form-control:focus + .input-icon,
+  .input-icon-wrapper .form-control:not(:placeholder-shown) + .input-icon {
+    color: #000;
+  }
+
+  /* Password Toggle */
+  .password-toggle-btn {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: #aaa;
+    cursor: pointer;
+    padding: 5px;
+    z-index: 5;
+  }
+
+  .password-toggle-btn:hover {
+    color: #000;
+  }
+
+  /* Custom Form Control */
+  .custom-input {
+    width: 100%;
+    padding: 16px 20px;
+    border: 2px solid #e8e8e8;
+    border-radius: 12px;
+    font-size: 15px;
+    background: #fafafa;
+    transition: all 0.3s ease;
+  }
+
+  .custom-input:focus {
+    outline: none;
+    border-color: #000;
+    box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.1);
+    background: #fff;
+  }
+
+  .custom-select {
+    width: 100%;
+    padding: 16px 20px;
+    border: 2px solid #e8e8e8;
+    border-radius: 12px;
+    font-size: 15px;
+    background: #fafafa;
+    transition: all 0.3s ease;
+    cursor: pointer;
+  }
+
+  .custom-select:focus {
+    outline: none;
+    border-color: #000;
+    box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.1);
+    background: #fff;
   }
 
   .form-label {
     font-weight: 600;
-    color: #444;
+    color: #000;
     font-size: 14px;
     margin-bottom: 8px;
-  }
-  
-  .form-control, .form-select {
-    padding: 12px 15px;
-    border-radius: 10px;
-    border: 1px solid #e0e0e0;
-    background: #fdfdfd;
-    font-size: 15px;
-    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
   }
 
-  .form-control:focus, .form-select:focus {
-    background: #fff;
-    border-color: var(--primary-color);
-    box-shadow: 0 0 0 4px rgba(230, 57, 70, 0.1);
+  .form-label i {
+    color: #000;
   }
 
-  .form-help-text {
-    font-size: 13px;
-    color: #888;
+  .required-star {
+    color: var(--accent-color);
+    font-weight: bold;
+  }
+
+  .form-hint {
+    font-size: 12px;
+    color: #666;
     margin-top: 6px;
     display: flex;
     align-items: center;
     gap: 5px;
   }
 
+  .form-hint i {
+    color: #333;
+  }
+
+  /* Error Messages */
+  .error-msg {
+    color: var(--accent-color);
+    font-size: 13px;
+    margin-top: 6px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-weight: 500;
+  }
+
+  /* Terms Checkbox */
+  .terms-box {
+    background: #f8f9fa;
+    border: 2px solid #e8e8e8;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 25px;
+  }
+
+  .terms-box .form-check-input {
+    width: 22px;
+    height: 22px;
+    border: 2px solid #ccc;
+    margin-top: 0;
+    cursor: pointer;
+  }
+
+  .terms-box .form-check-input:checked {
+    background-color: #000;
+    border-color: #000;
+  }
+
+  .terms-box .form-check-label {
+    padding-left: 10px;
+    font-size: 14px;
+    line-height: 1.6;
+    cursor: pointer;
+    color: #333;
+  }
+
+  .terms-box a {
+    color: #000;
+    font-weight: 700;
+    text-decoration: underline;
+  }
+
+  .terms-box a:hover {
+    text-decoration: none;
+  }
+
+  /* Submit Button */
   .submit-btn {
     width: 100%;
     padding: 18px;
-    font-size: 18px;
-    font-weight: 800;
+    font-size: 17px;
+    font-weight: 700;
     text-transform: uppercase;
-    background: var(--primary-gradient);
-    border: none;
-    border-radius: 50px;
-    box-shadow: 0 10px 20px rgba(211, 47, 47, 0.3);
-    transition: all 0.3s;
     letter-spacing: 1px;
-  }
-  
-  .submit-btn:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 15px 30px rgba(211, 47, 47, 0.4);
-    background: linear-gradient(135deg, #FF6B6B 0%, #b71c1c 100%);
+    background: #000;
+    border: 2px solid #000;
+    border-radius: 14px;
+    color: #fff;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
   }
 
-  .login-link {
+  .submit-btn:hover {
+    background: #333;
+    border-color: #333;
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  }
+
+  .submit-btn:active {
+    transform: translateY(-1px);
+  }
+
+  /* Login Link */
+  .login-section {
     text-align: center;
-    margin-top: 30px;
-    padding-top: 20px;
+    padding: 25px;
+    background: #f8f9fa;
     border-top: 1px solid #eee;
   }
 
-  .required-mark {
-    color: var(--primary-color);
-    font-weight: bold;
-    margin-left: 3px;
-  }
-
-  .password-wrapper {
-    position: relative;
-  }
-
-  .password-toggle {
-    position: absolute;
-    right: 15px;
-    top: 50%;
-    transform: translateY(-50%);
-    cursor: pointer;
-    color: #999;
-    background: none;
-    border: none;
-    padding: 5px;
-    transition: color 0.3s;
-  }
-
-  .password-toggle:hover {
-    color: var(--primary-color);
-  }
-
-  .age-groups-info {
-    background: #f0f7ff;
-    padding: 20px;
-    border-radius: 12px;
-    margin-bottom: 20px;
-    border: 1px solid #e1f0ff;
-  }
-
-  .age-groups-info h6 {
-    margin-bottom: 15px;
-    font-size: 16px;
-    color: #0d47a1;
-  }
-
-  .age-group-item {
-    display: flex;
-    justify-content: space-between;
-    padding: 8px 0;
+  .login-section p {
+    margin: 0;
+    color: #666;
     font-size: 14px;
-    border-bottom: 1px dashed #cedceb;
-  }
-  
-  .age-group-item:last-child {
-    border-bottom: none;
   }
 
-  .age-group-name {
+  .login-section a {
+    color: #000;
     font-weight: 700;
-    color: #1976d2;
+    text-decoration: none;
   }
 
-  .form-check-input {
-    width: 20px;
-    height: 20px;
-    margin-top: 3px;
-    border: 2px solid #ccc;
-    cursor: pointer;
-  }
-  
-  .form-check-input:checked {
-    background-color: var(--primary-color);
-    border-color: var(--primary-color);
-  }
-  
-  .form-check-label {
-    padding-left: 8px;
-    cursor: pointer;
-    font-size: 14px;
-    line-height: 1.5;
+  .login-section a:hover {
+    text-decoration: underline;
   }
 
+  /* Responsive */
   @media (max-width: 768px) {
     .registration-page {
-        padding: 30px 15px;
+      padding: 20px 15px;
     }
-    
-    .card-header {
-        padding: 20px;
-        font-size: 20px;
+
+    .form-header {
+      padding: 30px 20px;
     }
-    
-    .form-section {
-        padding: 25px;
+
+    .form-header h1 {
+      font-size: 22px;
+    }
+
+    .form-body {
+      padding: 25px 20px;
+    }
+
+    .info-banner {
+      margin: 20px 15px;
     }
   }
 </style>
@@ -287,248 +447,227 @@
 {% block content %}
 <div class="registration-page">
   <div class="container">
-    <div class="registration-card">
-      <!-- Page Header -->
-      <div class="card mb-4">
-        <div class="card-header">
-          <i class="fas fa-user-plus me-2"></i>
-          माता-पिता पंजीकरण / Parent Registration
+    <div class="main-card">
+      
+      <!-- Header -->
+      <div class="form-header">
+        <div class="header-icon">
+          <i class="fas fa-child"></i>
         </div>
-        <div class="card-body">
-          <p class="text-center mb-2">
-            अपने बच्चे को {{ program.name }} में नामांकित करने के लिए पंजीकरण करें
-          </p>
-          <p class="text-center text-muted mb-0">
-            <small>Register to enroll your child in {{ program.name }}</small>
-          </p>
-        </div>
+        <h1>नन्हे पत्रकार में आपका स्वागत है!</h1>
+        <p>अपने बच्चे को पंजीकृत करें / Register Your Child</p>
       </div>
 
-      <!-- Requirements Box -->
-      <div class="requirements-box">
-        <h6>
-          <i class="fas fa-check-circle me-2"></i>पात्रता मानदंड / Eligibility Requirements
-        </h6>
-        <ul>
-          <li>
-            <strong>आयु सीमा:</strong> बच्चे की आयु {{ program.min_age }}-{{ program.max_age }} वर्ष के बीच होनी चाहिए
-          </li>
-          <li>
-            <strong>निवास:</strong> हिमाचल प्रदेश का निवासी होना आवश्यक है
-          </li>
-          <li>
-            <strong>माता-पिता की सहमति:</strong> माता-पिता/अभिभावक की पूर्ण सहमति आवश्यक है
-          </li>
-        </ul>
-
-        <!-- Age Groups Info -->
-        {% if program.age_group_a_min and program.age_group_a_max %}
-        <div class="age-groups-info">
-          <h6><i class="fas fa-users me-1"></i>आयु समूह / Age Groups:</h6>
-          
-          {% if program.age_group_a_min and program.age_group_a_max %}
-          <div class="age-group-item">
-            <span class="age-group-name">समूह अ / Group A:</span>
-            <span class="age-group-range">{{ program.age_group_a_min }}-{{ program.age_group_a_max }} वर्ष / years</span>
-          </div>
-          {% endif %}
-          
-          {% if program.age_group_b_min and program.age_group_b_max %}
-          <div class="age-group-item">
-            <span class="age-group-name">समूह ब / Group B:</span>
-            <span class="age-group-range">{{ program.age_group_b_min }}-{{ program.age_group_b_max }} वर्ष / years</span>
-          </div>
-          {% endif %}
-          
-          {% if program.age_group_c_min and program.age_group_c_max %}
-          <div class="age-group-item">
-            <span class="age-group-name">समूह स / Group C:</span>
-            <span class="age-group-range">{{ program.age_group_c_min }}-{{ program.age_group_c_max }} वर्ष / years</span>
-          </div>
-          {% endif %}
-        </div>
-        {% endif %}
-
-        <div class="fee">
-          <i class="fas fa-rupee-sign me-1"></i>{{ program.price }} - एकमुश्त भागीदारी शुल्क
-        </div>
-      </div>
-
-      <!-- Registration Form -->
-      <div class="form-section">
-        <form method="post" id="registrationForm" novalidate>
-          {% csrf_token %}
+      <!-- Form -->
+      <form method="post" id="registrationForm" novalidate>
+        {% csrf_token %}
+        <div class="form-body">
 
           <!-- Personal Information Section -->
-          <div class="section-title">
-            <i class="fas fa-user me-2"></i>व्यक्तिगत जानकारी / Personal Information
+          <div class="section-header">
+            <div class="section-icon">
+              <i class="fas fa-user"></i>
+            </div>
+            <div>
+              <h5>व्यक्तिगत जानकारी</h5>
+              <small>Personal Information</small>
+            </div>
           </div>
 
           <div class="row">
             <!-- First Name -->
-            <div class="col-md-6 mb-3">
-              <label class="form-label" for="{{ form.first_name.id_for_label }}">
-                पहला नाम / First Name <span class="required-mark">*</span>
+            <div class="col-md-6 mb-4">
+              <label class="form-label">
+                <i class="fas fa-id-card"></i>
+                पहला नाम / First Name <span class="required-star">*</span>
               </label>
-              {{ form.first_name }}
+              <input type="text" name="first_name" id="id_first_name" 
+                     class="custom-input" placeholder="पहला नाम दर्ज करें"
+                     value="{{ form.first_name.value|default:'' }}" required>
               {% if form.first_name.errors %}
-              <div class="text-danger small mt-1">
-                <i class="fas fa-exclamation-circle"></i> {{ form.first_name.errors.0 }}
-              </div>
+              <div class="error-msg"><i class="fas fa-exclamation-circle"></i> {{ form.first_name.errors.0 }}</div>
               {% endif %}
             </div>
 
             <!-- Last Name -->
-            <div class="col-md-6 mb-3">
-              <label class="form-label" for="{{ form.last_name.id_for_label }}">
-                उपनाम / Last Name <span class="required-mark">*</span>
+            <div class="col-md-6 mb-4">
+              <label class="form-label">
+                <i class="fas fa-id-card"></i>
+                उपनाम / Last Name <span class="required-star">*</span>
               </label>
-              {{ form.last_name }}
+              <input type="text" name="last_name" id="id_last_name" 
+                     class="custom-input" placeholder="उपनाम दर्ज करें"
+                     value="{{ form.last_name.value|default:'' }}" required>
               {% if form.last_name.errors %}
-              <div class="text-danger small mt-1">
-                <i class="fas fa-exclamation-circle"></i> {{ form.last_name.errors.0 }}
-              </div>
+              <div class="error-msg"><i class="fas fa-exclamation-circle"></i> {{ form.last_name.errors.0 }}</div>
               {% endif %}
             </div>
           </div>
 
           <!-- Username -->
-          <div class="mb-3">
-            <label class="form-label" for="{{ form.username.id_for_label }}">
-              यूजरनेम / Username <span class="required-mark">*</span>
+          <div class="mb-4">
+            <label class="form-label">
+              <i class="fas fa-at"></i>
+              यूजरनेम / Username <span class="required-star">*</span>
             </label>
-            {{ form.username }}
-            <div class="form-help-text">
-              <i class="fas fa-info-circle"></i> लॉगिन के लिए उपयोग किया जाएगा / Will be used for login
-            </div>
+            <input type="text" name="username" id="id_username" 
+                   class="custom-input" placeholder="यूजरनेम चुनें (जैसे: rahul123)"
+                   value="{{ form.username.value|default:'' }}" required>
+            <div class="form-hint"><i class="fas fa-info-circle"></i> लॉगिन के लिए उपयोग होगा / Used for login</div>
             {% if form.username.errors %}
-            <div class="text-danger small mt-1">
-              <i class="fas fa-exclamation-circle"></i> {{ form.username.errors.0 }}
-            </div>
+            <div class="error-msg"><i class="fas fa-exclamation-circle"></i> {{ form.username.errors.0 }}</div>
             {% endif %}
           </div>
 
-          <!-- Mobile Number -->
-          <div class="mb-3">
-            <label class="form-label" for="{{ form.mobile.id_for_label }}">
-              मोबाइल नंबर / Mobile Number <span class="required-mark">*</span>
+          <!-- Mobile -->
+          <div class="mb-4">
+            <label class="form-label">
+              <i class="fas fa-mobile-alt"></i>
+              मोबाइल नंबर / Mobile <span class="required-star">*</span>
             </label>
-            {{ form.mobile }}
-            <div class="form-help-text">
-              <i class="fas fa-info-circle"></i> इस नंबर से आप ऐप में लॉगिन कर सकेंगे / You can login to app with this number
-            </div>
+            <input type="tel" name="mobile" id="id_mobile" 
+                   class="custom-input" placeholder="10 अंकों का मोबाइल नंबर"
+                   value="{{ form.mobile.value|default:'' }}" maxlength="10" required>
+            <div class="form-hint"><i class="fas fa-info-circle"></i> इस नंबर से ऐप में लॉगिन होगा / App login with this number</div>
             {% if form.mobile.errors %}
-            <div class="text-danger small mt-1">
-              <i class="fas fa-exclamation-circle"></i> {{ form.mobile.errors.0 }}
-            </div>
+            <div class="error-msg"><i class="fas fa-exclamation-circle"></i> {{ form.mobile.errors.0 }}</div>
             {% endif %}
           </div>
 
-          <!-- Email Address -->
-          <div class="mb-3">
-            <label class="form-label" for="{{ form.email.id_for_label }}">
-              ईमेल पता / Email Address <span class="required-mark">*</span>
+          <!-- Email -->
+          <div class="mb-4">
+            <label class="form-label">
+              <i class="fas fa-envelope"></i>
+              ईमेल / Email <span class="required-star">*</span>
             </label>
-            {{ form.email }}
+            <input type="email" name="email" id="id_email" 
+                   class="custom-input" placeholder="आपका ईमेल पता"
+                   value="{{ form.email.value|default:'' }}" required>
             {% if form.email.errors %}
-            <div class="text-danger small mt-1">
-              <i class="fas fa-exclamation-circle"></i> {{ form.email.errors.0 }}
-            </div>
+            <div class="error-msg"><i class="fas fa-exclamation-circle"></i> {{ form.email.errors.0 }}</div>
             {% endif %}
           </div>
 
           <!-- Password -->
-          <div class="mb-3">
-            <label class="form-label" for="{{ form.password.id_for_label }}">
-              पासवर्ड / Password <span class="required-mark">*</span>
+          <div class="mb-4">
+            <label class="form-label">
+              <i class="fas fa-lock"></i>
+              पासवर्ड / Password <span class="required-star">*</span>
             </label>
-            <div class="password-wrapper">
-              {{ form.password }}
-              <button type="button" class="password-toggle" onclick="togglePassword('{{ form.password.id_for_label }}')">
-                <i class="fas fa-eye" id="toggleIcon_{{ form.password.id_for_label }}"></i>
+            <div class="position-relative">
+              <input type="password" name="password" id="id_password" 
+                     class="custom-input" placeholder="कम से कम 6 अक्षर" required>
+              <button type="button" class="password-toggle-btn" onclick="togglePassword()">
+                <i class="fas fa-eye" id="toggleIcon"></i>
               </button>
             </div>
-            <div class="form-help-text">
-              <i class="fas fa-info-circle"></i> कम से कम 6 अक्षर / Minimum 6 characters
-            </div>
+            <div class="form-hint"><i class="fas fa-info-circle"></i> कम से कम 6 अक्षर / Minimum 6 characters</div>
             {% if form.password.errors %}
-            <div class="text-danger small mt-1">
-              <i class="fas fa-exclamation-circle"></i> {{ form.password.errors.0 }}
-            </div>
+            <div class="error-msg"><i class="fas fa-exclamation-circle"></i> {{ form.password.errors.0 }}</div>
             {% endif %}
           </div>
 
-          <!-- Location Details Section -->
-          <div class="section-title mt-4">
-            <i class="fas fa-map-marker-alt me-2"></i>स्थान विवरण / Location Details
+          <!-- Location Section -->
+          <div class="section-header mt-5">
+            <div class="section-icon">
+              <i class="fas fa-map-marker-alt"></i>
+            </div>
+            <div>
+              <h5>स्थान विवरण</h5>
+              <small>Location Details</small>
+            </div>
           </div>
 
           <div class="row">
             <!-- City -->
-            <div class="col-md-6 mb-3">
-              <label class="form-label" for="{{ form.city.id_for_label }}">
-                शहर / City <span class="required-mark">*</span>
+            <div class="col-md-6 mb-4">
+              <label class="form-label">
+                <i class="fas fa-city"></i>
+                शहर / City <span class="required-star">*</span>
               </label>
-              {{ form.city }}
+              <input type="text" name="city" id="id_city" 
+                     class="custom-input" placeholder="अपना शहर दर्ज करें"
+                     value="{{ form.city.value|default:'' }}" required>
               {% if form.city.errors %}
-              <div class="text-danger small mt-1">
-                <i class="fas fa-exclamation-circle"></i> {{ form.city.errors.0 }}
-              </div>
+              <div class="error-msg"><i class="fas fa-exclamation-circle"></i> {{ form.city.errors.0 }}</div>
               {% endif %}
             </div>
 
             <!-- District -->
-            <div class="col-md-6 mb-3">
-              <label class="form-label" for="{{ form.district.id_for_label }}">
-                जिला / District <span class="required-mark">*</span>
+            <div class="col-md-6 mb-4">
+              <label class="form-label">
+                <i class="fas fa-map"></i>
+                जिला / District <span class="required-star">*</span>
               </label>
-              {{ form.district }}
+              <select name="district" id="id_district" class="custom-select" required>
+                <option value="">-- जिला चुनें --</option>
+                {% for district in districts %}
+                <option value="{{ district.id }}" {% if form.district.value == district.id %}selected{% endif %}>{{ district.name }}</option>
+                {% endfor %}
+              </select>
               {% if form.district.errors %}
-              <div class="text-danger small mt-1">
-                <i class="fas fa-exclamation-circle"></i> {{ form.district.errors.0 }}
-              </div>
+              <div class="error-msg"><i class="fas fa-exclamation-circle"></i> {{ form.district.errors.0 }}</div>
               {% endif %}
             </div>
           </div>
 
-          <!-- Terms & Conditions Section -->
-          <div class="section-title mt-4">
-            <i class="fas fa-file-contract me-2"></i>नियम और शर्तें / Terms & Conditions
+          <!-- Terms Section -->
+          <div class="section-header mt-4">
+            <div class="section-icon">
+              <i class="fas fa-file-signature"></i>
+            </div>
+            <div>
+              <h5>नियम और शर्तें</h5>
+              <small>Terms & Conditions</small>
+            </div>
           </div>
 
-          <div class="mb-4">
-            <div class="form-check">
-              {{ form.terms_accepted }}
-              <label class="form-check-label" for="{{ form.terms_accepted.id_for_label }}">
-                मैं
-                <a href="#" class="text-primary" target="_blank">नियम और शर्तें</a>
-                तथा
-                <a href="#" class="text-primary" target="_blank">गोपनीयता नीति</a>
-                से सहमत हूं
-                <span class="required-mark">*</span>
+          <div class="terms-box">
+            <div class="form-check d-flex align-items-start">
+              <input type="checkbox" name="terms_accepted" id="id_terms_accepted" 
+                     class="form-check-input" required>
+              <label class="form-check-label" for="id_terms_accepted">
+                मैं <a href="/terms" target="_blank">नियम और शर्तें</a> तथा 
+                <a href="/privacy" target="_blank">गोपनीयता नीति</a> से सहमत हूं। 
+                मैं पुष्टि करता/करती हूं कि दी गई जानकारी सत्य है।
+                <span class="required-star">*</span>
               </label>
-              {% if form.terms_accepted.errors %}
-              <div class="text-danger small mt-1">
-                <i class="fas fa-exclamation-circle"></i> {{ form.terms_accepted.errors.0 }}
-              </div>
-              {% endif %}
             </div>
+            {% if form.terms_accepted.errors %}
+            <div class="error-msg mt-2"><i class="fas fa-exclamation-circle"></i> {{ form.terms_accepted.errors.0 }}</div>
+            {% endif %}
           </div>
 
           <!-- Submit Button -->
-          <button type="submit" class="btn btn-primary submit-btn">
-            <i class="fas fa-user-plus me-2"></i>पंजीकरण करें / Register
+          <button type="submit" class="submit-btn">
+            <i class="fas fa-arrow-right"></i>
+            आगे बढ़ें / Continue
           </button>
-        </form>
 
-        <!-- Login Link -->
-        <div class="login-link">
-          <p class="text-muted mb-0">
-            पहले से पंजीकृत हैं? / Already registered?
-            <a href="#" class="text-primary fw-semibold">यहां लॉगिन करें / Login here</a>
-          </p>
+        </div>
+      </form>
+
+      <!-- Info Banner (After Form) -->
+      <div class="info-banner" style="margin: 0 25px 25px;">
+        <h6><i class="fas fa-info-circle me-2"></i>पात्रता मानदंड / Eligibility</h6>
+        <ul>
+          <li><i class="fas fa-check-circle"></i> <strong>आयु:</strong> {{ program.min_age }}-{{ program.max_age }} वर्ष ({{ program.min_age }}-{{ program.max_age }} years)</li>
+          <li><i class="fas fa-check-circle"></i> <strong>निवास:</strong> हिमाचल प्रदेश का निवासी (Himachal Pradesh resident)</li>
+          <li><i class="fas fa-check-circle"></i> <strong>सहमति:</strong> माता-पिता की पूर्ण सहमति आवश्यक (Parent consent required)</li>
+        </ul>
+        <div class="fee-badge">
+          <i class="fas fa-rupee-sign"></i> {{ program.price }} - एकमुश्त भागीदारी शुल्क
         </div>
       </div>
+
+      <!-- Login Link -->
+      <div class="login-section">
+        <p>
+          पहले से पंजीकृत हैं? 
+          <a href="{% url 'nanhe_patrakar:landing' %}">यहां लॉगिन करें / Login here</a>
+        </p>
+      </div>
+
     </div>
   </div>
 </div>
@@ -537,9 +676,9 @@
 {% block extra_js %}
 <script>
   // Toggle password visibility
-  function togglePassword(fieldId) {
-    const passwordField = document.getElementById(fieldId);
-    const toggleIcon = document.getElementById('toggleIcon_' + fieldId);
+  function togglePassword() {
+    const passwordField = document.getElementById('id_password');
+    const toggleIcon = document.getElementById('toggleIcon');
     
     if (passwordField.type === 'password') {
       passwordField.type = 'text';
@@ -552,51 +691,49 @@
     }
   }
 
-  // Mobile number formatting - only numbers
-  const mobileField = document.getElementById("{{ form.mobile.id_for_label }}");
+  // Mobile number - only digits
+  const mobileField = document.getElementById("id_mobile");
   if (mobileField) {
     mobileField.addEventListener("input", function (e) {
       let value = e.target.value.replace(/\D/g, "");
-      if (value.length > 10) {
-        value = value.slice(0, 10);
-      }
+      if (value.length > 10) value = value.slice(0, 10);
       e.target.value = value;
     });
   }
 
-  // Username validation - no spaces, special characters
-  const usernameField = document.getElementById("{{ form.username.id_for_label }}");
+  // Username - lowercase, no spaces
+  const usernameField = document.getElementById("id_username");
   if (usernameField) {
     usernameField.addEventListener("input", function (e) {
-      // Remove spaces and convert to lowercase
       let value = e.target.value.replace(/\s/g, "").toLowerCase();
-      // Only allow alphanumeric, underscore, and hyphen
       value = value.replace(/[^a-z0-9_-]/g, "");
       e.target.value = value;
     });
   }
 
-  // Form validation before submit
+  // Form validation
   document.getElementById("registrationForm").addEventListener("submit", function (e) {
-    const mobile = document.getElementById("{{ form.mobile.id_for_label }}").value;
-    const username = document.getElementById("{{ form.username.id_for_label }}").value;
-    const password = document.getElementById("{{ form.password.id_for_label }}").value;
+    const mobile = document.getElementById("id_mobile").value;
+    const username = document.getElementById("id_username").value;
+    const password = document.getElementById("id_password").value;
+    const terms = document.getElementById("id_terms_accepted").checked;
     
     let errors = [];
 
-    // Validate mobile
     if (mobile.length !== 10) {
-      errors.push("कृपया वैध 10 अंकों का मोबाइल नंबर दर्ज करें / Please enter a valid 10-digit mobile number");
+      errors.push("कृपया वैध 10 अंकों का मोबाइल नंबर दर्ज करें");
     }
 
-    // Validate username
     if (username.length < 3) {
-      errors.push("यूजरनेम कम से कम 3 अक्षरों का होना चाहिए / Username must be at least 3 characters");
+      errors.push("यूजरनेम कम से कम 3 अक्षरों का होना चाहिए");
     }
 
-    // Validate password
     if (password.length < 6) {
-      errors.push("पासवर्ड कम से कम 6 अक्षरों का होना चाहिए / Password must be at least 6 characters");
+      errors.push("पासवर्ड कम से कम 6 अक्षरों का होना चाहिए");
+    }
+
+    if (!terms) {
+      errors.push("कृपया नियम और शर्तें स्वीकार करें");
     }
 
     if (errors.length > 0) {

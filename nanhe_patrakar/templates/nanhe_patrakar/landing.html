@@ -12,148 +12,997 @@
         --text-shadow: 0 4px 10px rgba(0,0,0,0.1);
     }
     
-    /* Animations */
-    @keyframes float {
-        0% { transform: translateY(0px) rotate(0deg); }
-        50% { transform: translateY(-20px) rotate(5deg); }
-        100% { transform: translateY(0px) rotate(0deg); }
-    }
-    
-    @keyframes pulse-glow {
-        0% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.4); }
-        70% { box-shadow: 0 0 0 20px rgba(255, 255, 255, 0); }
-        100% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); }
-    }
-    
+    /* Helper Classes */
     .ls-2 { letter-spacing: 2px; }
+    .section-title { font-weight: 700; }
     
-    /* Hero Section */
-    .hero-section {
-        background: radial-gradient(circle at top right, #3a1c71, #d76d77, #ffaf7b); /* Deep vibrant gradient */
+    /* ============================================
+       HIMACHAL MOUNTAIN HERO - OPTIMIZED
+    ============================================ */
+    .hero-himachal {
         position: relative;
-        padding: 160px 0 180px;
+        min-height: 700px;
+        /* Rich Sunset/Dawn Sky */
+        background: linear-gradient(180deg, 
+            #0a0a1a 0%,
+            #1a1035 8%,
+            #2d1f4a 15%,
+            #4a2c6a 22%,
+            #6b3a7a 28%,
+            #8b4a6a 33%,
+            #b85a5a 38%,
+            #d97a4a 43%,
+            #e8a050 48%,
+            #f5c060 52%,
+            #8ec8e8 65%,
+            #a8d8f0 75%,
+            #c8e8f8 85%,
+            #e0f0f8 100%);
         overflow: hidden;
+        padding-top: 80px;
+        /* GPU Acceleration for smooth scroll */
+        transform: translateZ(0);
+        -webkit-backface-visibility: hidden;
+        backface-visibility: hidden;
     }
-    
-    /* Animated Bubbles */
-    .circles {
+
+    /* Ambient Light Glow Overlay */
+    .ambient-glow {
         position: absolute;
         top: 0;
         left: 0;
         width: 100%;
         height: 100%;
-        overflow: hidden;
-        z-index: 0;
+        background: radial-gradient(ellipse at 85% 30%, 
+            rgba(255, 200, 100, 0.3) 0%, 
+            rgba(255, 150, 80, 0.15) 30%, 
+            transparent 60%);
+        z-index: 1;
+        pointer-events: none;
     }
-    .circles li {
+
+    /* Golden Hour Light Rays */
+    .light-rays {
         position: absolute;
-        display: block;
-        list-style: none;
-        width: 20px;
-        height: 20px;
-        background: rgba(255, 255, 255, 0.1);
-        animation: animate 25s linear infinite;
-        bottom: -150px;
-    }
-    .circles li:nth-child(1) { left: 25%; width: 80px; height: 80px; animation-delay: 0s; }
-    .circles li:nth-child(2) { left: 10%; width: 20px; height: 20px; animation-delay: 2s; animation-duration: 12s; }
-    .circles li:nth-child(3) { left: 70%; width: 20px; height: 20px; animation-delay: 4s; }
-    .circles li:nth-child(4) { left: 40%; width: 60px; height: 60px; animation-delay: 0s; animation-duration: 18s; }
-    .circles li:nth-child(5) { left: 65%; width: 20px; height: 20px; animation-delay: 0s; }
-    
-    @keyframes animate {
-        0% { transform: translateY(0) rotate(0deg); opacity: 1; border-radius: 0; }
-        100% { transform: translateY(-1000px) rotate(720deg); opacity: 0; border-radius: 50%; }
-    }
-    
-    /* Hero Image Composition */
-    .hero-image-wrapper {
-        position: relative;
-        height: 400px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-    
-    .main-circle-bg {
-        width: 350px;
-        height: 350px;
-        background: rgba(255, 255, 255, 0.1);
-        border-radius: 50%;
-        backdrop-filter: blur(10px);
-        border: 1px solid rgba(255,255,255,0.2);
-        position: absolute;
-        animation: float 6s ease-in-out infinite;
-    }
-    
-    .floating-icon {
-        position: absolute;
-        width: 60px;
-        height: 60px;
-        background: #fff;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 24px;
-        box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-        animation: float 4s ease-in-out infinite;
+        top: 10%;
+        right: 5%;
+        width: 500px;
+        height: 500px;
+        background: conic-gradient(from 180deg at 50% 50%,
+            transparent 0deg,
+            rgba(255, 220, 150, 0.15) 10deg,
+            transparent 20deg,
+            rgba(255, 200, 120, 0.1) 40deg,
+            transparent 50deg,
+            rgba(255, 220, 150, 0.12) 70deg,
+            transparent 80deg,
+            rgba(255, 200, 120, 0.08) 100deg,
+            transparent 110deg,
+            rgba(255, 220, 150, 0.1) 130deg,
+            transparent 140deg);
         z-index: 2;
+        animation: lightRaysRotate 120s linear infinite;
+        opacity: 0.8;
     }
-    
-    .icon-mic { top: 20px; left: 50px; color: #e63946; animation-delay: 0s; }
-    .icon-camera { bottom: 60px; right: 40px; color: #2a9d8f; animation-delay: 1s; }
-    .icon-news { top: 60px; right: 20px; color: #457b9d; animation-delay: 2s; }
-    .icon-pen { bottom: 40px; left: 20px; color: #f4a261; animation-delay: 1.5s; }
-    
-    .center-badge {
-        width: 140px;
-        height: 140px;
+
+    @keyframes lightRaysRotate {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+
+    /* Floating Magical Particles */
+    .magic-particles {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 15;
+        pointer-events: none;
+        overflow: hidden;
+    }
+
+    .particle {
+        position: absolute;
+        width: 4px;
+        height: 4px;
+        background: rgba(255, 255, 220, 0.8);
+        border-radius: 50%;
+        box-shadow: 0 0 6px rgba(255, 255, 200, 0.6), 0 0 12px rgba(255, 220, 150, 0.4);
+        animation: floatParticle 15s ease-in-out infinite;
+    }
+
+    .particle:nth-child(1) { left: 10%; top: 60%; animation-duration: 18s; animation-delay: 0s; }
+    .particle:nth-child(2) { left: 20%; top: 70%; animation-duration: 22s; animation-delay: 2s; width: 3px; height: 3px; }
+    .particle:nth-child(3) { left: 35%; top: 55%; animation-duration: 16s; animation-delay: 4s; }
+    .particle:nth-child(4) { left: 50%; top: 65%; animation-duration: 20s; animation-delay: 1s; width: 5px; height: 5px; }
+    .particle:nth-child(5) { left: 65%; top: 58%; animation-duration: 17s; animation-delay: 3s; }
+    .particle:nth-child(6) { left: 75%; top: 72%; animation-duration: 21s; animation-delay: 5s; width: 3px; height: 3px; }
+    .particle:nth-child(7) { left: 85%; top: 62%; animation-duration: 19s; animation-delay: 2.5s; }
+    .particle:nth-child(8) { left: 45%; top: 75%; animation-duration: 23s; animation-delay: 4.5s; width: 4px; height: 4px; }
+
+    @keyframes floatParticle {
+        0% { transform: translateY(0) translateX(0); opacity: 0; }
+        10% { opacity: 0.8; }
+        50% { transform: translateY(-150px) translateX(30px); opacity: 0.6; }
+        90% { opacity: 0.8; }
+        100% { transform: translateY(-300px) translateX(-20px); opacity: 0; }
+    }
+
+    /* Twinkling Stars - Enhanced Glow */
+    .stars {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 35%;
+        z-index: 1;
+    }
+
+    .star {
+        position: absolute;
+        width: 3px;
+        height: 3px;
         background: #fff;
         border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        position: relative;
-        z-index: 3;
-        border: 4px solid rgba(255,255,255,0.8);
-        box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+        box-shadow: 0 0 4px #fff, 0 0 8px rgba(200, 220, 255, 0.5);
+        animation: twinkleStar 3s ease-in-out infinite;
     }
-    
-    /* Wave Shape */
-    .wave-shape {
+
+    .star:nth-child(1) { top: 4%; left: 8%; animation-delay: 0s; }
+    .star:nth-child(2) { top: 7%; left: 22%; animation-delay: 0.8s; width: 2px; height: 2px; }
+    .star:nth-child(3) { top: 2%; left: 38%; animation-delay: 1.5s; width: 4px; height: 4px; }
+    .star:nth-child(4) { top: 10%; left: 52%; animation-delay: 0.4s; width: 2px; height: 2px; }
+    .star:nth-child(5) { top: 5%; left: 68%; animation-delay: 1.2s; }
+    .star:nth-child(6) { top: 8%; left: 82%; animation-delay: 2s; width: 2px; height: 2px; }
+    .star:nth-child(7) { top: 12%; left: 12%; animation-delay: 0.6s; width: 3px; height: 3px; }
+    .star:nth-child(8) { top: 3%; left: 75%; animation-delay: 1.8s; width: 4px; height: 4px; }
+    .star:nth-child(9) { top: 6%; left: 45%; animation-delay: 2.5s; width: 2px; height: 2px; }
+    .star:nth-child(10) { top: 9%; left: 60%; animation-delay: 1s; }
+
+    @keyframes twinkleStar {
+        0%, 100% { opacity: 0.2; transform: scale(0.8); }
+        50% { opacity: 1; transform: scale(1.2); box-shadow: 0 0 8px #fff, 0 0 16px rgba(200, 220, 255, 0.8); }
+    }
+
+    /* Sun - Premium Golden Hour Style */
+    .sun-container {
+        position: absolute;
+        top: 15%;
+        right: 10%;
+        z-index: 3;
+    }
+
+    .sun {
+        width: 100px;
+        height: 100px;
+        background: radial-gradient(circle, 
+            #fffef0 0%, 
+            #fff8dc 20%, 
+            #ffd54f 40%, 
+            #ffb300 60%, 
+            #ff8f00 80%, 
+            transparent 100%);
+        border-radius: 50%;
+        box-shadow: 
+            0 0 40px rgba(255, 245, 200, 1),
+            0 0 80px rgba(255, 200, 100, 0.8),
+            0 0 120px rgba(255, 160, 60, 0.6),
+            0 0 200px rgba(255, 120, 40, 0.4);
+        animation: sunPulse 4s ease-in-out infinite;
+    }
+
+    @keyframes sunPulse {
+        0%, 100% { 
+            transform: scale(1); 
+            box-shadow: 
+                0 0 40px rgba(255, 245, 200, 1),
+                0 0 80px rgba(255, 200, 100, 0.8),
+                0 0 120px rgba(255, 160, 60, 0.6),
+                0 0 200px rgba(255, 120, 40, 0.4);
+        }
+        50% { 
+            transform: scale(1.05); 
+            box-shadow: 
+                0 0 50px rgba(255, 245, 200, 1),
+                0 0 100px rgba(255, 200, 100, 0.9),
+                0 0 150px rgba(255, 160, 60, 0.7),
+                0 0 250px rgba(255, 120, 40, 0.5);
+        }
+    }
+
+    .sun-rays {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 280px;
+        height: 280px;
+        animation: rotateSunRays 60s linear infinite;
+    }
+
+    .sun-ray {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 140px;
+        height: 4px;
+        background: linear-gradient(90deg, 
+            rgba(255, 240, 180, 0.9) 0%, 
+            rgba(255, 200, 100, 0.5) 40%,
+            transparent 100%);
+        transform-origin: left center;
+        border-radius: 2px;
+    }
+
+    .sun-ray:nth-child(1) { transform: rotate(0deg); }
+    .sun-ray:nth-child(2) { transform: rotate(30deg); }
+    .sun-ray:nth-child(3) { transform: rotate(60deg); }
+    .sun-ray:nth-child(4) { transform: rotate(90deg); }
+    .sun-ray:nth-child(5) { transform: rotate(120deg); }
+    .sun-ray:nth-child(6) { transform: rotate(150deg); }
+    .sun-ray:nth-child(7) { transform: rotate(180deg); }
+    .sun-ray:nth-child(8) { transform: rotate(210deg); }
+    .sun-ray:nth-child(9) { transform: rotate(240deg); }
+    .sun-ray:nth-child(10) { transform: rotate(270deg); }
+    .sun-ray:nth-child(11) { transform: rotate(300deg); }
+    .sun-ray:nth-child(12) { transform: rotate(330deg); }
+
+    @keyframes sunGlow {
+        0%, 100% { transform: scale(1); box-shadow: 0 0 60px rgba(255, 193, 7, 0.8), 0 0 100px rgba(255, 152, 0, 0.5); }
+        50% { transform: scale(1.05); box-shadow: 0 0 80px rgba(255, 193, 7, 1), 0 0 120px rgba(255, 152, 0, 0.7); }
+    }
+
+    @keyframes rotateSunRays {
+        from { transform: translate(-50%, -50%) rotate(0deg); }
+        to { transform: translate(-50%, -50%) rotate(360deg); }
+    }
+
+    /* Clouds - Enhanced */
+    .cloud {
+        position: absolute;
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 100px;
+        z-index: 3;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    }
+
+    .cloud::before, .cloud::after {
+        content: '';
+        position: absolute;
+        background: inherit;
+        border-radius: 50%;
+        box-shadow: inherit;
+    }
+
+    .cloud-1 {
+        width: 180px;
+        height: 60px;
+        top: 15%;
+        left: -200px;
+        animation: cloudMove1 40s linear infinite;
+    }
+    .cloud-1::before { width: 70px; height: 70px; top: -35px; left: 25px; }
+    .cloud-1::after { width: 90px; height: 90px; top: -50px; left: 70px; }
+
+    .cloud-2 {
+        width: 140px;
+        height: 45px;
+        top: 25%;
+        left: -150px;
+        animation: cloudMove2 50s linear infinite;
+        animation-delay: 10s;
+        opacity: 0.9;
+    }
+    .cloud-2::before { width: 55px; height: 55px; top: -28px; left: 20px; }
+    .cloud-2::after { width: 70px; height: 70px; top: -40px; left: 55px; }
+
+    .cloud-3 {
+        width: 120px;
+        height: 40px;
+        top: 10%;
+        left: -130px;
+        animation: cloudMove3 60s linear infinite;
+        animation-delay: 25s;
+        opacity: 0.8;
+    }
+    .cloud-3::before { width: 45px; height: 45px; top: -22px; left: 15px; }
+    .cloud-3::after { width: 60px; height: 60px; top: -35px; left: 45px; }
+
+    @keyframes cloudMove1 {
+        0% { transform: translateX(0); }
+        100% { transform: translateX(calc(100vw + 400px)); }
+    }
+
+    @keyframes cloudMove2 {
+        0% { transform: translateX(0) translateY(0); }
+        25% { transform: translateX(calc(25vw + 100px)) translateY(-10px); }
+        50% { transform: translateX(calc(50vw + 200px)) translateY(5px); }
+        75% { transform: translateX(calc(75vw + 300px)) translateY(-5px); }
+        100% { transform: translateX(calc(100vw + 400px)) translateY(0); }
+    }
+
+    @keyframes cloudMove3 {
+        0% { transform: translateX(0); }
+        100% { transform: translateX(calc(100vw + 350px)); }
+    }
+
+    /* Mountains - Back Layer (Snow-capped) */
+    .mountains-back {
+        position: absolute;
+        bottom: 120px;
+        left: 0;
+        width: 100%;
+        height: 380px;
+        z-index: 4;
+        filter: drop-shadow(0 8px 25px rgba(0,0,0,0.1));
+    }
+
+    .mountains-back svg {
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+        height: 100%;
+    }
+
+    /* Mountains - Mid Layer (Forest Hills) */
+    .mountains-mid {
+        position: absolute;
+        bottom: 90px;
+        left: 0;
+        width: 100%;
+        height: 300px;
+        z-index: 5;
+        filter: drop-shadow(0 8px 20px rgba(0,0,0,0.15));
+    }
+
+    .mountains-mid svg {
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+        height: 100%;
+    }
+
+    /* Mountains - Front Layer (Dark Forest) */
+    .mountains-front {
+        position: absolute;
+        bottom: 70px;
+        left: 0;
+        width: 100%;
+        height: 240px;
+        z-index: 6;
+        filter: drop-shadow(0 5px 15px rgba(0,0,0,0.2));
+    }
+
+    .mountains-front svg {
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+        height: 100%;
+    }
+
+    /* Mist/Fog Effect between mountains */
+    .mist-layer {
+        position: absolute;
+        left: 0;
+        width: 100%;
+        height: 80px;
+        background: linear-gradient(180deg, 
+            rgba(255,255,255,0) 0%, 
+            rgba(200,220,240,0.4) 50%, 
+            rgba(255,255,255,0) 100%);
+        z-index: 5;
+        animation: mistFloat 8s ease-in-out infinite;
+    }
+
+    .mist-1 {
+        bottom: 280px;
+        opacity: 0.6;
+    }
+
+    .mist-2 {
+        bottom: 200px;
+        opacity: 0.5;
+        animation-delay: 2s;
+    }
+
+    .mist-3 {
+        bottom: 140px;
+        opacity: 0.4;
+        animation-delay: 4s;
+    }
+
+    @keyframes mistFloat {
+        0%, 100% { transform: translateX(-20px); opacity: 0.4; }
+        50% { transform: translateX(20px); opacity: 0.7; }
+    }
+
+    /* Animated Pine Trees with wind sway */
+    .trees-container {
+        position: absolute;
+        bottom: 80px;
+        left: 0;
+        width: 100%;
+        z-index: 7;
+        display: flex;
+        justify-content: space-around;
+        align-items: flex-end;
+        padding: 0 3%;
+    }
+
+    .pine-tree {
+        position: relative;
+        transform-origin: bottom center;
+        animation: treeSway 4s ease-in-out infinite;
+    }
+
+    .pine-tree:nth-child(odd) { animation-delay: 0.5s; }
+    .pine-tree:nth-child(3n) { animation-delay: 1s; }
+
+    @keyframes treeSway {
+        0%, 100% { transform: rotate(0deg); }
+        25% { transform: rotate(1deg); }
+        75% { transform: rotate(-1deg); }
+    }
+
+    /* Green Ground with Grass */
+    .ground {
         position: absolute;
         bottom: 0;
         left: 0;
         width: 100%;
+        height: 110px;
+        background: linear-gradient(180deg, #4a9c5b 0%, #2d7a3e 50%, #1a5c2d 100%);
+        z-index: 9;
+    }
+
+    /* Animated Grass */
+    .grass-container {
+        position: absolute;
+        bottom: 90px;
+        left: 0;
+        width: 100%;
+        height: 40px;
+        z-index: 8;
         overflow: hidden;
-        line-height: 0;
-        transform: rotate(180deg);
     }
-    .wave-shape svg {
+
+    .grass-blade {
+        position: absolute;
+        bottom: 0;
+        width: 4px;
+        height: 25px;
+        background: linear-gradient(to top, #2d7a3e, #4caf50);
+        border-radius: 50% 50% 0 0;
+        transform-origin: bottom center;
+        animation: grassWave 2s ease-in-out infinite;
+    }
+
+    @keyframes grassWave {
+        0%, 100% { transform: rotate(-5deg); }
+        50% { transform: rotate(5deg); }
+    }
+
+    /* Children Group - More Animated */
+    .children-group {
+        position: absolute;
+        bottom: 100px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 12;
+        display: flex;
+        align-items: flex-end;
+        gap: 20px;
+    }
+
+    .child-svg {
+        animation: childBounce 2s ease-in-out infinite;
+        filter: drop-shadow(2px 4px 6px rgba(0,0,0,0.3));
+    }
+
+    .child-svg:nth-child(1) { animation-delay: 0s; }
+    .child-svg:nth-child(2) { animation-delay: 0.4s; }
+    .child-svg:nth-child(3) { animation-delay: 0.2s; }
+    .child-svg:nth-child(4) { animation-delay: 0.6s; }
+    .child-svg:nth-child(5) { animation-delay: 0.3s; }
+
+    @keyframes childBounce {
+        0%, 100% { transform: translateY(0) scale(1); }
+        50% { transform: translateY(-8px) scale(1.02); }
+    }
+
+    /* Fireflies / Particles */
+    .fireflies {
+        position: absolute;
+        top: 50%;
+        left: 0;
+        width: 100%;
+        height: 50%;
+        z-index: 11;
+        pointer-events: none;
+    }
+
+    .firefly {
+        position: absolute;
+        width: 6px;
+        height: 6px;
+        background: rgba(255, 255, 150, 0.9);
+        border-radius: 50%;
+        box-shadow: 0 0 10px rgba(255, 255, 150, 0.8), 0 0 20px rgba(255, 255, 100, 0.5);
+        animation: fireflyFloat 6s ease-in-out infinite;
+    }
+
+    .firefly:nth-child(1) { top: 20%; left: 10%; animation-delay: 0s; }
+    .firefly:nth-child(2) { top: 40%; left: 25%; animation-delay: 1s; width: 4px; height: 4px; }
+    .firefly:nth-child(3) { top: 30%; left: 60%; animation-delay: 2s; }
+    .firefly:nth-child(4) { top: 50%; left: 80%; animation-delay: 0.5s; width: 5px; height: 5px; }
+    .firefly:nth-child(5) { top: 35%; left: 45%; animation-delay: 1.5s; }
+
+    @keyframes fireflyFloat {
+        0% { transform: translate(0, 0); opacity: 0.3; }
+        25% { transform: translate(20px, -30px); opacity: 1; }
+        50% { transform: translate(-10px, -50px); opacity: 0.5; }
+        75% { transform: translate(30px, -20px); opacity: 1; }
+        100% { transform: translate(0, 0); opacity: 0.3; }
+    }
+
+    /* Flying Birds - More Natural */
+    .birds-group {
+        position: absolute;
+        top: 20%;
+        left: 5%;
+        z-index: 4;
+        animation: birdsPath 25s linear infinite;
+    }
+
+    .bird {
+        fill: none;
+        stroke: #1a1a1a;
+        stroke-width: 2;
+        stroke-linecap: round;
+        animation: birdFlap 0.5s ease-in-out infinite;
+    }
+
+    .bird:nth-child(2) { animation-delay: 0.1s; }
+    .bird:nth-child(3) { animation-delay: 0.2s; }
+
+    @keyframes birdFlap {
+        0%, 100% { d: path('M0 5 Q5 0, 10 5'); }
+        50% { d: path('M0 5 Q5 10, 10 5'); }
+    }
+
+    @keyframes birdsPath {
+        0% { transform: translateX(0) translateY(0); }
+        25% { transform: translateX(20vw) translateY(-20px); }
+        50% { transform: translateX(50vw) translateY(10px); }
+        75% { transform: translateX(80vw) translateY(-15px); }
+        100% { transform: translateX(110vw) translateY(0); opacity: 0; }
+    }
+
+    /* Hero Content */
+    .hero-content {
         position: relative;
-        display: block;
-        width: calc(157% + 1.3px);
-        height: 104px;
+        z-index: 20;
+        padding: 40px 0 280px;
     }
-    .wave-shape .shape-fill { fill: #fff; }
-    
-    /* Buttons */
-    .hero-btn-primary {
-        border: none;
-        padding: 15px 30px;
+
+    .hero-title {
+        font-size: 3.5rem;
+        font-weight: 800;
+        color: #fff;
+        text-shadow: 
+            2px 2px 0px rgba(0,0,0,0.3),
+            4px 4px 10px rgba(0,0,0,0.4),
+            0 0 30px rgba(0,0,0,0.2);
+        margin-bottom: 15px;
+        -webkit-text-stroke: 1px rgba(0,0,0,0.1);
+    }
+
+    .hero-subtitle {
+        font-size: 1.5rem;
+        color: #fff;
+        text-shadow: 
+            1px 1px 0px rgba(0,0,0,0.3),
+            2px 2px 8px rgba(0,0,0,0.4);
+        margin-bottom: 20px;
+        font-weight: 600;
+    }
+
+    .hero-desc {
+        font-size: 1.15rem;
+        color: #fff;
+        max-width: 650px;
+        margin-bottom: 30px;
+        text-shadow: 
+            1px 1px 0px rgba(0,0,0,0.3),
+            2px 2px 6px rgba(0,0,0,0.3);
+        line-height: 1.7;
+        font-weight: 500;
+    }
+
+    .hero-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: #d91c1c;
+        color: #fff;
+        padding: 12px 24px;
         border-radius: 50px;
         font-weight: 700;
-        box-shadow: 0 10px 20px rgba(0,0,0,0.2);
-        transition: all 0.3s;
-        color: #d76d77;
+        margin-bottom: 25px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.25);
+        border: 2px solid rgba(255,255,255,0.3);
     }
+
+    .hero-btn-primary {
+        background: #d91c1c;
+        color: #fff;
+        padding: 16px 40px;
+        border-radius: 50px;
+        font-weight: 700;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        box-shadow: 0 8px 25px rgba(217, 28, 28, 0.4);
+        transition: all 0.3s;
+        border: none;
+    }
+
     .hero-btn-primary:hover {
         transform: translateY(-3px);
-        box-shadow: 0 15px 30px rgba(0,0,0,0.3);
-        color: #c92a36;
+        box-shadow: 0 12px 35px rgba(217, 28, 28, 0.5);
+        background: #b01515;
+        color: #fff;
+    }
+
+    .hero-btn-outline {
+        background: rgba(255,255,255,0.95);
+        color: #333;
+        border: 2px solid #fff;
+        padding: 14px 35px;
+        border-radius: 50px;
+        font-weight: 600;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        transition: all 0.3s;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+    }
+
+    .hero-btn-outline:hover {
+        background: #fff;
+        color: #d91c1c;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+    }
+
+    /* Birds Animation */
+    .birds {
+        position: absolute;
+        top: 25%;
+        left: 10%;
+        z-index: 3;
+        animation: birdsfly 20s linear infinite;
+    }
+
+    @keyframes birdsfly {
+        0% { transform: translateX(0) translateY(0); }
+        25% { transform: translateX(100px) translateY(-20px); }
+        50% { transform: translateX(200px) translateY(10px); }
+        75% { transform: translateX(300px) translateY(-10px); }
+        100% { transform: translateX(400px) translateY(0); opacity: 0; }
+    }
+
+    /* Responsive */
+    @media (max-width: 992px) {
+        .hero-himachal { min-height: 550px; }
+        .hero-title { font-size: 2.5rem; }
+        .hero-subtitle { font-size: 1.2rem; }
+        .hero-content { padding-bottom: 200px; }
+        .children-group { display: none; }
+    }
+
+    @media (max-width: 576px) {
+        .hero-himachal { min-height: 500px; }
+        .hero-title { font-size: 2rem; }
+        .hero-subtitle { font-size: 1rem; }
+        .trees { display: none; }
+    }
+
+    /* ============================================
+       CONTENT SECTIONS - CLEAN & PROFESSIONAL
+       (Designed for Parents)
+    ============================================ */
+    
+    /* Section Base Styling */
+    .content-section {
+        background: #fff;
+        padding: 80px 0;
+    }
+
+    .content-section-alt {
+        background: #f8f9fa;
+        padding: 80px 0;
+    }
+
+    .section-header {
+        margin-bottom: 50px;
+    }
+
+    .section-header h2 {
+        font-size: 2.2rem;
+        font-weight: 700;
+        color: #1a1a2e;
+        margin-bottom: 15px;
+    }
+
+    .section-header p {
+        font-size: 1.1rem;
+        color: #666;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
+    .section-header .accent-line {
+        width: 60px;
+        height: 4px;
+        background: #d91c1c;
+        margin: 20px auto 0;
+        border-radius: 2px;
+    }
+
+    /* Clean Feature Cards */
+    .feature-card {
+        background: #fff;
+        border-radius: 16px;
+        padding: 30px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+        border: 1px solid rgba(0,0,0,0.04);
+        transition: all 0.3s ease;
+        height: 100%;
+    }
+
+    .feature-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 35px rgba(0,0,0,0.1);
+    }
+
+    .feature-card .icon-wrap {
+        width: 60px;
+        height: 60px;
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        margin-bottom: 20px;
+    }
+
+    .feature-card h5 {
+        font-size: 1.15rem;
+        font-weight: 600;
+        color: #1a1a2e;
+        margin-bottom: 12px;
+    }
+
+    .feature-card p {
+        font-size: 0.95rem;
+        color: #666;
+        line-height: 1.6;
+        margin: 0;
+    }
+
+    /* Icon Background Colors - Subtle */
+    .icon-bg-red { background: rgba(217, 28, 28, 0.1); color: #d91c1c; }
+    .icon-bg-blue { background: rgba(37, 99, 235, 0.1); color: #2563eb; }
+    .icon-bg-green { background: rgba(22, 163, 74, 0.1); color: #16a34a; }
+    .icon-bg-orange { background: rgba(234, 88, 12, 0.1); color: #ea580c; }
+    .icon-bg-purple { background: rgba(139, 92, 246, 0.1); color: #8b5cf6; }
+    .icon-bg-teal { background: rgba(20, 184, 166, 0.1); color: #14b8a6; }
+
+    /* Process Steps - Clean */
+    .process-step {
+        text-align: center;
+        padding: 25px;
+    }
+
+    .process-step .step-number {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background: #d91c1c;
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+        font-weight: 700;
+        margin: 0 auto 20px;
+    }
+
+    .process-step h5 {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #1a1a2e;
+        margin-bottom: 10px;
+    }
+
+    .process-step p {
+        font-size: 0.9rem;
+        color: #666;
+    }
+
+    /* Info Box */
+    .info-box {
+        background: #fff;
+        border-left: 4px solid #d91c1c;
+        padding: 25px;
+        border-radius: 0 12px 12px 0;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    }
+
+    .info-box h5 {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #1a1a2e;
+        margin-bottom: 10px;
+    }
+
+    .info-box p {
+        color: #666;
+        margin: 0;
+    }
+
+    /* Pricing/Fee Card */
+    .pricing-card {
+        background: linear-gradient(135deg, #1a1a2e 0%, #2d2d4a 100%);
+        color: #fff;
+        border-radius: 20px;
+        padding: 40px;
+        text-align: center;
+    }
+
+    .pricing-card .price {
+        font-size: 3rem;
+        font-weight: 800;
+        margin: 20px 0;
+    }
+
+    .pricing-card .price small {
+        font-size: 1rem;
+        font-weight: 400;
+        opacity: 0.8;
+    }
+
+    /* CTA Section - Clean */
+    .cta-section {
+        background: linear-gradient(135deg, #d91c1c 0%, #b01515 100%);
+        padding: 60px 0;
+    }
+
+    .cta-section h2 {
+        color: #fff;
+        font-weight: 700;
+    }
+
+    .cta-section p {
+        color: rgba(255,255,255,0.9);
+    }
+
+    .btn-white { 
+        background: #fff; 
+        color: #d91c1c; 
+        font-weight: 600;
+        padding: 14px 35px;
+        border-radius: 50px;
+        transition: all 0.3s; 
+    }
+
+    .btn-white:hover { 
+        background: #f8f8f8; 
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    }
+
+    /* List Styles */
+    .check-list {
+        list-style: none;
+        padding: 0;
+    }
+
+    .check-list li {
+        padding: 10px 0;
+        padding-left: 30px;
+        position: relative;
+        color: #444;
+    }
+
+    .check-list li::before {
+        content: '✓';
+        position: absolute;
+        left: 0;
+        color: #16a34a;
+        font-weight: bold;
+    }
+
+    /* Legacy compatibility */
+    .shadow-hover { transition: all 0.3s ease; }
+    .shadow-hover:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 30px rgba(0,0,0,0.08) !important;
     }
     
+    .bg-soft-danger { background: rgba(217, 28, 28, 0.08); }
+    .bg-soft-primary { background: rgba(37, 99, 235, 0.08); }
+    .bg-soft-success { background: rgba(22, 163, 74, 0.08); }
+    .bg-soft-info { background: rgba(20, 184, 166, 0.08); }
+    .bg-soft-warning { background: rgba(234, 88, 12, 0.08); }
+    .bg-soft-purple { background: rgba(139, 92, 246, 0.08); }
+    
+    .icon-box { width: 70px; height: 70px; }
+    .icon-box-sm { width: 55px; height: 55px; }
+    
+    /* Process Steps - Legacy */
+    .step-icon-wrap {
+        width: 65px;
+        height: 65px;
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 22px;
+        transition: all 0.3s;
+    }
+    .process-step-new:hover .step-icon-wrap { transform: scale(1.05); }
+
+    /* Pills */
+    .feature-pill {
+        background: #f1f5f9;
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-size: 13px;
+        font-weight: 500;
+        color: #475569;
+        display: inline-block;
+        margin: 4px;
+    }
+
+    /* Timeline */
+    .timeline-item {
+        position: relative;
+        padding-left: 40px;
+        padding-bottom: 30px;
+        border-left: 3px solid #dee2e6;
+    }
+    .timeline-item:last-child { border-left: 3px solid transparent; padding-bottom: 0; }
+    .timeline-item::before {
+        content: '';
+        position: absolute;
+        left: -10px;
+        top: 0;
+        width: 20px;
+        height: 20px;
+        background: #d91c1c;
+        border-radius: 50%;
+        border: 3px solid #fff;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    /* Info Cards */
+    .info-card {
+        border-left: 4px solid #d91c1c;
+        background: #fff;
+    }
+    
+    /* Age Group Cards */
+    .age-card {
+        transition: all 0.3s;
+    }
+    .age-card:hover {
+        transform: translateY(-5px);
+    }
+
     .btn-shine {
         position: relative;
         overflow: hidden;
@@ -169,294 +1018,1139 @@
         transition: 0.5s;
     }
     .btn-shine:hover::after { left: 100%; }
-
-    /* Features */
-    .shadow-hover { transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1); }
-    .shadow-hover:hover {
-        transform: translateY(-10px);
-        box-shadow: 0 20px 40px rgba(0,0,0,0.1) !important;
-    }
-    
-    .bg-soft-danger { background: rgba(220, 53, 69, 0.1); }
-    .bg-soft-primary { background: rgba(13, 110, 253, 0.1); }
-    .bg-soft-success { background: rgba(25, 135, 84, 0.1); }
-    .bg-soft-info { background: rgba(13, 202, 240, 0.1); }
-    
-    .icon-box { width: 80px; height: 80px; }
-    
-    /* Process Steps */
-    .step-icon-wrap {
-        width: 70px;
-        height: 70px;
-        border-radius: 20px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 24px;
-        transform: rotate(-10deg);
-        transition: transform 0.3s;
-    }
-    .process-step-new:hover .step-icon-wrap { transform: rotate(0deg) scale(1.1); }
-
-    /* Pills */
-    .feature-pill {
-        background: #f8f9fa;
-        padding: 8px 15px;
-        border-radius: 20px;
-        font-size: 14px;
-        font-weight: 500;
-        color: #555;
-    }
-    
-    /* CTA */
-    .cta-section {
-        background: var(--primary-gradient);
-    }
-    .btn-white { background: #fff; color: #333; transition: all 0.3s; }
-    .btn-white:hover { background: #f0f0f0; transform: translateY(-3px); }
 </style>
 {% endblock %}
 
 
 {% block content %}
-<!-- Hero Section -->
-<section class="hero-section">
-    <!-- Animated Background Elements -->
-    <div class="circles">
-        <li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li>
+<!-- Hero Section - PIXAR QUALITY Himachal Scene -->
+<section class="hero-himachal">
+    
+    <!-- Ambient Golden Glow Overlay -->
+    <div class="ambient-glow"></div>
+    
+    <!-- Dramatic Light Rays from Sun -->
+    <div class="light-rays"></div>
+    
+    <!-- Floating Magical Particles -->
+    <div class="magic-particles">
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
     </div>
-
-    <div class="container position-relative z-index-1">
-        <div class="row align-items-center">
-            <div class="col-lg-7 text-lg-start text-center mb-5 mb-lg-0">
-                <span class="badge bg-white text-danger mb-3 px-3 py-2 rounded-pill fw-bold shadow-sm">
-                    <i class="fas fa-star me-1 text-warning"></i> जन हिमाचल की पहल
-                </span>
-                <h1 class="display-3 fw-bolder mb-3 text-white">
-                    {{ program.name_hindi }}
-                </h1>
-                <h2 class="h2 mb-4 text-white-50 fw-light">
-                    {{ program.name }}
-                </h2>
-                <p class="lead mb-5 text-white opacity-75">
-                    क्या आपका बच्चा कहानियाँ बुनना पसंद करता है? <br>
-                    उन्हें <strong>नन्हे पत्रकार</strong> के साथ अपनी आवाज़ दुनिया तक पहुँचाने दें।
+    
+    <!-- Twinkling Stars - More Stars -->
+    <div class="stars">
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+    </div>
+    
+    <!-- Sun with Rotating Rays -->
+    <div class="sun-container">
+        <div class="sun-rays">
+            <div class="sun-ray"></div>
+            <div class="sun-ray"></div>
+            <div class="sun-ray"></div>
+            <div class="sun-ray"></div>
+            <div class="sun-ray"></div>
+            <div class="sun-ray"></div>
+            <div class="sun-ray"></div>
+            <div class="sun-ray"></div>
+            <div class="sun-ray"></div>
+            <div class="sun-ray"></div>
+            <div class="sun-ray"></div>
+            <div class="sun-ray"></div>
+        </div>
+        <div class="sun"></div>
+    </div>
+    
+    <!-- Animated Clouds -->
+    <div class="cloud cloud-1"></div>
+    <div class="cloud cloud-2"></div>
+    <div class="cloud cloud-3"></div>
+    
+    <!-- Flying Birds Group -->
+    <svg class="birds-group" width="80" height="30" viewBox="0 0 80 30">
+        <path class="bird" d="M5 15 Q10 8, 15 15"/>
+        <path class="bird" d="M25 10 Q30 3, 35 10"/>
+        <path class="bird" d="M45 18 Q50 11, 55 18"/>
+        <path class="bird" d="M60 12 Q65 5, 70 12"/>
+    </svg>
+    
+    <!-- Mountains Back (Snow-capped Himalayas) - REALISTIC -->
+    <div class="mountains-back">
+        <svg viewBox="0 0 1440 400" preserveAspectRatio="none">
+            <defs>
+                <!-- Main mountain gradient -->
+                <linearGradient id="snowMountain" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#ffffff"/>
+                    <stop offset="15%" style="stop-color:#f0f4f8"/>
+                    <stop offset="40%" style="stop-color:#b8c5d1"/>
+                    <stop offset="70%" style="stop-color:#8a9bab"/>
+                    <stop offset="100%" style="stop-color:#5a6b7a"/>
+                </linearGradient>
+                <!-- Shadow side gradient -->
+                <linearGradient id="mountainShadow" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" style="stop-color:#4a5a6a"/>
+                    <stop offset="100%" style="stop-color:#6a7a8a"/>
+                </linearGradient>
+                <!-- Snow highlight -->
+                <linearGradient id="snowHighlight" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#ffffff"/>
+                    <stop offset="100%" style="stop-color:#e8f0f8"/>
+                </linearGradient>
+            </defs>
+            
+            <!-- Main mountain range with peaks -->
+            <path fill="url(#snowMountain)" d="M0,400 L0,280 L80,220 L140,260 L200,160 L280,220 L360,100 L420,180 L500,60 L580,150 L660,80 L740,160 L820,40 L900,130 L980,70 L1060,150 L1140,50 L1220,140 L1300,90 L1380,150 L1440,120 L1440,400 Z"/>
+            
+            <!-- Shadow faces on right side of peaks -->
+            <path fill="url(#mountainShadow)" opacity="0.4" d="M360,100 L420,180 L360,180 Z"/>
+            <path fill="url(#mountainShadow)" opacity="0.4" d="M500,60 L580,150 L500,150 Z"/>
+            <path fill="url(#mountainShadow)" opacity="0.4" d="M660,80 L740,160 L660,160 Z"/>
+            <path fill="url(#mountainShadow)" opacity="0.4" d="M820,40 L900,130 L820,130 Z"/>
+            <path fill="url(#mountainShadow)" opacity="0.4" d="M980,70 L1060,150 L980,150 Z"/>
+            <path fill="url(#mountainShadow)" opacity="0.4" d="M1140,50 L1220,140 L1140,140 Z"/>
+            
+            <!-- Realistic snow caps with shape -->
+            <path fill="url(#snowHighlight)" d="M340,120 L360,100 L380,120 Q370,130, 360,125 Q350,130, 340,120"/>
+            <path fill="url(#snowHighlight)" d="M480,80 L500,60 L520,80 Q510,90, 500,85 Q490,90, 480,80"/>
+            <path fill="url(#snowHighlight)" d="M640,100 L660,80 L680,100 Q670,110, 660,105 Q650,110, 640,100"/>
+            <path fill="url(#snowHighlight)" d="M800,60 L820,40 L840,60 Q830,70, 820,65 Q810,70, 800,60"/>
+            <path fill="url(#snowHighlight)" d="M960,90 L980,70 L1000,90 Q990,100, 980,95 Q970,100, 960,90"/>
+            <path fill="url(#snowHighlight)" d="M1120,70 L1140,50 L1160,70 Q1150,80, 1140,75 Q1130,80, 1120,70"/>
+            <path fill="url(#snowHighlight)" d="M1280,110 L1300,90 L1320,110 Q1310,120, 1300,115 Q1290,120, 1280,110"/>
+        </svg>
+    </div>
+    
+    <!-- Mist Layer 1 (between back and mid mountains) -->
+    <div class="mist-layer mist-1"></div>
+    
+    <!-- Mountains Mid (Forested Hills) - REALISTIC -->
+    <div class="mountains-mid">
+        <svg viewBox="0 0 1440 320" preserveAspectRatio="none">
+            <defs>
+                <linearGradient id="forestHill" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#5a9050"/>
+                    <stop offset="30%" style="stop-color:#4a8040"/>
+                    <stop offset="60%" style="stop-color:#3a7030"/>
+                    <stop offset="100%" style="stop-color:#2a5020"/>
+                </linearGradient>
+                <linearGradient id="forestShadow" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" style="stop-color:#1a4020"/>
+                    <stop offset="100%" style="stop-color:#2a5030"/>
+                </linearGradient>
+            </defs>
+            
+            <!-- Main forested hills -->
+            <path fill="url(#forestHill)" d="M0,320 L0,220 L60,180 L140,210 L220,140 L320,180 L420,110 L520,160 L620,100 L720,150 L820,120 L920,160 L1020,100 L1120,150 L1220,130 L1320,170 L1440,140 L1440,320 Z"/>
+            
+            <!-- Shadow on some hills -->
+            <path fill="url(#forestShadow)" opacity="0.3" d="M220,140 L320,180 L220,180 Z"/>
+            <path fill="url(#forestShadow)" opacity="0.3" d="M420,110 L520,160 L420,160 Z"/>
+            <path fill="url(#forestShadow)" opacity="0.3" d="M620,100 L720,150 L620,150 Z"/>
+            <path fill="url(#forestShadow)" opacity="0.3" d="M820,120 L920,160 L820,160 Z"/>
+            <path fill="url(#forestShadow)" opacity="0.3" d="M1020,100 L1120,150 L1020,150 Z"/>
+            
+            <!-- Tree texture hints on ridges -->
+            <path fill="#2a6030" opacity="0.5" d="M140,210 Q150,200, 160,210 Q170,200, 180,210 Q190,200, 200,210 L220,140 L140,210"/>
+            <path fill="#2a6030" opacity="0.5" d="M520,160 Q530,150, 540,160 Q550,150, 560,160 Q570,150, 580,160 L620,100 L520,160"/>
+        </svg>
+    </div>
+    
+    <!-- Mist Layer 2 -->
+    <div class="mist-layer mist-2"></div>
+    
+    <!-- Mountains Front (Dark Dense Forest) - REALISTIC -->
+    <div class="mountains-front">
+        <svg viewBox="0 0 1440 280" preserveAspectRatio="none">
+            <defs>
+                <linearGradient id="denseForest" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#2d5a2e"/>
+                    <stop offset="40%" style="stop-color:#1f4a20"/>
+                    <stop offset="100%" style="stop-color:#0f3010"/>
+                </linearGradient>
+                <linearGradient id="denseForestShadow" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" style="stop-color:#0a2008"/>
+                    <stop offset="100%" style="stop-color:#153015"/>
+                </linearGradient>
+            </defs>
+            
+            <!-- Dense forest hills -->
+            <path fill="url(#denseForest)" d="M0,280 L0,200 L50,160 L120,190 L200,130 L300,170 L400,110 L500,150 L600,100 L700,140 L800,115 L900,150 L1000,110 L1100,145 L1200,120 L1300,155 L1400,130 L1440,150 L1440,280 Z"/>
+            
+            <!-- Shadows -->
+            <path fill="url(#denseForestShadow)" opacity="0.4" d="M200,130 L300,170 L200,170 Z"/>
+            <path fill="url(#denseForestShadow)" opacity="0.4" d="M400,110 L500,150 L400,150 Z"/>
+            <path fill="url(#denseForestShadow)" opacity="0.4" d="M600,100 L700,140 L600,140 Z"/>
+            <path fill="url(#denseForestShadow)" opacity="0.4" d="M800,115 L900,150 L800,150 Z"/>
+            <path fill="url(#denseForestShadow)" opacity="0.4" d="M1000,110 L1100,145 L1000,145 Z"/>
+            
+            <!-- Pine tree silhouettes on ridge -->
+            <path fill="#0f3010" d="M100,190 L105,175 L110,190 M115,190 L120,172 L125,190 M130,190 L135,178 L140,190"/>
+            <path fill="#0f3010" d="M300,170 L305,155 L310,170 M315,170 L320,152 L325,170 M330,170 L335,158 L340,170"/>
+            <path fill="#0f3010" d="M500,150 L505,135 L510,150 M515,150 L520,132 L525,150 M530,150 L535,138 L540,150"/>
+            <path fill="#0f3010" d="M700,140 L705,125 L710,140 M715,140 L720,122 L725,140 M730,140 L735,128 L740,140"/>
+        </svg>
+    </div>
+    
+    <!-- Mist Layer 3 (lowest) -->
+    <div class="mist-layer mist-3"></div>
+    
+    <!-- SVG Pine Trees with Wind Sway -->
+    <div class="trees-container">
+        <svg class="pine-tree" width="40" height="80" viewBox="0 0 40 80">
+            <polygon points="20,5 35,35 28,35 38,55 25,55 40,80 0,80 15,55 2,55 12,35 5,35" fill="#1a5c3a"/>
+            <rect x="17" y="65" width="6" height="15" fill="#4a3728"/>
+        </svg>
+        <svg class="pine-tree" width="30" height="60" viewBox="0 0 30 60" style="margin-left:-10px">
+            <polygon points="15,3 26,26 21,26 29,42 19,42 30,60 0,60 11,42 1,42 9,26 4,26" fill="#2d7a3e"/>
+            <rect x="12" y="50" width="5" height="10" fill="#5c4033"/>
+        </svg>
+        <svg class="pine-tree" width="45" height="90" viewBox="0 0 45 90">
+            <polygon points="22,2 40,38 32,38 44,62 28,62 45,90 0,90 17,62 1,62 13,38 5,38" fill="#1a5c3a"/>
+            <rect x="18" y="75" width="8" height="15" fill="#4a3728"/>
+        </svg>
+        <svg class="pine-tree" width="35" height="70" viewBox="0 0 35 70" style="margin-left:-5px">
+            <polygon points="17,3 31,30 25,30 34,50 22,50 35,70 0,70 13,50 1,50 10,30 4,30" fill="#2d7a3e"/>
+            <rect x="14" y="58" width="6" height="12" fill="#5c4033"/>
+        </svg>
+        <svg class="pine-tree" width="38" height="75" viewBox="0 0 38 75">
+            <polygon points="19,4 34,32 27,32 37,54 24,54 38,75 0,75 14,54 1,54 11,32 4,32" fill="#1a5c3a"/>
+            <rect x="15" y="62" width="7" height="13" fill="#4a3728"/>
+        </svg>
+    </div>
+    
+    <!-- Animated Grass -->
+    <div class="grass-container" id="grassContainer"></div>
+    
+    <!-- Children with Himachali Caps - Enhanced -->
+    <div class="children-group">
+        <!-- Boy 1 with Red Himachali Cap -->
+        <svg class="child-svg" width="55" height="110" viewBox="0 0 55 110">
+            <!-- Head -->
+            <ellipse cx="27" cy="22" rx="14" ry="16" fill="#d2a679"/>
+            <!-- Eyes -->
+            <ellipse cx="22" cy="22" rx="2" ry="2.5" fill="#1a1a1a"/>
+            <ellipse cx="32" cy="22" rx="2" ry="2.5" fill="#1a1a1a"/>
+            <!-- Smile -->
+            <path d="M22 28 Q27 32, 32 28" stroke="#1a1a1a" stroke-width="1.5" fill="none"/>
+            <!-- Himachali Cap -->
+            <path d="M13 18 Q27 0, 41 18" fill="#d91c1c"/>
+            <ellipse cx="27" cy="18" rx="14" ry="4" fill="#d91c1c"/>
+            <circle cx="27" cy="6" r="4" fill="#d91c1c"/>
+            <circle cx="27" cy="6" r="2" fill="#ffd700"/>
+            <!-- Body (Green Kurta) -->
+            <path d="M18 38 L12 70 L42 70 L36 38 Q27 42, 18 38" fill="#2e7d32"/>
+            <!-- Arms -->
+            <rect x="8" y="42" width="8" height="25" rx="4" fill="#2e7d32"/>
+            <rect x="38" y="42" width="8" height="25" rx="4" fill="#2e7d32"/>
+            <!-- Legs -->
+            <rect x="16" y="70" width="10" height="35" rx="3" fill="#5d4037"/>
+            <rect x="29" y="70" width="10" height="35" rx="3" fill="#5d4037"/>
+        </svg>
+        
+        <!-- Girl with Braids -->
+        <svg class="child-svg" width="48" height="95" viewBox="0 0 48 95">
+            <!-- Hair -->
+            <ellipse cx="24" cy="20" rx="14" ry="15" fill="#1a1a1a"/>
+            <!-- Face -->
+            <ellipse cx="24" cy="22" rx="11" ry="13" fill="#e8c4a0"/>
+            <!-- Eyes -->
+            <ellipse cx="20" cy="21" rx="2" ry="2" fill="#1a1a1a"/>
+            <ellipse cx="28" cy="21" rx="2" ry="2" fill="#1a1a1a"/>
+            <!-- Smile -->
+            <path d="M20 27 Q24 30, 28 27" stroke="#1a1a1a" stroke-width="1.2" fill="none"/>
+            <!-- Braids -->
+            <rect x="8" y="20" width="5" height="30" rx="2.5" fill="#1a1a1a"/>
+            <rect x="35" y="20" width="5" height="30" rx="2.5" fill="#1a1a1a"/>
+            <!-- Pink Dress -->
+            <path d="M16 36 L10 65 L38 65 L32 36 Q24 40, 16 36" fill="#e91e63"/>
+            <path d="M10 65 L5 95 L43 95 L38 65 Z" fill="#e91e63"/>
+            <!-- Ribbon -->
+            <ellipse cx="24" cy="8" rx="6" ry="3" fill="#ff4081"/>
+        </svg>
+        
+        <!-- Tall Boy with Blue Dress -->
+        <svg class="child-svg" width="60" height="120" viewBox="0 0 60 120">
+            <!-- Head -->
+            <ellipse cx="30" cy="24" rx="15" ry="17" fill="#c9a06d"/>
+            <!-- Eyes -->
+            <ellipse cx="25" cy="24" rx="2.5" ry="3" fill="#1a1a1a"/>
+            <ellipse cx="35" cy="24" rx="2.5" ry="3" fill="#1a1a1a"/>
+            <!-- Smile -->
+            <path d="M24 31 Q30 36, 36 31" stroke="#1a1a1a" stroke-width="1.5" fill="none"/>
+            <!-- Himachali Cap -->
+            <path d="M15 20 Q30 0, 45 20" fill="#d91c1c"/>
+            <ellipse cx="30" cy="20" rx="15" ry="5" fill="#d91c1c"/>
+            <circle cx="30" cy="6" r="5" fill="#d91c1c"/>
+            <circle cx="30" cy="6" r="2.5" fill="#ffd700"/>
+            <!-- Body (Blue Kurta) -->
+            <path d="M20 42 L14 80 L46 80 L40 42 Q30 46, 20 42" fill="#1565c0"/>
+            <!-- Arms -->
+            <rect x="8" y="46" width="9" height="28" rx="4" fill="#1565c0"/>
+            <rect x="43" y="46" width="9" height="28" rx="4" fill="#1565c0"/>
+            <!-- Legs -->
+            <rect x="18" y="80" width="11" height="38" rx="3" fill="#4a3728"/>
+            <rect x="32" y="80" width="11" height="38" rx="3" fill="#4a3728"/>
+        </svg>
+        
+        <!-- Small Boy with Green -->
+        <svg class="child-svg" width="45" height="90" viewBox="0 0 45 90">
+            <!-- Head -->
+            <ellipse cx="22" cy="18" rx="12" ry="14" fill="#deb887"/>
+            <!-- Eyes -->
+            <ellipse cx="18" cy="18" rx="2" ry="2" fill="#1a1a1a"/>
+            <ellipse cx="26" cy="18" rx="2" ry="2" fill="#1a1a1a"/>
+            <!-- Smile -->
+            <path d="M18 23 Q22 27, 26 23" stroke="#1a1a1a" stroke-width="1" fill="none"/>
+            <!-- Himachali Cap -->
+            <path d="M10 15 Q22 0, 34 15" fill="#d91c1c"/>
+            <ellipse cx="22" cy="15" rx="12" ry="4" fill="#d91c1c"/>
+            <circle cx="22" cy="5" r="3" fill="#d91c1c"/>
+            <!-- Body (Green) -->
+            <path d="M14 32 L9 58 L35 58 L30 32 Q22 36, 14 32" fill="#4caf50"/>
+            <!-- Legs -->
+            <rect x="12" y="58" width="9" height="30" rx="3" fill="#5d4037"/>
+            <rect x="24" y="58" width="9" height="30" rx="3" fill="#5d4037"/>
+        </svg>
+        
+        <!-- Small Girl with Purple -->
+        <svg class="child-svg" width="42" height="85" viewBox="0 0 42 85">
+            <!-- Hair -->
+            <ellipse cx="21" cy="16" rx="12" ry="13" fill="#3d2314"/>
+            <!-- Face -->
+            <ellipse cx="21" cy="18" rx="10" ry="11" fill="#f5d5c8"/>
+            <!-- Eyes -->
+            <ellipse cx="17" cy="17" rx="1.5" ry="2" fill="#1a1a1a"/>
+            <ellipse cx="25" cy="17" rx="1.5" ry="2" fill="#1a1a1a"/>
+            <!-- Smile -->
+            <path d="M17 22 Q21 25, 25 22" stroke="#1a1a1a" stroke-width="1" fill="none"/>
+            <!-- Purple Dress -->
+            <path d="M14 30 L9 52 L33 52 L28 30 Q21 34, 14 30" fill="#9c27b0"/>
+            <path d="M9 52 L5 85 L37 85 L33 52 Z" fill="#9c27b0"/>
+            <!-- Hair bands -->
+            <circle cx="10" cy="12" r="3" fill="#ff4081"/>
+            <circle cx="32" cy="12" r="3" fill="#ff4081"/>
+        </svg>
+    </div>
+    
+    <!-- Fireflies -->
+    <div class="fireflies">
+        <div class="firefly"></div>
+        <div class="firefly"></div>
+        <div class="firefly"></div>
+        <div class="firefly"></div>
+        <div class="firefly"></div>
+    </div>
+    
+    <!-- Green Ground -->
+    <div class="ground"></div>
+    
+    <!-- Hero Content -->
+    <div class="container hero-content">
+        <div class="row">
+            <div class="col-lg-8 text-lg-start text-center">
+                <div class="hero-badge">
+                    <i class="fas fa-star text-warning"></i>
+                    जन हिमाचल की पहल
+                </div>
+                
+                <h1 class="hero-title">{{ program.name_hindi }}</h1>
+                <h2 class="hero-subtitle">हिमाचल के बच्चों की आवाज़</h2>
+                
+                <p class="hero-desc">
+                    मोबाइल से हटकर, बच्चों को पत्रकार बनने का अवसर। कहानियाँ, विचार, भाषण और वीडियो Publish करें।
                 </p>
                 
-                <div class="d-flex flex-column flex-sm-row justify-content-lg-start justify-content-center gap-3">
-                    <a href="{% url 'nanhe_patrakar:register' %}" class="btn btn-light hero-btn-primary">
-                        <i class="fas fa-pen-nib me-2"></i>पंजीकरण करें (Register)
+                <div class="d-flex flex-column flex-sm-row gap-3 justify-content-lg-start justify-content-center">
+                    <a href="{% url 'nanhe_patrakar:register' %}" class="hero-btn-primary">
+                        <i class="fas fa-pen-nib"></i> पंजीकरण करें
                     </a>
-                    <a href="#about" class="btn btn-outline-light hero-btn-outline">
-                        <i class="fas fa-info-circle me-2"></i>और जानें
+                    <a href="#about" class="hero-btn-outline">
+                        <i class="fas fa-info-circle"></i> और जानें
                     </a>
                 </div>
             </div>
-            
-            <!-- Hero Visual / Illustration -->
-            <div class="col-lg-5 position-relative">
-                <div class="hero-image-wrapper">
-                    <!-- Central Composition -->
-                    <div class="main-circle-bg"></div>
-                    <div class="floating-icon icon-mic">
-                        <i class="fas fa-microphone-alt"></i>
+        </div>
+    </div>
+</section>
+
+<!-- Why This Initiative Section - BLACK & WHITE -->
+<section class="py-5 bg-white" id="about">
+    <div class="container">
+        <div class="row align-items-center g-5">
+            <div class="col-lg-6">
+                <span class="text-secondary fw-bold text-uppercase small ls-2 mb-2 d-block">इस पहल की आवश्यकता</span>
+                <h2 class="fw-bold mb-4 text-black">आज के समय में बच्चों को सही दिशा की जरूरत है</h2>
+                <p class="text-secondary mb-4" style="line-height:1.8;">
+                    आज के समय में बच्चों का अधिकतर समय मोबाइल और सोशल मीडिया पर बीतता है, जहाँ सही और गलत की स्पष्ट समझ विकसित होना कठिन हो जाता है।
+                </p>
+                
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <div class="d-flex align-items-start">
+                            <div class="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0 me-3" style="width:45px;height:45px;background:#f8f9fa;border:1px solid #eee;">
+                                <i class="fas fa-lightbulb text-black"></i>
+                            </div>
+                            <div>
+                                <h6 class="fw-bold mb-1 text-black">सोचने की सही दिशा</h6>
+                                <p class="text-muted small mb-0">बच्चों को विचारशील बनाना</p>
+                            </div>
+                        </div>
                     </div>
-                    <div class="floating-icon icon-camera">
-                        <i class="fas fa-camera"></i>
+                    <div class="col-md-6">
+                        <div class="d-flex align-items-start">
+                            <div class="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0 me-3" style="width:45px;height:45px;background:#f8f9fa;border:1px solid #eee;">
+                                <i class="fas fa-language text-black"></i>
+                            </div>
+                            <div>
+                                <h6 class="fw-bold mb-1 text-black">भाषा और संस्कृति</h6>
+                                <p class="text-muted small mb-0">अपनी जड़ों से जोड़ना</p>
+                            </div>
+                        </div>
                     </div>
-                    <div class="floating-icon icon-news">
-                        <i class="far fa-newspaper"></i>
+                    <div class="col-md-6">
+                        <div class="d-flex align-items-start">
+                            <div class="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0 me-3" style="width:45px;height:45px;background:#f8f9fa;border:1px solid #eee;">
+                                <i class="fas fa-heart text-black"></i>
+                            </div>
+                            <div>
+                                <h6 class="fw-bold mb-1 text-black">जीवन-मूल्य</h6>
+                                <p class="text-muted small mb-0">अच्छे संस्कार सिखाना</p>
+                            </div>
+                        </div>
                     </div>
-                    <div class="floating-icon icon-pen">
-                        <i class="fas fa-pen-fancy"></i>
-                    </div>
-                    
-                    <!-- Center Badge -->
-                    <div class="center-badge shadow-lg">
-                        <div class="text-center">
-                            <span class="d-block display-4 fw-bold text-danger">8-16</span>
-                            <small class="text-uppercase fw-bold text-dark">Years / वर्ष</small>
+                    <div class="col-md-6">
+                        <div class="d-flex align-items-start">
+                            <div class="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0 me-3" style="width:45px;height:45px;background:#f8f9fa;border:1px solid #eee;">
+                                <i class="fas fa-user-tie text-black"></i>
+                            </div>
+                            <div>
+                                <h6 class="fw-bold mb-1 text-black">जिम्मेदार नागरिक</h6>
+                                <p class="text-muted small mb-0">भविष्य की नींव</p>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
-    
-    <!-- Wave Shape Divider -->
-    <div class="wave-shape">
-        <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
-            <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z" class="shape-fill"></path>
-        </svg>
-    </div>
-</section>
-
-<!-- About Section -->
-<section class="py-5 position-relative overflow-hidden" id="about">
-    <div class="container position-relative">
-        <div class="text-center mx-auto mb-5" style="max-width: 700px;">
-            <h6 class="text-danger fw-bold text-uppercase ls-2">About The Program</h6>
-            <h2 class="section-title mb-3">भविष्य के पत्रकार तैयार करना</h2>
-            <p class="text-muted">हम बच्चों में जिज्ञासा, रचनात्मकता और आत्मविश्वास जगाते हैं।</p>
-        </div>
-
-        <div class="row g-4">
-            <!-- Card 1 -->
-            <div class="col-md-4">
-                <div class="feature-card h-100 p-4 border-0 shadow-hover bg-white rounded-4 text-center group-hover-trigger">
-                    <div class="icon-box bg-soft-danger text-danger mx-auto mb-4 rounded-circle d-flex align-items-center justify-content-center">
-                        <i class="fas fa-bullhorn fa-2x"></i>
-                    </div>
-                    <h4 class="fw-bold mb-3 text-dark">आवाज़ को मंच</h4>
-                    <p class="text-muted mb-0">बच्चों को अपनी बात रखने और समाज के मुद्दों पर विचार व्यक्त करने का एक सशक्त माध्यम।</p>
-                </div>
-            </div>
-            
-            <!-- Card 2 -->
-            <div class="col-md-4">
-                <div class="feature-card h-100 p-4 border-0 shadow-hover bg-white rounded-4 text-center group-hover-trigger">
-                    <div class="icon-box bg-soft-primary text-primary mx-auto mb-4 rounded-circle d-flex align-items-center justify-content-center">
-                        <i class="fas fa-medal fa-2x"></i>
-                    </div>
-                    <h4 class="fw-bold mb-3 text-dark">सर्टिफाइड पत्रकार</h4>
-                    <p class="text-muted mb-0">जन हिमाचल द्वारा मान्यता प्राप्त प्रमाणपत्र जो उनके भविष्य के पोर्टफोलियो को मजबूत करेगा।</p>
-                </div>
-            </div>
-            
-            <!-- Card 3 -->
-            <div class="col-md-4">
-                <div class="feature-card h-100 p-4 border-0 shadow-hover bg-white rounded-4 text-center group-hover-trigger">
-                    <div class="icon-box bg-soft-success text-success mx-auto mb-4 rounded-circle d-flex align-items-center justify-content-center">
-                        <i class="fas fa-laptop-house fa-2x"></i>
-                    </div>
-                    <h4 class="fw-bold mb-3 text-dark">सीखें और बढ़ें</h4>
-                    <p class="text-muted mb-0">लेखन, रिपोर्टिंग और डिजिटल मीडिया के गुर सीखें, वो भी घर बैठे।</p>
+            <div class="col-lg-6">
+                <div class="p-4 rounded-4 bg-light" style="border-left:4px solid #000;">
+                    <h5 class="fw-bold mb-3 text-black"><i class="fas fa-quote-left me-2"></i>नन्हे पत्रकार क्या है?</h5>
+                    <p class="mb-3 text-secondary" style="line-height:1.8;">
+                        नन्हे पत्रकार एक <strong>संपादकीय सहभागिता कार्यक्रम</strong> है, जिसका उद्देश्य हिमाचल प्रदेश के बच्चों को लेखन, विचार और अभिव्यक्ति के माध्यम से समाज से जोड़ना है।
+                    </p>
+                    <p class="text-muted mb-0" style="line-height:1.7;">
+                        यह कोई सामान्य प्रतियोगिता नहीं, बल्कि एक शैक्षिक, सांस्कृतिक और सामाजिक पहल है, जहाँ बच्चे अपने आसपास की दुनिया को समझकर, जिम्मेदारी से लिखना सीखते हैं।
+                    </p>
                 </div>
             </div>
         </div>
     </div>
 </section>
 
-<!-- Age Groups Section -->
-<section class="py-5 bg-light">
+<!-- Who Can Participate Section - BLACK & WHITE -->
+<section class="py-5 border-top border-bottom" style="background:#fff;">
     <div class="container">
         <div class="text-center mb-5">
-            <h6 class="text-primary fw-bold text-uppercase ls-2">Who Can Join?</h6>
-            <h2 class="section-title">आयु समूह (Age Groups)</h2>
+            <span class="text-muted fw-semibold text-uppercase small">Eligibility</span>
+            <h2 class="fw-bold mt-2 text-black">कौन भाग ले सकता है?</h2>
+            <div style="width:60px;height:3px;background:#000;margin:15px auto 0;"></div>
         </div>
         
         <div class="row g-4 justify-content-center">
-            {% for group in age_groups %}
-            <div class="col-md-4">
-                <div class="age-group-card d-flex flex-column align-items-center p-4 bg-white rounded-4 border-bottom border-4 border-{{ forloop.counter|divisibleby:2|yesno:'info,warning' }} shadow-sm h-100">
-                    <div class="display-4 fw-bold text-secondary mb-2">{{ forloop.counter }}</div>
-                    <h4 class="fw-bold mb-1">{{ group.name }}</h4>
-                    <p class="text-muted small mb-0">{{ group.name_hindi }}</p>
-                    <hr class="w-25 my-3 border-secondary">
-                    <span class="badge bg-light text-dark border px-3 py-2 rounded-pill">
-                        {{ group.range }} / {{ group.range_hindi }}
-                    </span>
+            <div class="col-lg-3 col-md-6">
+                <div class="bg-white p-4 rounded-0 text-center h-100" style="border:1px solid #eee;">
+                    <div class="mx-auto mb-3 rounded-circle d-flex align-items-center justify-content-center" style="width:60px;height:60px;background:#f8f9fa;color:#000;">
+                        <i class="fas fa-child fa-lg"></i>
+                    </div>
+                    <h5 class="fw-bold text-black">आयु सीमा</h5>
+                    <p class="h4 fw-bold mb-0 text-black">8-16 वर्ष</p>
                 </div>
             </div>
-            {% endfor %}
+            <div class="col-lg-3 col-md-6">
+                <div class="bg-white p-4 rounded-0 text-center h-100" style="border:1px solid #eee;">
+                    <div class="mx-auto mb-3 rounded-circle d-flex align-items-center justify-content-center" style="width:60px;height:60px;background:#f8f9fa;color:#000;">
+                        <i class="fas fa-map-marker-alt fa-lg"></i>
+                    </div>
+                    <h5 class="fw-bold text-black">क्षेत्र</h5>
+                    <p class="text-muted mb-0">केवल <strong>हिमाचल प्रदेश</strong></p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="bg-white p-4 rounded-0 text-center h-100" style="border:1px solid #eee;">
+                    <div class="mx-auto mb-3 rounded-circle d-flex align-items-center justify-content-center" style="width:60px;height:60px;background:#f8f9fa;color:#000;">
+                        <i class="fas fa-school fa-lg"></i>
+                    </div>
+                    <h5 class="fw-bold text-black">विद्यालय</h5>
+                    <p class="text-muted mb-0">सरकारी और निजी विद्यालय</p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="bg-white p-4 rounded-0 text-center h-100" style="border:1px solid #eee;">
+                    <div class="mx-auto mb-3 rounded-circle d-flex align-items-center justify-content-center" style="width:60px;height:60px;background:#f8f9fa;color:#000;">
+                        <i class="fas fa-users fa-lg"></i>
+                    </div>
+                    <h5 class="fw-bold text-black">अभिभावक</h5>
+                    <p class="text-muted mb-0">अभिभावकों की सहमति</p>
+                </div>
+            </div>
         </div>
     </div>
 </section>
 
-<!-- Process Section -->
-<section class="py-5">
+<!-- Age Groups Section - BLACK & WHITE -->
+<section class="py-5 bg-light">
     <div class="container">
-        <div class="text-center mx-auto mb-5" style="max-width: 800px;">
-            <h2 class="section-title">शुरुआत कैसे करें? (Process)</h2>
+        <div class="text-center mb-5">
+            <span class="text-muted fw-semibold text-uppercase small">Categories</span>
+            <h2 class="fw-bold mt-2 text-black">आयु वर्ग और लेखन स्तर</h2>
+            <div style="width:60px;height:3px;background:#000;margin:15px auto 0;"></div>
+            <p class="text-muted mt-3">हर बच्चा अपनी समझ और क्षमता के अनुसार लिख सके</p>
         </div>
         
-        <div class="row g-4">
-            <!-- Step 1 -->
-            <div class="col-lg-3 col-md-6">
-                <div class="process-step-new text-center position-relative">
-                    <div class="step-icon-wrap bg-primary text-white mx-auto mb-3 shadow">
-                        <i class="fas fa-user-edit"></i>
+        <div class="row g-4 justify-content-center">
+            <!-- Group A -->
+            <div class="col-lg-4 col-md-6">
+                <div class="bg-white p-4 h-100 border border-secondary rounded-1" style="border-top-width:4px !important;">
+                    <div class="d-flex align-items-center mb-3">
+                        <span class="rounded-0 d-flex align-items-center justify-content-center me-3" style="width:40px;height:40px;background:#000;color:#fff;font-weight:700;">A</span>
+                        <div>
+                            <h4 class="fw-bold mb-0 text-black">8-10 वर्ष</h4>
+                            <small class="text-muted">Junior Category</small>
+                        </div>
                     </div>
-                    <h5 class="fw-bold">1. पंजीकरण</h5>
-                    <p class="small text-muted">फॉर्म भरें</p>
+                    <hr class="text-muted">
+                    <ul class="list-unstyled mb-0">
+                        <li class="mb-2 text-secondary"><i class="fas fa-check me-2 text-black"></i>सरल सोच</li>
+                        <li class="mb-2 text-secondary"><i class="fas fa-check me-2 text-black"></i>अच्छे संस्कार</li>
+                        <li class="text-secondary"><i class="fas fa-check me-2 text-black"></i>अपने आसपास की दुनिया</li>
+                    </ul>
                 </div>
             </div>
-            <!-- Step 2 -->
-            <div class="col-lg-3 col-md-6">
-                <div class="process-step-new text-center position-relative">
-                    <div class="step-icon-wrap bg-danger text-white mx-auto mb-3 shadow">
-                        <i class="fas fa-rupee-sign"></i>
+            
+            <!-- Group B -->
+            <div class="col-lg-4 col-md-6">
+                <div class="bg-white p-4 h-100 border border-secondary rounded-1" style="border-top-width:4px !important;">
+                    <div class="d-flex align-items-center mb-3">
+                        <span class="rounded-0 d-flex align-items-center justify-content-center me-3" style="width:40px;height:40px;background:#000;color:#fff;font-weight:700;">B</span>
+                        <div>
+                            <h4 class="fw-bold mb-0 text-black">11-13 वर्ष</h4>
+                            <small class="text-muted">Intermediate Category</small>
+                        </div>
                     </div>
-                    <h5 class="fw-bold">2. फीस भुगतान</h5>
-                    <p class="small text-muted">शुल्क जमा करें</p>
+                    <hr class="text-muted">
+                    <ul class="list-unstyled mb-0">
+                        <li class="mb-2 text-secondary"><i class="fas fa-check me-2 text-black"></i>सही-गलत की पहचान</li>
+                        <li class="mb-2 text-secondary"><i class="fas fa-check me-2 text-black"></i>सामाजिक समझ</li>
+                        <li class="text-secondary"><i class="fas fa-check me-2 text-black"></i>विचारशील लेखन</li>
+                    </ul>
                 </div>
             </div>
-            <!-- Step 3 -->
-            <div class="col-lg-3 col-md-6">
-                <div class="process-step-new text-center position-relative">
-                    <div class="step-icon-wrap bg-success text-white mx-auto mb-3 shadow">
-                        <i class="fas fa-download"></i>
+            
+            <!-- Group C -->
+            <div class="col-lg-4 col-md-6">
+                <div class="bg-white p-4 h-100 border border-secondary rounded-1" style="border-top-width:4px !important;">
+                    <div class="d-flex align-items-center mb-3">
+                        <span class="rounded-0 d-flex align-items-center justify-content-center me-3" style="width:40px;height:40px;background:#000;color:#fff;font-weight:700;">C</span>
+                        <div>
+                            <h4 class="fw-bold mb-0 text-black">14-16 वर्ष</h4>
+                            <small class="text-muted">Senior Category</small>
+                        </div>
                     </div>
-                    <h5 class="fw-bold">3. ऐप डाउनलोड</h5>
-                    <p class="small text-muted">प्रोफाइल बनाएं</p>
-                </div>
-            </div>
-            <!-- Step 4 -->
-            <div class="col-lg-3 col-md-6">
-                <div class="process-step-new text-center position-relative">
-                    <div class="step-icon-wrap bg-info text-white mx-auto mb-3 shadow">
-                        <i class="fas fa-paper-plane"></i>
-                    </div>
-                    <h5 class="fw-bold">4. भेजना शुरू करें</h5>
-                    <p class="small text-muted">रचनाएं भेजें</p>
+                    <hr class="text-muted">
+                    <ul class="list-unstyled mb-0">
+                        <li class="mb-2 text-secondary"><i class="fas fa-check me-2 text-black"></i>जिम्मेदारी और नेतृत्व</li>
+                        <li class="mb-2 text-secondary"><i class="fas fa-check me-2 text-black"></i>सामाजिक दृष्टि</li>
+                        <li class="text-secondary"><i class="fas fa-check me-2 text-black"></i>गहन विश्लेषण</li>
+                    </ul>
                 </div>
             </div>
         </div>
     </div>
 </section>
 
-<!-- Pricing Section -->
-<section class="py-5 bg-light position-relative">
+<!-- Writing Formats Section - BLACK & WHITE -->
+<section class="py-5 bg-white border-top">
+    <div class="container">
+        <div class="text-center mb-5">
+            <span class="text-muted fw-semibold text-uppercase small">Submission Formats</span>
+            <h2 class="fw-bold mt-2 text-black">लेखन और प्रस्तुति के माध्यम</h2>
+            <div style="width:60px;height:3px;background:#000;margin:15px auto 0;"></div>
+        </div>
+        
+        <div class="row g-3 justify-content-center">
+            <div class="col-lg-2 col-md-4 col-6">
+                <div class="bg-light p-3 text-center h-100 border border-light" style="transition:0.3s;">
+                    <i class="fas fa-file-alt fa-2x mb-3 text-black"></i>
+                    <h6 class="mb-0 fw-bold text-black">लेख</h6>
+                    <small class="text-muted">Article</small>
+                </div>
+            </div>
+            <div class="col-lg-2 col-md-4 col-6">
+                <div class="bg-light p-3 text-center h-100 border border-light">
+                    <i class="fas fa-feather-alt fa-2x mb-3 text-black"></i>
+                    <h6 class="mb-0 fw-bold text-black">कविता</h6>
+                    <small class="text-muted">Poetry</small>
+                </div>
+            </div>
+            <div class="col-lg-2 col-md-4 col-6">
+                <div class="bg-light p-3 text-center h-100 border border-light">
+                    <i class="fas fa-book-open fa-2x mb-3 text-black"></i>
+                    <h6 class="mb-0 fw-bold text-black">अनुभव</h6>
+                    <small class="text-muted">Experience</small>
+                </div>
+            </div>
+            <div class="col-lg-2 col-md-4 col-6">
+                <div class="bg-light p-3 text-center h-100 border border-light">
+                    <i class="fas fa-microphone fa-2x mb-3 text-black"></i>
+                    <h6 class="mb-0 fw-bold text-black">भाषण</h6>
+                    <small class="text-muted">Speech</small>
+                </div>
+            </div>
+            <div class="col-lg-2 col-md-4 col-6">
+                <div class="bg-light p-3 text-center h-100 border border-light">
+                    <i class="fas fa-music fa-2x mb-3 text-black"></i>
+                    <h6 class="mb-0 fw-bold text-black">गीत</h6>
+                    <small class="text-muted">Song</small>
+                </div>
+            </div>
+            <div class="col-lg-2 col-md-4 col-6">
+                <div class="bg-light p-3 text-center h-100 border border-light">
+                    <i class="fas fa-video fa-2x mb-3 text-black"></i>
+                    <h6 class="mb-0 fw-bold text-black">वीडियो</h6>
+                    <small class="text-muted">Video</small>
+                </div>
+            </div>
+        </div>
+        
+        <div class="text-center mt-4">
+            <div class="d-inline-block p-3 bg-light border border-secondary rounded-1">
+                <i class="fas fa-info-circle me-2 text-black"></i>
+                <strong class="text-black">नोट:</strong> वीडियो या ऑडियो के लिए अभिभावक की अनुमति अनिवार्य है।
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Language Policy Section - BLACK & WHITE -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="row align-items-center g-4">
+            <div class="col-lg-6">
+                <span class="text-muted fw-semibold text-uppercase small ls-2 mb-2 d-block">Language Policy</span>
+                <h2 class="section-title mb-4 text-black">भाषा नीति</h2>
+                <p class="text-secondary mb-4" style="line-height:1.8;">
+                    कार्यक्रम में निम्न भाषाएँ स्वीकार्य हैं। इसका उद्देश्य बच्चों को उनकी भाषाई पहचान से जोड़ना है।
+                </p>
+                
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <div class="bg-white p-3 rounded-0 text-center border border-secondary">
+                            <h4 class="fw-bold mb-1 text-black">हिंदी</h4>
+                            <small class="text-muted">Hindi</small>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="bg-white p-3 rounded-0 text-center border border-secondary">
+                            <h4 class="fw-bold mb-1 text-black">English</h4>
+                            <small class="text-muted">अंग्रेज़ी</small>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="bg-white p-3 rounded-0 text-center border border-secondary">
+                            <h4 class="fw-bold mb-1 text-black">पहाड़ी</h4>
+                            <small class="text-muted">Dialects</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="bg-white p-4 rounded-0 shadow-sm border border-secondary border-start border-4 border-start-dark" style="border-left-width:4px !important; border-left-color: #000 !important;">
+                    <h5 class="fw-bold mb-3 text-black"><i class="fas fa-quote-left text-secondary me-2"></i>विषय चयन की नीति</h5>
+                    <p class="mb-3 text-secondary">विषय इस प्रकार चुने गए हैं कि:</p>
+                    <ul class="mb-0 text-secondary">
+                        <li class="mb-2">बच्चे भ्रमित न हों</li>
+                        <li class="mb-2">अपने आप स्थानीय संदर्भ में लिखें</li>
+                        <li class="mb-2">समाज के लिए सकारात्मक संदेश दें</li>
+                        <li>अभिभावक और शिक्षक भी संतुष्ट हों</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Process Section - BLACK & WHITE -->
+<section class="py-5 bg-white border-top">
+    <div class="container">
+        <div class="text-center mx-auto mb-5" style="max-width: 800px;">
+            <span class="text-muted fw-semibold text-uppercase small">Step by Step</span>
+            <h2 class="section-title mt-2 text-black">ऐप के माध्यम से भागीदारी की प्रक्रिया</h2>
+            <div style="width:60px;height:3px;background:#000;margin:15px auto 0;"></div>
+        </div>
+        
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="timeline-item border-start border-secondary" style="border-left-color: #ddd !important;">
+                    <h5 class="fw-bold text-black" style="color: #000;">1. Jan Himachal News ऐप डाउनलोड</h5>
+                    <p class="text-muted mb-0">Play Store से ऐप डाउनलोड करें</p>
+                </div>
+                <div class="timeline-item border-start border-secondary" style="border-left-color: #ddd !important;">
+                    <h5 class="fw-bold text-black" style="color: #000;">2. छात्र प्रोफ़ाइल निर्माण</h5>
+                    <p class="text-muted mb-0">बच्चे का पूरा विवरण भरें</p>
+                </div>
+                <div class="timeline-item border-start border-secondary" style="border-left-color: #ddd !important;">
+                    <h5 class="fw-bold text-black" style="color: #000;">3. अभिभावक का विवरण</h5>
+                    <p class="text-muted mb-0">माता-पिता की जानकारी दें</p>
+                </div>
+                <div class="timeline-item border-start border-secondary" style="border-left-color: #ddd !important;">
+                    <h5 class="fw-bold text-black" style="color: #000;">4. पहचान पत्र अपलोड</h5>
+                    <p class="text-muted mb-0">आधार/वोटर ID अपलोड</p>
+                </div>
+                <div class="timeline-item border-start border-secondary" style="border-left-color: #ddd !important;">
+                    <h5 class="fw-bold text-black" style="color: #000;">5. डिजिटल सहमति</h5>
+                    <p class="text-muted mb-0">नियम और शर्तें स्वीकार करें</p>
+                </div>
+                <div class="timeline-item border-start border-secondary" style="border-left-color: #ddd !important;">
+                    <h5 class="fw-bold text-black" style="color: #000;">6. शुल्क भुगतान</h5>
+                    <p class="text-muted mb-0">₹{{ program.price }} का भुगतान</p>
+                </div>
+                <div class="timeline-item border-start border-secondary" style="border-left-color: #ddd !important;">
+                    <h5 class="fw-bold text-black" style="color: #000;">7. सामग्री सबमिशन</h5>
+                    <p class="text-muted mb-0">अपनी रचना भेजें</p>
+                </div>
+                <div class="timeline-item border-start border-secondary" style="border-left-color: #ddd !important;">
+                    <h5 class="fw-bold text-black" style="color: #000;">8. संपादकीय समीक्षा</h5>
+                    <p class="text-muted mb-0">4 कार्य दिवस में समीक्षा</p>
+                </div>
+                <div class="timeline-item border-start border-secondary" style="border-left-color: #ddd !important;">
+                    <h5 class="fw-bold text-black" style="color: #000;">9. प्रकाशन</h5>
+                    <p class="text-muted mb-0">सामग्री प्रकाशित होगी</p>
+                </div>
+                <div class="timeline-item border-start border-secondary" style="border-left-color: #ddd !important;">
+                    <h5 class="fw-bold text-black" style="color: #000;">10. प्रमाण-पत्र</h5>
+                    <p class="text-muted mb-0">डिजital सर्टिफिकेट</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Pricing Section - BLACK & WHITE -->
+<section class="py-5 position-relative bg-light border-top">
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-lg-8">
-                <div class="pricing-card-2 p-5 bg-white rounded-5 shadow-lg text-center border border-light position-relative overflow-hidden">
-                    <div class="position-absolute top-0 end-0 bg-warning text-dark fw-bold px-3 py-1 rounded-bottom-start shadow-sm">
-                        BEST VALUE
+                <div class="p-5 bg-white rounded-0 shadow-sm text-center border border-secondary position-relative overflow-hidden">
+                    <div class="position-absolute top-0 end-0 bg-black text-white fw-bold px-3 py-1 text-uppercase small">
+                        Fee Structure
                     </div>
                     
-                    <h3 class="fw-bold text-dark mb-2">पूरा कोर्स पैकेज</h3>
-                    <p class="text-muted">Participation Fee</p>
+                    <h3 class="fw-bold text-black mb-2">सहभागिता शुल्क</h3>
+                    <p class="text-muted small text-uppercase ls-1">Participation Fee</p>
                     
-                    <div class="display-2 fw-bolder text-danger my-4">
-                        <sup class="fs-4">₹</sup>{{ program.price }}
+                    <div class="display-3 fw-bold text-black my-4 d-inline-flex align-items-start">
+                        ₹<span class="fs-2 me-1"></span><span>{{ program.price }}</span>
                     </div>
                     
-                    <div class="d-flex flex-wrap justify-content-center gap-3 mb-5">
-                        <span class="feature-pill"><i class="fas fa-check-circle text-success me-1"></i> Lifetime Access</span>
-                        <span class="feature-pill"><i class="fas fa-check-circle text-success me-1"></i> Editor Reivews</span>
-                        <span class="feature-pill"><i class="fas fa-check-circle text-success me-1"></i> Certificate</span>
-                        <span class="feature-pill"><i class="fas fa-check-circle text-success me-1"></i> ID Card</span>
+                    <p class="text-secondary mb-5">शुल्क का भुगतान सामग्री जमा करने से पहले अनिवार्य है</p>
+                    
+                    <div class="row g-3 mb-5 text-start justify-content-center">
+                        <div class="col-md-5">
+                            <div class="d-flex align-items-center mb-2">
+                                <i class="fas fa-check text-black me-3"></i>
+                                <span class="text-secondary">संपादकीय समीक्षा</span>
+                            </div>
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-check text-black me-3"></i>
+                                <span class="text-secondary">प्रकाशन अवसर</span>
+                            </div>
+                        </div>
+                        <div class="col-md-5">
+                            <div class="d-flex align-items-center mb-2">
+                                <i class="fas fa-check text-black me-3"></i>
+                                <span class="text-secondary">डिजिटल प्रमाण-पत्र</span>
+                            </div>
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-check text-black me-3"></i>
+                                <span class="text-secondary">आधिकारिक रिकॉर्ड</span>
+                            </div>
+                        </div>
                     </div>
 
-                    <a href="{% url 'nanhe_patrakar:register' %}" class="btn btn-danger btn-lg rounded-pill px-5 py-3 shadow-lg btn-shine">
-                        <span class="position-relative z-index-1">अभी रजिस्टर करें (Join Now)</span>
+                    <a href="{% url 'nanhe_patrakar:register' %}" class="btn btn-dark text-white rounded-0 px-5 py-3 text-uppercase fw-bold ls-1" style="background:#000;">
+                        अभी रजिस्टर करें
                     </a>
+
                 </div>
             </div>
         </div>
     </div>
 </section>
 
-<!-- CTA Section -->
-<section class="cta-section position-relative overflow-hidden py-5">
-    <div class="bg-overlay"></div>
-    <div class="container position-relative z-index-1 text-center text-white py-4">
-        <h2 class="fw-bolder mb-3">आज ही शुरुआत करें!</h2>
-        <p class="lead mb-4 text-white-50">बच्चों की रचनात्मकता को एक नई दिशा दें।</p>
-        <a href="{% url 'nanhe_patrakar:register' %}" class="btn btn-white text-primary btn-lg rounded-pill px-5 fw-bold">
-            <i class="fas fa-rocket me-2"></i> Get Started
+<!-- Rules & Parent Role Section - BLACK & WHITE -->
+<section class="py-5 bg-white">
+    <div class="container">
+        <div class="row g-4">
+            <!-- Rules -->
+            <div class="col-lg-6">
+                <div class="bg-white p-4 h-100 border border-secondary rounded-0">
+                    <h4 class="fw-bold mb-4 text-black"><i class="fas fa-gavel me-2"></i>नियम और आचार संहिता</h4>
+                    <p class="text-secondary mb-3">निम्नलिखित सामग्री स्वीकार्य <strong>नहीं</strong> है:</p>
+                    <ul class="list-unstyled">
+                        <li class="mb-2 d-flex align-items-start">
+                            <i class="fas fa-times me-2 mt-1 text-black"></i>
+                            <span class="text-secondary">अपमानजनक या घृणास्पद भाषा</span>
+                        </li>
+                        <li class="mb-2 d-flex align-items-start">
+                            <i class="fas fa-times me-2 mt-1 text-black"></i>
+                            <span class="text-secondary">अशोभनीय शब्द या संकेत</span>
+                        </li>
+                        <li class="mb-2 d-flex align-items-start">
+                            <i class="fas fa-times me-2 mt-1 text-black"></i>
+                            <span class="text-secondary">किसी व्यक्ति या समूह पर व्यक्तिगत हमला</span>
+                        </li>
+                        <li class="mb-2 d-flex align-items-start">
+                            <i class="fas fa-times me-2 mt-1 text-black"></i>
+                            <span class="text-secondary">असत्य या भ्रामक जानकारी</span>
+                        </li>
+                        <li class="d-flex align-items-start">
+                            <i class="fas fa-times me-2 mt-1 text-black"></i>
+                            <span class="text-secondary">राजनीतिक प्रचार</span>
+                        </li>
+                    </ul>
+                    <div class="p-3 bg-light border border-secondary mt-3">
+                        <i class="fas fa-heart text-black me-2"></i><span class="text-secondary">सम्मानजनक और सकारात्मक विचारों का स्वागत है।</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Parent Role -->
+            <div class="col-lg-6">
+                <div class="bg-white p-4 h-100 border border-secondary rounded-0">
+                    <h4 class="fw-bold mb-4 text-black"><i class="fas fa-user-friends me-2"></i>अभिभावक की भूमिका</h4>
+                    <p class="text-secondary mb-3">अभिभावक की जिम्मेदारी है कि वे:</p>
+                    <ul class="list-unstyled">
+                        <li class="mb-3 d-flex align-items-start">
+                            <i class="fas fa-check me-2 mt-1 text-black"></i>
+                            <span class="text-secondary">बच्चे के लेखन को मार्गदर्शन दें, न कि स्वयं लिखें</span>
+                        </li>
+                        <li class="mb-3 d-flex align-items-start">
+                            <i class="fas fa-check me-2 mt-1 text-black"></i>
+                            <span class="text-secondary">सामग्री पढ़कर सहमति दें</span>
+                        </li>
+                        <li class="mb-3 d-flex align-items-start">
+                            <i class="fas fa-check me-2 mt-1 text-black"></i>
+                            <span class="text-secondary">डिजिटल घोषणा स्वीकार करें</span>
+                        </li>
+                    </ul>
+                    <div class="p-3 bg-light border border-secondary mt-3">
+                        <i class="fas fa-info-circle text-black me-2"></i>
+                        <strong class="text-black">महत्वपूर्ण:</strong> <span class="text-secondary">बिना अभिभावक की सहमति कोई सामग्री प्रकाशित नहीं की जाएगी।</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Privacy & Certificate Section - BLACK & WHITE -->
+<section class="py-5 bg-white border-top">
+    <div class="container">
+        <div class="row g-4">
+            <!-- Privacy -->
+            <div class="col-lg-6">
+                <div class="bg-light p-4 h-100 border border-secondary rounded-0">
+                    <h4 class="fw-bold mb-4 text-black"><i class="fas fa-shield-alt me-2"></i>गोपनीयता और बाल सुरक्षा</h4>
+                    <ul class="list-unstyled mb-0">
+                        <li class="mb-3 d-flex align-items-start">
+                            <i class="fas fa-lock text-black me-2 mt-1"></i>
+                            <span class="text-secondary">बच्चों की व्यक्तिगत जानकारी सुरक्षित रखी जाती है</span>
+                        </li>
+                        <li class="mb-3 d-flex align-items-start">
+                            <i class="fas fa-lock text-black me-2 mt-1"></i>
+                            <span class="text-secondary">फोटो, वीडियो या नाम का उपयोग केवल सहमति से</span>
+                        </li>
+                        <li class="d-flex align-items-start">
+                            <i class="fas fa-lock text-black me-2 mt-1"></i>
+                            <span class="text-secondary">किसी तीसरे पक्ष को डेटा नहीं दिया जाता</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- Certificate -->
+            <div class="col-lg-6">
+                <div class="bg-light p-4 h-100 border border-secondary rounded-0">
+                    <h4 class="fw-bold mb-4 text-black"><i class="fas fa-certificate me-2"></i>प्रमाण-पत्र और पहचान</h4>
+                    <ul class="list-unstyled mb-0">
+                        <li class="mb-3 d-flex align-items-start">
+                            <i class="fas fa-award text-black me-2 mt-1"></i>
+                            <span class="text-secondary">प्रत्येक प्रकाशित प्रतिभागी को <strong>डिजिटल प्रमाण-पत्र</strong></span>
+                        </li>
+                        <li class="mb-3 d-flex align-items-start">
+                            <i class="fas fa-award text-black me-2 mt-1"></i>
+                            <span class="text-secondary">प्रमाण-पत्र Jan Himachal News द्वारा <strong>सत्यापित</strong></span>
+                        </li>
+                        <li class="d-flex align-items-start">
+                            <i class="fas fa-award text-black me-2 mt-1"></i>
+                            <span class="text-secondary">शैक्षणिक और सह-पाठ्य गतिविधियों में उपयोगी</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Social Impact Section - BLACK & WHITE -->
+<section class="py-5 bg-black text-white">
+    <div class="container">
+        <div class="text-center mb-5">
+            <span class="text-white-50 fw-semibold text-uppercase small ls-2">Social Impact</span>
+            <h2 class="section-title text-white mt-2">इस पहल का सामाजिक प्रभाव</h2>
+            <div style="width:60px;height:3px;background:#fff;margin:15px auto 0;"></div>
+        </div>
+        
+        <div class="row g-4 text-center">
+            <div class="col-md-3 col-6">
+                <div class="p-3 border border-secondary rounded-0 h-100">
+                    <i class="fas fa-pen-fancy fa-2x text-white mb-3"></i>
+                    <h6 class="text-white">लेखन और सोचने की आदत</h6>
+                </div>
+            </div>
+            <div class="col-md-3 col-6">
+                <div class="p-3 border border-secondary rounded-0 h-100">
+                    <i class="fas fa-language fa-2x text-white mb-3"></i>
+                    <h6 class="text-white">भाषा और संस्कृति के प्रति सम्मान</h6>
+                </div>
+            </div>
+            <div class="col-md-3 col-6">
+                <div class="p-3 border border-secondary rounded-0 h-100">
+                    <i class="fas fa-heart fa-2x text-white mb-3"></i>
+                    <h6 class="text-white">सकारात्मक जीवन मूल्य</h6>
+                </div>
+            </div>
+            <div class="col-md-3 col-6">
+                <div class="p-3 border border-secondary rounded-0 h-100">
+                    <i class="fas fa-users fa-2x text-white mb-3"></i>
+                    <h6 class="text-white">समाज के लिए उपयोगी सामग्री</h6>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section - BLACK & WHITE -->
+<section class="py-5 border-top bg-white">
+    <div class="container text-center py-4">
+        <h2 class="fw-bold mb-3 text-black">आज ही शुरुआत करें!</h2>
+        <p class="lead mb-2 text-secondary">नन्हे पत्रकार केवल लेखन का मंच नहीं, बल्कि हिमाचल के बच्चों के लिए</p>
+        <p class="h5 mb-4 text-black">एक सोचने, समझने और जिम्मेदार बनने की यात्रा है।</p>
+        <a href="{% url 'nanhe_patrakar:register' %}" class="btn btn-lg rounded-0 px-5 fw-bold text-uppercase" style="background-color: #000; color: #fff; border: 2px solid #000; transition: all 0.3s ease;" onmouseover="this.style.backgroundColor='#333'; this.style.borderColor='#333';" onmouseout="this.style.backgroundColor='#000'; this.style.borderColor='#000';">
+            Start Now <i class="fas fa-arrow-right ms-2"></i>
         </a>
     </div>
 </section>
+
+<!-- Anime.js CDN -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    
+    // ============================================
+    // SMOOTH ANIME.JS ANIMATIONS
+    // ============================================
+    
+    // 1. Stars - Smooth Twinkling
+    anime({
+        targets: '.star',
+        opacity: [0.2, 1, 0.2],
+        scale: [0.8, 1.3, 0.8],
+        duration: 2500,
+        easing: 'easeInOutSine',
+        delay: anime.stagger(250),
+        loop: true
+    });
+    
+    // 2. Sun - Gentle Pulsing
+    anime({
+        targets: '.sun',
+        scale: [1, 1.05, 1],
+        duration: 4000,
+        easing: 'easeInOutSine',
+        loop: true
+    });
+    
+    // 3. Sun Rays - Smooth Rotation
+    anime({
+        targets: '.sun-rays',
+        rotate: 360,
+        duration: 60000,
+        easing: 'linear',
+        loop: true
+    });
+    
+    // 4. Light Rays - Slow Rotation
+    anime({
+        targets: '.light-rays',
+        rotate: [0, 360],
+        duration: 120000,
+        easing: 'linear',
+        loop: true
+    });
+    
+    // 5. Clouds - Smooth Floating
+    anime({
+        targets: '.cloud-1',
+        translateX: ['0vw', '120vw'],
+        translateY: [0, -15, 10, -5, 0],
+        duration: 45000,
+        easing: 'linear',
+        loop: true
+    });
+    
+    // Cloud 2
+    anime({
+        targets: '.cloud-2',
+        translateX: ['0vw', '120vw'],
+        translateY: [0, 10, -10, 5, 0],
+        duration: 55000,
+        easing: 'linear',
+        delay: 8000,
+        loop: true
+    });
+    
+    // Cloud 3
+    anime({
+        targets: '.cloud-3',
+        translateX: ['0vw', '120vw'],
+        translateY: [0, -8, 12, -3, 0],
+        duration: 65000,
+        easing: 'linear',
+        delay: 15000,
+        loop: true
+    });
+    
+    // 5. Birds Flying Animation
+    anime({
+        targets: '.birds-group',
+        translateX: ['0vw', '110vw'],
+        translateY: [0, -30, 15, -20, 10, 0],
+        duration: 25000,
+        easing: 'easeInOutSine',
+        loop: true
+    });
+    
+    // 6. Pine Trees Swaying
+    anime({
+        targets: '.pine-tree',
+        rotate: [-2, 2, -1.5, 1.5, -2],
+        duration: 4000,
+        easing: 'easeInOutSine',
+        delay: anime.stagger(200),
+        loop: true
+    });
+    
+    // 7. Children Bouncing Animation
+    anime({
+        targets: '.child-svg',
+        translateY: [0, -12, 0],
+        scale: [1, 1.02, 1],
+        duration: 1800,
+        easing: 'easeInOutQuad',
+        delay: anime.stagger(150),
+        loop: true
+    });
+    
+    // 8. Fireflies - Simple Float (CSS handles main animation)
+    anime({
+        targets: '.firefly',
+        translateY: [-40, -80],
+        opacity: [0.4, 1, 0.4],
+        duration: 5000,
+        easing: 'easeInOutSine',
+        delay: anime.stagger(600),
+        loop: true
+    });
+    
+    // 9. Generate Grass Blades (reduced count for performance)
+    const grassContainer = document.getElementById('grassContainer');
+    if (grassContainer) {
+        const grassCount = 25;
+        
+        for (let i = 0; i < grassCount; i++) {
+            const blade = document.createElement('div');
+            blade.className = 'grass-blade';
+            blade.style.left = (i * (100 / grassCount)) + '%';
+            blade.style.height = (15 + Math.random() * 20) + 'px';
+            blade.style.animationDelay = (Math.random() * 2) + 's';
+            grassContainer.appendChild(blade);
+        }
+        
+        // Animate grass with Anime.js
+        anime({
+            targets: '.grass-blade',
+            rotate: [-5, 5, -5],
+            duration: 3000,
+            easing: 'easeInOutSine',
+            delay: anime.stagger(50),
+            loop: true
+        });
+    }
+    
+    // 10. Hero Content Entrance Animation (runs once)
+    anime.timeline({
+        easing: 'easeOutExpo'
+    })
+    .add({
+        targets: '.hero-badge',
+        translateY: [-30, 0],
+        opacity: [0, 1],
+        duration: 600
+    })
+    .add({
+        targets: '.hero-title',
+        translateY: [-20, 0],
+        opacity: [0, 1],
+        duration: 600
+    }, '-=400')
+    .add({
+        targets: '.hero-subtitle',
+        translateY: [-15, 0],
+        opacity: [0, 1],
+        duration: 600
+    }, '-=400')
+    .add({
+        targets: '.hero-desc',
+        translateY: [-10, 0],
+        opacity: [0, 1],
+        duration: 600
+    }, '-=400')
+    .add({
+        targets: '.hero-btn-primary, .hero-btn-outline',
+        translateY: [15, 0],
+        opacity: [0, 1],
+        duration: 500,
+        delay: anime.stagger(80)
+    }, '-=300');
+    
+    console.log('🏔️ Himachal Hero Animations Loaded!');
+});
+</script>
 {% endblock %}

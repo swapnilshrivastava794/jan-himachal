@@ -1,4 +1,5 @@
 {% load static %}
+{% load i18n %}
 <!DOCTYPE html>
 <html lang="hi"> 
 <head>
@@ -6,352 +7,80 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}नन्हे पत्रकार - जन हिमाचल{% endblock %}</title>
     
-    <!-- Bootstrap 5 CSS -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
-    
-    <!-- Font Awesome -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    
-    <!-- Google Fonts - Noto Sans Devanagari for Hindi -->
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;600;700&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- Include Main Site Head for all CSS -->
+    {% include 'head.html' %}
     
     <style>
+        /* Only Nanhe Patrakar specific styles - NO Header CSS */
         :root {
-            --primary-color: #e63946;
-            --secondary-color: #000000;
-            --accent-color: #e63946;
-            --text-dark: #000000;
-            --text-light: #6c757d;
-            --bg-light: #ffffff;
-            --border-color: #dee2e6;
-        }
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+            --primary-color: #d91c1c;
         }
         
         body {
-            font-family: 'Noto Sans Devanagari', 'Poppins', sans-serif;
-            background-color: #fff;
-            color: var(--text-dark);
+            font-family: 'Poppins', 'Noto Sans Devanagari', sans-serif;
         }
-        
-        /* Header Styles matching Jan Himachal */
-        .top-bar {
-            background: #000;
-            border-bottom: none;
-            padding: 8px 0;
-            font-size: 13px;
+
+        /* Content Wrapper */
+        .content-wrapper { 
+            padding-top: 0px; 
+            min-height: 80vh; 
         }
-        
-        .top-bar .date-time {
+
+        /* Footer */
+        .np-footer {
+            background-color: #000;
             color: #fff;
+            padding: 60px 0 20px;
+            border-top: 5px solid var(--primary-color);
         }
-        
-        .top-bar .language-selector {
-            text-align: right;
+        .np-footer h5 {
+            color: #fff; 
+            font-weight: 700; 
+            margin-bottom: 25px;
+            position: relative;
         }
-        
-        .top-bar .language-selector .btn {
-            color: #fff;
-            border-color: #fff;
-        }
-        
-        .main-header {
-            background: #fff;
-            padding: 15px 0;
-            border-bottom: 1px solid var(--border-color);
-            box-shadow: none;
-        }
-        
-        .logo-section {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .logo-section img {
-            max-height: 70px;
-        }
-        
-        .logo-text {
-            font-size: 26px;
-            font-weight: 700;
-            color: #000;
-            text-align: center;
-        }
-        
-        .logo-tagline {
-            font-size: 11px;
-            color: var(--text-light);
-            text-align: center;
-        }
-        
-        /* Navigation matching Jan Himachal */
-        .main-nav {
-            background: #000;
-            padding: 0;
-            border-top: 1px solid #333;
-        }
-        
-        .main-nav .navbar {
-            padding: 0;
-        }
-        
-        .main-nav .navbar-nav .nav-link {
-            color: #fff !important;
-            padding: 12px 18px;
-            font-weight: 500;
-            font-size: 14px;
-            border-right: 1px solid #333;
-            transition: all 0.3s ease;
-        }
-        
-        .main-nav .navbar-nav .nav-link:hover {
-            background: #222;
-            color: #fff;
-        }
-        
-        .main-nav .navbar-nav .nav-link.active {
-            background: #222;
-        }
-        
-        /* Content Area */
-        .content-wrapper {
-            min-height: 70vh;
-            padding: 0;
-            background: #f8f9fa;
-        }
-        
-        /* Card Styles */
-        .card {
-            border: 1px solid var(--border-color);
-            border-radius: 4px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-            margin-bottom: 20px;
-        }
-        
-        .card-header {
-            background: #fff;
-            color: #000;
-            font-weight: 600;
-            border-radius: 4px 4px 0 0 !important;
-            padding: 15px 20px;
-            border-bottom: 2px solid var(--primary-color);
-        }
-        
-        /* Button Styles */
-        .btn-primary {
+        .np-footer h5::after {
+            content: ''; 
+            position: absolute; 
+            left: 0; 
+            bottom: -10px; 
+            width: 40px; 
+            height: 3px; 
             background: var(--primary-color);
-            border: none;
-            padding: 10px 25px;
-            font-weight: 600;
-            border-radius: 3px;
         }
-        
-        .btn-primary:hover {
-            background: #c92a36;
-            transform: translateY(-1px);
-            box-shadow: 0 3px 10px rgba(230, 57, 70, 0.3);
+        .np-footer a {
+            color: #aaa; 
+            text-decoration: none; 
+            transition: 0.3s;
+            font-size: 14px; 
+            display: block; 
+            margin-bottom: 12px;
         }
-        
-        .btn-secondary {
-            background: #000;
-            border: none;
-            padding: 10px 25px;
-            font-weight: 600;
-            border-radius: 3px;
+        .np-footer a:hover { 
+            color: var(--primary-color); 
+            padding-left: 5px; 
         }
-        
-        /* Alert Styles */
-        .alert {
-            border-radius: 5px;
-            border: none;
-            padding: 15px;
-            margin-bottom: 20px;
-        }
-        
-        .alert-success {
-            background: #e8f5e9;
-            color: #2e7d32;
-            border-left: 4px solid #4caf50;
-        }
-        
-        .alert-danger {
-            background: #ffebee;
-            color: #c62828;
-            border-left: 4px solid #f44336;
-        }
-        
-        .alert-warning {
-            background: #fff3e0;
-            color: #e65100;
-            border-left: 4px solid #ff9800;
-        }
-        
-        .alert-info {
-            background: #e3f2fd;
-            color: #1565c0;
-            border-left: 4px solid #2196f3;
-        }
-        
-        /* Footer matching Jan Himachal */
-        .footer {
-            background: #000;
-            color: #fff;
-            padding: 30px 0 10px;
-            margin-top: 50px;
-        }
-        
-        .footer h5 {
-            color: #fff;
-            margin-bottom: 15px;
-            font-weight: 600;
-            font-size: 16px;
-        }
-        
-        .footer a {
-            color: #aaa;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            font-size: 14px;
-        }
-        
-        .footer a:hover {
-            color: var(--primary-color);
-        }
-        
-        .footer-bottom {
-            background: #000;
-            padding: 15px 0;
-            margin-top: 20px;
-            text-align: center;
-            font-size: 13px;
-            color: #999;
-            border-top: 1px solid #222;
-        }
-        
-        /* Form Styles */
-        .form-label {
-            font-weight: 600;
-            color: var(--text-dark);
-            margin-bottom: 8px;
-            font-size: 14px;
-        }
-        
-        .form-control, .form-select {
-            border-radius: 3px;
-            border: 1px solid var(--border-color);
-            padding: 10px 12px;
-            font-size: 14px;
-        }
-        
-        .form-control:focus, .form-select:focus {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 2px rgba(230, 57, 70, 0.1);
-        }
-        
-        .form-check-input:checked {
-            background-color: var(--primary-color);
-            border-color: var(--primary-color);
-        }
-        
-        /* Mobile Responsive */
-        @media (max-width: 768px) {
-            .logo-text {
-                font-size: 20px;
-            }
-            
-            .main-nav .navbar-nav .nav-link {
-                padding: 12px 15px;
-                border-right: none;
-                border-bottom: 1px solid rgba(255,255,255,0.1);
-            }
+        .np-footer-bottom { 
+            background: #0a0a0a; 
+            padding: 25px 0; 
+            margin-top: 50px; 
+            border-top: 1px solid #222; 
+            font-size: 13px; 
+            color: #666; 
         }
     </style>
-    
     {% block extra_css %}{% endblock %}
 </head>
 <body>
-    <!-- Top Bar -->
-    {% comment %} <div class="top-bar">
-        <div class="container">
-            <div class="row align-items-center">
-                <div class="col-md-6">
-                    <div class="date-time">
-                        <i class="far fa-calendar-alt me-2"></i>
-                        {% now "l, F d, Y" %}
-                    </div>
-                </div>
-                <div class="col-md-6 language-selector">
-                    <a href="#" class="btn btn-sm btn-outline-secondary">English</a>
-                    <a href="#" class="btn btn-sm btn-outline-secondary">हिंदी</a>
-                </div>
-            </div>
-        </div>
-    </div> {% endcomment %}
 
-    <!-- Main Header -->
-    <header class="main-header">
-        <div class="container">
-            <div class="row align-items-center">
-                <div class="col-12">
-                    <div class="logo-section">
-                        <div>
-                            <div class="logo-text">नन्हे पत्रकार</div>
-                            <div class="logo-tagline">जन हिमाचल की एक पहल</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </header>
+    <!-- Use Main Site Header (Already Properly Styled) -->
+    {% include 'header.html' %}
 
-    <!-- Main Navigation -->
-    <nav class="main-nav">
-        <div class="container">
-            <nav class="navbar navbar-expand-lg navbar-dark">
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="mainNav">
-                    <ul class="navbar-nav me-auto">
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'home' %}">
-                                <i class="fas fa-home me-1"></i> होम
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'nanhe_patrakar:landing' %}#about">
-                                कार्यक्रम के बारे में
-                            </a>
-                        </li>
-                        {% if user.is_authenticated %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">
-                                <i class="fas fa-user me-1"></i> {{ user.get_full_name }}
-                            </a>
-                        </li>
-                        {% else %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'nanhe_patrakar:register' %}">
-                                <i class="fas fa-user-plus me-1"></i> पंजीकरण करें
-                            </a>
-                        </li>
-                        {% endif %}
-                    </ul>
-                </div>
-            </nav>
-        </div>
-    </nav>
-
-    <!-- Messages -->
+    <!-- Global Messages -->
     {% if messages %}
-    <div class="container mt-3">
+    <div class="container mt-4">
         {% for message in messages %}
-        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show shadow-sm" role="alert">
             {{ message }}
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
@@ -365,38 +94,44 @@
     </div>
 
     <!-- Footer -->
-    <footer class="footer">
+    <footer class="np-footer">
         <div class="container">
             <div class="row">
-                <div class="col-md-4">
+                <div class="col-lg-4 col-md-6 mb-4">
                     <h5>नन्हे पत्रकार</h5>
-                    <p class="text-light">हिमाचल प्रदेश के बच्चों को पत्रकारिता की कला सिखाने और उनकी प्रतिभा को निखारने का एक सुनहरा अवसर।</p>
+                    <p class="text-secondary pe-4">हिमाचल प्रदेश के बच्चों को पत्रकारिता की कला सिखाने और उनकी प्रतिभा को निखारने का एक सुनहरा अवसर।</p>
                 </div>
-                <div class="col-md-4">
+                <div class="col-lg-2 col-md-6 mb-4">
                     <h5>त्वरित लिंक</h5>
                     <ul class="list-unstyled">
                         <li><a href="{% url 'home' %}">होम</a></li>
-                        <li><a href="/nanhe-patrakar">कार्यक्रम के बारे में</a></li>
-                        <li><a href="/cmsupyog-kii-shrten">नियम और शर्तें</a></li>
-                        <li><a href="/cmsprivacy-policy">गोपनीयता नीति</a></li>
+                        <li><a href="{% url 'nanhe_patrakar:landing' %}">कार्यक्रम</a></li>
+                        <li><a href="{% url 'nanhe_patrakar:register' %}">पंजीकरण</a></li>
                     </ul>
                 </div>
-                <div class="col-md-4">
+                <div class="col-lg-2 col-md-6 mb-4">
+                    <h5>जानकारी</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="/about-us">हमारे बारे में</a></li>
+                        <li><a href="/cmsupyog-kii-shrten">नियम और शर्तें</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-4 col-md-6 mb-4">
                     <h5>संपर्क करें</h5>
-                    <p class="text-light">
-                        <i class="fas fa-envelope me-2"></i> connect@janhimachal.com<br>
-                        {% comment %} <i class="fas fa-phone me-2"></i> +91-XXXXXXXXXX {% endcomment %}
-                    </p>
+                    <p class="text-secondary mb-2"><i class="fas fa-map-marker-alt me-2 text-white"></i> हिमाचल प्रदेश, भारत</p>
+                    <p class="text-secondary mb-2"><i class="fas fa-envelope me-2 text-white"></i> connect@janhimachal.com</p>
                 </div>
             </div>
         </div>
-        <div class="footer-bottom">
-            <p class="mb-0">&copy; 2025 जन हिमाचल। सर्वाधिकार सुरक्षित।</p>
+        <div class="np-footer-bottom text-center">
+            <div class="container">
+                <p class="mb-0">&copy; {% now "Y" %} जन हिमाचल (Jan Himachal). सर्वाधिकार सुरक्षित।</p>
+            </div>
         </div>
     </footer> 
 
-    <!-- Bootstrap 5 JS -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <!-- Include Main Site Scripts -->
+    {% include 'footer.html' %}
     
     {% block extra_js %}{% endblock %}
 </body>
