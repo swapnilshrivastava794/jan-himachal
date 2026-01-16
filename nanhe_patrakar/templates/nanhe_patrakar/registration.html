@@ -3,98 +3,196 @@
 
 {% block extra_css %}
 <style>
+  :root {
+    --primary-gradient: linear-gradient(135deg, #FF6B6B 0%, #D32F2F 100%);
+    --bg-pattern: radial-gradient(#e0e0e0 1px, transparent 1px);
+    --card-shadow: 0 10px 30px rgba(0,0,0,0.08);
+  }
+
   .registration-page {
-    background: var(--bg-light);
-    padding: 40px 0;
+    background-color: #f8f9fa;
+    background-image: var(--bg-pattern);
+    background-size: 20px 20px;
+    padding: 60px 0;
+    min-height: 100vh;
   }
 
   .registration-card {
-    max-width: 700px;
+    max-width: 800px;
     margin: 0 auto;
   }
 
-  .card-header {
-    text-align: center;
-    font-size: 24px;
+  /* Header Card */
+  .card {
+    border: none;
+    border-radius: 15px;
+    box-shadow: var(--card-shadow);
+    overflow: hidden;
+    margin-bottom: 30px !important;
   }
 
+  .card-header {
+    background: var(--primary-gradient) !important;
+    color: #fff !important;
+    text-align: center;
+    font-size: 24px;
+    font-weight: 700;
+    padding: 25px;
+    border: none !important;
+  }
+  
+  .card-body {
+    padding: 25px;
+  }
+
+  /* Requirements Box */
   .requirements-box {
     background: #fff;
-    border-left: 3px solid var(--primary-color);
-    padding: 20px;
-    border-radius: 3px;
-    margin-bottom: 25px;
-    border: 1px solid var(--border-color);
+    border-left: 5px solid var(--primary-color);
+    padding: 30px;
+    border-radius: 15px;
+    margin-bottom: 30px;
+    box-shadow: var(--card-shadow);
+    transition: transform 0.3s ease;
+  }
+  
+  .requirements-box:hover {
+    transform: translateY(-5px);
   }
 
   .requirements-box h6 {
-    color: #000;
-    font-weight: 700;
-    margin-bottom: 15px;
-    font-size: 16px;
+    color: #333;
+    font-weight: 800;
+    margin-bottom: 20px;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
   }
 
   .requirements-box ul {
-    margin-bottom: 0;
-    padding-left: 25px;
-    color: var(--text-dark);
+    margin-bottom: 15px;
+    padding-left: 0;
+    list-style: none;
   }
 
   .requirements-box li {
-    margin-bottom: 8px;
+    margin-bottom: 12px;
     line-height: 1.6;
+    position: relative;
+    padding-left: 25px;
+    font-size: 15px;
+  }
+  
+  .requirements-box li::before {
+    content: '✓';
+    position: absolute;
+    left: 0;
+    color: var(--primary-color);
+    font-weight: bold;
   }
 
   .requirements-box .fee {
-    background: var(--primary-color);
+    background: var(--primary-gradient);
     color: #fff;
-    padding: 8px 15px;
-    border-radius: 3px;
+    padding: 12px 25px;
+    border-radius: 50px;
     display: inline-block;
     font-weight: 700;
-    margin-top: 10px;
+    margin-top: 15px;
+    box-shadow: 0 5px 15px rgba(211, 47, 47, 0.3);
   }
 
+  /* Form Section */
   .form-section {
     background: #fff;
-    padding: 30px;
-    border-radius: 4px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-    border: 1px solid var(--border-color);
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: var(--card-shadow);
+    border: none;
   }
 
   .section-title {
-    font-size: 16px;
-    font-weight: 700;
-    color: #000;
-    margin-bottom: 20px;
-    padding-bottom: 10px;
-    border-bottom: 2px solid var(--primary-color);
+    font-size: 18px;
+    font-weight: 800;
+    color: #333;
+    margin-bottom: 25px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid #f0f0f0;
+    position: relative;
+  }
+  
+  .section-title::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 60px;
+    height: 2px;
+    background: var(--primary-color);
+  }
+
+  .form-label {
+    font-weight: 600;
+    color: #444;
+    font-size: 14px;
+    margin-bottom: 8px;
+  }
+  
+  .form-control, .form-select {
+    padding: 12px 15px;
+    border-radius: 10px;
+    border: 1px solid #e0e0e0;
+    background: #fdfdfd;
+    font-size: 15px;
+    transition: all 0.3s;
+  }
+
+  .form-control:focus, .form-select:focus {
+    background: #fff;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 4px rgba(230, 57, 70, 0.1);
   }
 
   .form-help-text {
-    font-size: 12px;
-    color: var(--text-light);
-    margin-top: 5px;
+    font-size: 13px;
+    color: #888;
+    margin-top: 6px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
   }
 
   .submit-btn {
     width: 100%;
-    padding: 15px;
-    font-size: 16px;
-    font-weight: 700;
+    padding: 18px;
+    font-size: 18px;
+    font-weight: 800;
     text-transform: uppercase;
+    background: var(--primary-gradient);
+    border: none;
+    border-radius: 50px;
+    box-shadow: 0 10px 20px rgba(211, 47, 47, 0.3);
+    transition: all 0.3s;
+    letter-spacing: 1px;
+  }
+  
+  .submit-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 15px 30px rgba(211, 47, 47, 0.4);
+    background: linear-gradient(135deg, #FF6B6B 0%, #b71c1c 100%);
   }
 
   .login-link {
     text-align: center;
-    margin-top: 20px;
+    margin-top: 30px;
     padding-top: 20px;
-    border-top: 1px solid #e0e0e0;
+    border-top: 1px solid #eee;
   }
 
   .required-mark {
     color: var(--primary-color);
+    font-weight: bold;
+    margin-left: 3px;
   }
 
   .password-wrapper {
@@ -103,14 +201,15 @@
 
   .password-toggle {
     position: absolute;
-    right: 10px;
+    right: 15px;
     top: 50%;
     transform: translateY(-50%);
     cursor: pointer;
-    color: #6c757d;
+    color: #999;
     background: none;
     border: none;
     padding: 5px;
+    transition: color 0.3s;
   }
 
   .password-toggle:hover {
@@ -118,37 +217,69 @@
   }
 
   .age-groups-info {
-    background: #f8f9fa;
-    padding: 15px;
-    border-radius: 5px;
-    margin-bottom: 15px;
+    background: #f0f7ff;
+    padding: 20px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    border: 1px solid #e1f0ff;
   }
 
   .age-groups-info h6 {
-    font-size: 14px;
-    font-weight: 700;
-    margin-bottom: 10px;
-    color: #333;
+    margin-bottom: 15px;
+    font-size: 16px;
+    color: #0d47a1;
   }
 
   .age-group-item {
     display: flex;
     justify-content: space-between;
-    padding: 5px 0;
-    font-size: 13px;
+    padding: 8px 0;
+    font-size: 14px;
+    border-bottom: 1px dashed #cedceb;
+  }
+  
+  .age-group-item:last-child {
+    border-bottom: none;
   }
 
   .age-group-name {
-    font-weight: 600;
-    color: var(--primary-color);
+    font-weight: 700;
+    color: #1976d2;
   }
 
-  .age-group-range {
-    color: #666;
+  .form-check-input {
+    width: 20px;
+    height: 20px;
+    margin-top: 3px;
+    border: 2px solid #ccc;
+    cursor: pointer;
+  }
+  
+  .form-check-input:checked {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+  }
+  
+  .form-check-label {
+    padding-left: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    line-height: 1.5;
   }
 
-  .form-check-input{
-    border-color: black;
+  @media (max-width: 768px) {
+    .registration-page {
+        padding: 30px 15px;
+    }
+    
+    .card-header {
+        padding: 20px;
+        font-size: 20px;
+    }
+    
+    .form-section {
+        padding: 25px;
+    }
   }
 </style>
 {% endblock %}

@@ -3,9 +3,18 @@
 
 {% block extra_css %}
 <style>
+  :root {
+    --primary-gradient: linear-gradient(135deg, #FF6B6B 0%, #D32F2F 100%);
+    --bg-pattern: radial-gradient(#e0e0e0 1px, transparent 1px);
+    --card-shadow: 0 10px 40px rgba(0,0,0,0.08);
+  }
+
   .payment-page {
-    background: var(--bg-light);
-    padding: 40px 0;
+    background: #f8f9fa;
+    background-image: var(--bg-pattern);
+    background-size: 20px 20px;
+    padding: 60px 0;
+    min-height: 100vh;
   }
 
   .payment-card {
@@ -13,108 +22,147 @@
     margin: 0 auto;
   }
 
+  .card {
+    border: none;
+    border-radius: 15px;
+    box-shadow: var(--card-shadow);
+    margin-bottom: 25px;
+    overflow: hidden;
+  }
+
   .card-header {
+    background: var(--primary-gradient) !important;
+    color: #fff !important;
     text-align: center;
-    font-size: 24px;
-  }
-
-  .order-summary {
-    background: #fff;
-    border: 1px solid var(--border-color);
-    border-radius: 4px;
-    padding: 25px;
-    margin-bottom: 30px;
-  }
-
-  .order-summary h5 {
-    color: #000;
+    font-size: 1.5rem;
     font-weight: 700;
+    padding: 25px;
+    border: none !important;
+  }
+  
+  .card-body {
+    padding: 25px;
+  }
+
+  .order-summary, .program-details {
+    background: #fff;
+    border: none;
+    border-radius: 15px;
+    padding: 30px;
+    margin-bottom: 25px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+    transition: transform 0.3s;
+  }
+  
+  .order-summary:hover, .program-details:hover {
+    transform: translateY(-3px);
+  }
+
+  .order-summary h5, .program-details h6 {
+    color: #333;
+    font-weight: 800;
     margin-bottom: 20px;
-    padding-bottom: 15px;
-    border-bottom: 2px solid var(--primary-color);
+    padding-bottom: 12px;
+    border-bottom: 2px solid #f0f0f0;
+    font-size: 18px;
+    position: relative;
+  }
+  
+  .order-summary h5::after, .program-details h6::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 50px;
+    height: 2px;
+    background: var(--primary-color);
   }
 
   .summary-row {
     display: flex;
     justify-content: space-between;
-    padding: 12px 0;
-    border-bottom: 1px solid #f0f0f0;
+    padding: 15px 0;
+    border-bottom: 1px dashed #eee;
+    color: #555;
+    font-size: 15px;
   }
 
   .summary-row:last-child {
     border-bottom: none;
-    font-weight: 700;
-    font-size: 18px;
-    color: var(--primary-color);
-    margin-top: 10px;
-    padding-top: 15px;
-    border-top: 2px solid #000;
-  }
-
-  .program-details {
-    background: #fff;
-    border: 1px solid var(--border-color);
-    border-radius: 4px;
-    padding: 25px;
-    margin-bottom: 30px;
-  }
-
-  .program-details h6 {
-    color: #000;
-    font-weight: 700;
-    margin-bottom: 15px;
+    font-weight: 800;
+    font-size: 20px;
+    color: #D32F2F;
+    margin-top: 15px;
+    padding-top: 20px;
+    border-top: 2px solid #eee;
   }
 
   .program-details ul {
     margin-bottom: 0;
-    padding-left: 25px;
+    padding-left: 20px;
+    list-style: none;
   }
 
   .program-details li {
-    margin-bottom: 8px;
-    color: var(--text-dark);
+    margin-bottom: 10px;
+    color: #444;
+    font-size: 15px;
+    position: relative;
+    padding-left: 5px;
   }
 
   .payment-button {
     width: 100%;
-    padding: 18px;
+    padding: 20px;
     font-size: 18px;
-    font-weight: 700;
+    font-weight: 800;
     text-transform: uppercase;
-    background: var(--primary-color);
+    background: var(--primary-gradient);
     border: none;
-    border-radius: 4px;
+    border-radius: 50px;
     color: #fff;
     cursor: pointer;
     transition: all 0.3s ease;
+    box-shadow: 0 10px 25px rgba(211, 47, 47, 0.3);
+    letter-spacing: 1px;
+    margin-top: 20px;
   }
 
   .payment-button:hover {
-    background: #c82333;
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(220, 53, 69, 0.3);
+    background: linear-gradient(135deg, #d32f2f 0%, #b71c1c 100%);
+    transform: translateY(-3px);
+    box-shadow: 0 15px 35px rgba(211, 47, 47, 0.4);
   }
 
   .secure-badge {
     text-align: center;
-    margin-top: 20px;
-    color: var(--text-light);
-    font-size: 14px;
+    margin-top: 25px;
+    color: #666;
+    font-size: 13px;
+    background: #e8f5e9;
+    padding: 8px 15px;
+    border-radius: 20px;
+    display: inline-block;
+    border: 1px solid #c8e6c9;
+  }
+  
+  .secure-badge-wrapper {
+    text-align: center;
   }
 
   .secure-badge i {
-    color: #28a745;
+    color: #2e7d32;
     margin-right: 5px;
   }
 
   .razorpay-logo {
     text-align: center;
-    margin-top: 15px;
+    margin-top: 30px;
+    opacity: 0.8;
   }
 
   .razorpay-logo img {
-    height: 30px;
-    opacity: 0.7;
+    height: 24px;
   }
 </style>
 {% endblock %}
@@ -178,6 +226,13 @@
         </button>
       </form>
 
+      <!-- Hidden Verification Form -->
+      <form action="{{ callback_url }}" method="POST" id="payment-verification-form" style="display: none;">
+        <input type="hidden" name="razorpay_payment_id" id="razorpay_payment_id">
+        <input type="hidden" name="razorpay_order_id" id="razorpay_order_id">
+        <input type="hidden" name="razorpay_signature" id="razorpay_signature">
+      </form>
+
       <!-- Secure Badge -->
       <div class="secure-badge">
         <i class="fas fa-shield-alt"></i>
@@ -200,32 +255,100 @@
   document.getElementById('rzp-button').onclick = function(e) {
     e.preventDefault();
     
+    // Disable button
+    var btn = this;
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Processing...';
+
     var options = {
       "key": "{{ razorpay_key_id }}",
       "amount": "{{ amount }}",
       "currency": "{{ currency }}",
       "name": "जन हिमाचल",
       "description": "{{ program.name_hindi }}",
+      "image": "https://janhimachal.com/static/images/logo.png",
       "order_id": "{{ razorpay_order_id }}",
-      "callback_url": "{{ callback_url }}",
-      "redirect": true,
+      
+      // Manual Handler for AJAX Control
+      "handler": function (response) {
+          console.log("PAYMENT SUCCESS! Starting Verification...", response);
+          
+          btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Verifying...';
+          
+          // Prepare payload for API
+          var payload = {
+              'razorpay_order_id': response.razorpay_order_id,
+              'razorpay_payment_id': response.razorpay_payment_id,
+              'razorpay_signature': response.razorpay_signature
+          };
+
+          // Use Fetch API to call Backend
+          fetch('/api/nanhe-patrakar/payment/verify/', {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json',
+                  'X-CSRFToken': '{{ csrf_token }}',  // Important for Django
+                  // Add Authorization header if using JWT on web, 
+                  // BUT since this is a session-based web view, we rely on session cookies.
+                  // The API View is [IsAuthenticated], which works with SessionAuth if configured.
+              },
+              body: JSON.stringify(payload)
+          })
+          .then(res => {
+              console.log("API Response Status:", res.status);
+              return res.json().then(data => ({status: res.status, body: data}));
+          })
+          .then(result => {
+              console.log("API Response Body:", result);
+              
+              if (result.status === 200 || result.status === 201) {
+                  alert("भुगतान सफल! Payment Successful! \nRedirecting...");
+                  // Success - Redirect
+                  window.location.href = "{% url 'nanhe_patrakar:download_app' %}";
+              } else {
+                  // Failure from Backend
+                  var errorMsg = result.body.message || JSON.stringify(result.body);
+                  alert("Payment Verification Failed on Server: " + errorMsg);
+                  btn.disabled = false;
+                  btn.innerHTML = 'Retry Verification';
+              }
+          })
+          .catch(error => {
+              console.error("AJAX Error:", error);
+              alert("Network Error during Verification: " + error);
+              btn.disabled = false;
+              btn.innerHTML = 'Retry Verification';
+          });
+      },
       "prefill": {
         "name": "{{ parent.user.get_full_name }}",
         "email": "{{ parent.user.email }}",
         "contact": "{{ parent.mobile }}"
+      },
+      "notes": {
+        "address": "{{ parent.city }}"
       },
       "theme": {
         "color": "#dc3545"
       },
       "modal": {
         "ondismiss": function() {
-          console.log('Payment cancelled');
+          console.log('Payment modal closed');
+          btn.disabled = false;
+          btn.innerHTML = '<i class="fas fa-lock me-2"></i>सुरक्षित भुगतान करें / Pay Securely';
         }
       }
     };
     
-    var rzp = new Razorpay(options);
-    rzp.open();
+    try {
+        var rzp = new Razorpay(options);
+        rzp.open();
+    } catch (err) {
+        console.error("Razorpay Error:", err);
+        alert("Payment initialization failed");
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-lock me-2"></i>Pay Securely';
+    }
   };
 </script>
 {% endblock %}
