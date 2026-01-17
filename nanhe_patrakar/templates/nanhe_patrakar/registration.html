@@ -1,4 +1,5 @@
 {% extends 'nanhe_patrakar/base.html' %}
+{% load static %}
 {% block title %}पंजीकरण - {{ program.name }} - जन हिमाचल{% endblock %}
 
 {% block extra_css %}
@@ -415,6 +416,14 @@
     text-decoration: none;
   }
 
+  /* Banner Image */
+  .registration-banner {
+    width: 100%;
+    height: 145px;
+    object-fit: fill;
+    display: block;
+  }
+
   .login-section a:hover {
     text-decoration: underline;
   }
@@ -440,6 +449,11 @@
     .info-banner {
       margin: 20px 15px;
     }
+
+    .registration-banner {
+      height: auto;
+      min-height: 150px;
+    }
   }
 </style>
 {% endblock %}
@@ -450,12 +464,8 @@
     <div class="main-card">
       
       <!-- Header -->
-      <div class="form-header">
-        <div class="header-icon">
-          <i class="fas fa-child"></i>
-        </div>
-        <h1>नन्हे पत्रकार में आपका स्वागत है!</h1>
-        <p>अपने बच्चे को पंजीकृत करें / Register Your Child</p>
+      <div class="form-header" style="padding: 0; background: none; box-shadow: none;">
+        <img src="{% static 'nanhe_patrakar/img/registration_banner.jpg' %}" alt="नन्हे पत्रकार पंजीकरण" class="registration-banner">
       </div>
 
       <!-- Form -->
@@ -463,26 +473,34 @@
         {% csrf_token %}
         <div class="form-body">
 
-          <!-- Personal Information Section -->
+          <!-- Guardian Information Section -->
           <div class="section-header">
             <div class="section-icon">
-              <i class="fas fa-user"></i>
+              <i class="fas fa-user-shield"></i>
             </div>
             <div>
-              <h5>व्यक्तिगत जानकारी</h5>
-              <small>Personal Information</small>
+              <h5>अभिभावक का विवरण</h5>
+              <small>Guardian Details</small>
             </div>
+          </div>
+
+          <!-- Note -->
+          <div style="background: #e3f2fd; border-radius: 12px; padding: 15px; margin-bottom: 25px; display: flex; align-items: center; gap: 12px;">
+            <i class="fas fa-info-circle" style="color: #1976d2; font-size: 20px;"></i>
+            <p style="margin: 0; color: #0d47a1; font-size: 14px; font-weight: 600;">
+              नोट: प्रोफाइल बनने के बाद आप अपने बच्चे का विवरण (Child Profile) और फोटो (Photo) अपडेट कर सकते हैं।
+            </p>
           </div>
 
           <div class="row">
             <!-- First Name -->
             <div class="col-md-6 mb-4">
               <label class="form-label">
-                <i class="fas fa-id-card"></i>
-                पहला नाम / First Name <span class="required-star">*</span>
+                <i class="fas fa-user"></i>
+                अभिभावक का नाम (First Name) <span class="required-star">*</span>
               </label>
               <input type="text" name="first_name" id="id_first_name" 
-                     class="custom-input" placeholder="पहला नाम दर्ज करें"
+                     class="custom-input" placeholder="अभिभावक का नाम लिखें"
                      value="{{ form.first_name.value|default:'' }}" required>
               {% if form.first_name.errors %}
               <div class="error-msg"><i class="fas fa-exclamation-circle"></i> {{ form.first_name.errors.0 }}</div>
@@ -492,11 +510,11 @@
             <!-- Last Name -->
             <div class="col-md-6 mb-4">
               <label class="form-label">
-                <i class="fas fa-id-card"></i>
-                उपनाम / Last Name <span class="required-star">*</span>
+                <i class="fas fa-user"></i>
+                अभिभावक का उपनाम (Last Name) <span class="required-star">*</span>
               </label>
               <input type="text" name="last_name" id="id_last_name" 
-                     class="custom-input" placeholder="उपनाम दर्ज करें"
+                     class="custom-input" placeholder="अभिभावक का उपनाम लिखें"
                      value="{{ form.last_name.value|default:'' }}" required>
               {% if form.last_name.errors %}
               <div class="error-msg"><i class="fas fa-exclamation-circle"></i> {{ form.last_name.errors.0 }}</div>
@@ -523,10 +541,10 @@
           <div class="mb-4">
             <label class="form-label">
               <i class="fas fa-mobile-alt"></i>
-              मोबाइल नंबर / Mobile <span class="required-star">*</span>
+              मोबाइल नंबर / Mobile Number <span class="required-star">*</span>
             </label>
             <input type="tel" name="mobile" id="id_mobile" 
-                   class="custom-input" placeholder="10 अंकों का मोबाइल नंबर"
+                   class="custom-input" placeholder="Mobile Number"
                    value="{{ form.mobile.value|default:'' }}" maxlength="10" required>
             <div class="form-hint"><i class="fas fa-info-circle"></i> इस नंबर से ऐप में लॉगिन होगा / App login with this number</div>
             {% if form.mobile.errors %}
@@ -583,10 +601,10 @@
             <div class="col-md-6 mb-4">
               <label class="form-label">
                 <i class="fas fa-city"></i>
-                शहर / City <span class="required-star">*</span>
+                शहर/गाँव / City/Village <span class="required-star">*</span>
               </label>
               <input type="text" name="city" id="id_city" 
-                     class="custom-input" placeholder="अपना शहर दर्ज करें"
+                     class="custom-input" placeholder="शहर/गाँव"
                      value="{{ form.city.value|default:'' }}" required>
               {% if form.city.errors %}
               <div class="error-msg"><i class="fas fa-exclamation-circle"></i> {{ form.city.errors.0 }}</div>
@@ -597,7 +615,7 @@
             <div class="col-md-6 mb-4">
               <label class="form-label">
                 <i class="fas fa-map"></i>
-                जिला / District <span class="required-star">*</span>
+                ज़िला / District <span class="required-star">*</span>
               </label>
               <select name="district" id="id_district" class="custom-select" required>
                 <option value="">-- जिला चुनें --</option>
@@ -629,7 +647,8 @@
               <label class="form-check-label" for="id_terms_accepted">
                 मैं <a href="/terms" target="_blank">नियम और शर्तें</a> तथा 
                 <a href="/privacy" target="_blank">गोपनीयता नीति</a> से सहमत हूं। 
-                मैं पुष्टि करता/करती हूं कि दी गई जानकारी सत्य है।
+                <br>
+                <strong style="color: #d32f2f;">महत्वपूर्ण सहमति:</strong> मैं अपने बच्चे की फोटो, वीडियो और रचनाओं (Content) को <strong>'Jan Himachal News' और 'नन्हे पत्रकार'</strong> प्लेटफॉर्म पर प्रकाशित करने की पूर्ण अनुमति देता/देती हूँ। मैं पुष्टि करता/करती हूँ कि दी गई जानकारी सत्य है।
                 <span class="required-star">*</span>
               </label>
             </div>
@@ -648,17 +667,7 @@
       </form>
 
       <!-- Info Banner (After Form) -->
-      <div class="info-banner" style="margin: 0 25px 25px;">
-        <h6><i class="fas fa-info-circle me-2"></i>पात्रता मानदंड / Eligibility</h6>
-        <ul>
-          <li><i class="fas fa-check-circle"></i> <strong>आयु:</strong> {{ program.min_age }}-{{ program.max_age }} वर्ष ({{ program.min_age }}-{{ program.max_age }} years)</li>
-          <li><i class="fas fa-check-circle"></i> <strong>निवास:</strong> हिमाचल प्रदेश का निवासी (Himachal Pradesh resident)</li>
-          <li><i class="fas fa-check-circle"></i> <strong>सहमति:</strong> माता-पिता की पूर्ण सहमति आवश्यक (Parent consent required)</li>
-        </ul>
-        <div class="fee-badge">
-          <i class="fas fa-rupee-sign"></i> {{ program.price }} - एकमुश्त भागीदारी शुल्क
-        </div>
-      </div>
+      
 
       <!-- Login Link -->
       <div class="login-section">

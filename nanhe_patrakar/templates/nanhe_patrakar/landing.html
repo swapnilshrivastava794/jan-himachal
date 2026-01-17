@@ -1,4 +1,5 @@
 {% extends 'nanhe_patrakar/base.html' %}
+{% load static %}
 
 {% block title %}नन्हे पत्रकार - जन हिमाचल{% endblock %}
 
@@ -11,54 +12,37 @@
         --glass-bg: rgba(255, 255, 255, 0.1);
         --text-shadow: 0 4px 10px rgba(0,0,0,0.1);
     }
-    
-    /* Helper Classes */
-    .ls-2 { letter-spacing: 2px; }
-    .section-title { font-weight: 700; }
-    
-    /* ============================================
-       HIMACHAL MOUNTAIN HERO - OPTIMIZED
-    ============================================ */
-    .hero-himachal {
-        position: relative;
-        min-height: 700px;
-        /* Rich Sunset/Dawn Sky */
-        background: linear-gradient(180deg, 
-            #0a0a1a 0%,
-            #1a1035 8%,
-            #2d1f4a 15%,
-            #4a2c6a 22%,
-            #6b3a7a 28%,
-            #8b4a6a 33%,
-            #b85a5a 38%,
-            #d97a4a 43%,
-            #e8a050 48%,
-            #f5c060 52%,
-            #8ec8e8 65%,
-            #a8d8f0 75%,
-            #c8e8f8 85%,
-            #e0f0f8 100%);
-        overflow: hidden;
-        padding-top: 80px;
-        /* GPU Acceleration for smooth scroll */
-        transform: translateZ(0);
-        -webkit-backface-visibility: hidden;
-        backface-visibility: hidden;
-    }
-
-    /* Ambient Light Glow Overlay */
-    .ambient-glow {
+    .hero-banner-bg {
         position: absolute;
         top: 0;
         left: 0;
         width: 100%;
         height: 100%;
-        background: radial-gradient(ellipse at 85% 30%, 
-            rgba(255, 200, 100, 0.3) 0%, 
-            rgba(255, 150, 80, 0.15) 30%, 
-            transparent 60%);
-        z-index: 1;
-        pointer-events: none;
+        object-fit: cover;
+        z-index: 0;
+        filter: brightness(0.6); /* Darken slightly for text readability */
+    }
+    
+    /* Registration Banner Styles from Registration Page */
+    .form-header {
+      padding: 0; 
+      background: none; 
+      box-shadow: none;
+      width: 100%;
+    }
+    
+    .registration-banner {
+      width: 100%;
+      height: 280px; /* Desktop height */
+      object-fit: fill;
+      display: block;
+    }
+
+    @media (max-width: 768px) {
+      .registration-banner {
+        height: auto; /* Mobile height */
+        min-height: 150px;
+      }
     }
 
     /* Golden Hour Light Rays */
@@ -171,6 +155,14 @@
         top: 15%;
         right: 10%;
         z-index: 3;
+    }
+
+    .hero-himachal {
+        position: relative;
+        /* Removed min-height and padding for banner only view */
+        transform: translateZ(0);
+        -webkit-backface-visibility: hidden;
+        backface-visibility: hidden;
     }
 
     .sun {
@@ -1018,6 +1010,23 @@
         transition: 0.5s;
     }
     .btn-shine:hover::after { left: 100%; }
+
+    /* New CSS for registration banner */
+    .registration-banner {
+        width: 100%;
+        height: auto;
+        display: block;
+        object-fit: cover;
+        border-radius: 12px; /* Optional: if you want rounded corners */
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1); /* Optional: subtle shadow */
+    }
+
+    .form-header {
+        padding: 0;
+        background: none;
+        box-shadow: none;
+        margin-bottom: 30px; /* Add some space below the banner */
+    }
 </style>
 {% endblock %}
 
@@ -1026,365 +1035,10 @@
 <!-- Hero Section - PIXAR QUALITY Himachal Scene -->
 <section class="hero-himachal">
     
-    <!-- Ambient Golden Glow Overlay -->
-    <div class="ambient-glow"></div>
-    
-    <!-- Dramatic Light Rays from Sun -->
-    <div class="light-rays"></div>
-    
-    <!-- Floating Magical Particles -->
-    <div class="magic-particles">
-        <div class="particle"></div>
-        <div class="particle"></div>
-        <div class="particle"></div>
-        <div class="particle"></div>
-        <div class="particle"></div>
-        <div class="particle"></div>
-        <div class="particle"></div>
-        <div class="particle"></div>
-    </div>
-    
-    <!-- Twinkling Stars - More Stars -->
-    <div class="stars">
-        <div class="star"></div>
-        <div class="star"></div>
-        <div class="star"></div>
-        <div class="star"></div>
-        <div class="star"></div>
-        <div class="star"></div>
-        <div class="star"></div>
-        <div class="star"></div>
-        <div class="star"></div>
-        <div class="star"></div>
-    </div>
-    
-    <!-- Sun with Rotating Rays -->
-    <div class="sun-container">
-        <div class="sun-rays">
-            <div class="sun-ray"></div>
-            <div class="sun-ray"></div>
-            <div class="sun-ray"></div>
-            <div class="sun-ray"></div>
-            <div class="sun-ray"></div>
-            <div class="sun-ray"></div>
-            <div class="sun-ray"></div>
-            <div class="sun-ray"></div>
-            <div class="sun-ray"></div>
-            <div class="sun-ray"></div>
-            <div class="sun-ray"></div>
-            <div class="sun-ray"></div>
-        </div>
-        <div class="sun"></div>
-    </div>
-    
-    <!-- Animated Clouds -->
-    <div class="cloud cloud-1"></div>
-    <div class="cloud cloud-2"></div>
-    <div class="cloud cloud-3"></div>
-    
-    <!-- Flying Birds Group -->
-    <svg class="birds-group" width="80" height="30" viewBox="0 0 80 30">
-        <path class="bird" d="M5 15 Q10 8, 15 15"/>
-        <path class="bird" d="M25 10 Q30 3, 35 10"/>
-        <path class="bird" d="M45 18 Q50 11, 55 18"/>
-        <path class="bird" d="M60 12 Q65 5, 70 12"/>
-    </svg>
-    
-    <!-- Mountains Back (Snow-capped Himalayas) - REALISTIC -->
-    <div class="mountains-back">
-        <svg viewBox="0 0 1440 400" preserveAspectRatio="none">
-            <defs>
-                <!-- Main mountain gradient -->
-                <linearGradient id="snowMountain" x1="0%" y1="0%" x2="0%" y2="100%">
-                    <stop offset="0%" style="stop-color:#ffffff"/>
-                    <stop offset="15%" style="stop-color:#f0f4f8"/>
-                    <stop offset="40%" style="stop-color:#b8c5d1"/>
-                    <stop offset="70%" style="stop-color:#8a9bab"/>
-                    <stop offset="100%" style="stop-color:#5a6b7a"/>
-                </linearGradient>
-                <!-- Shadow side gradient -->
-                <linearGradient id="mountainShadow" x1="0%" y1="0%" x2="100%" y2="0%">
-                    <stop offset="0%" style="stop-color:#4a5a6a"/>
-                    <stop offset="100%" style="stop-color:#6a7a8a"/>
-                </linearGradient>
-                <!-- Snow highlight -->
-                <linearGradient id="snowHighlight" x1="0%" y1="0%" x2="0%" y2="100%">
-                    <stop offset="0%" style="stop-color:#ffffff"/>
-                    <stop offset="100%" style="stop-color:#e8f0f8"/>
-                </linearGradient>
-            </defs>
-            
-            <!-- Main mountain range with peaks -->
-            <path fill="url(#snowMountain)" d="M0,400 L0,280 L80,220 L140,260 L200,160 L280,220 L360,100 L420,180 L500,60 L580,150 L660,80 L740,160 L820,40 L900,130 L980,70 L1060,150 L1140,50 L1220,140 L1300,90 L1380,150 L1440,120 L1440,400 Z"/>
-            
-            <!-- Shadow faces on right side of peaks -->
-            <path fill="url(#mountainShadow)" opacity="0.4" d="M360,100 L420,180 L360,180 Z"/>
-            <path fill="url(#mountainShadow)" opacity="0.4" d="M500,60 L580,150 L500,150 Z"/>
-            <path fill="url(#mountainShadow)" opacity="0.4" d="M660,80 L740,160 L660,160 Z"/>
-            <path fill="url(#mountainShadow)" opacity="0.4" d="M820,40 L900,130 L820,130 Z"/>
-            <path fill="url(#mountainShadow)" opacity="0.4" d="M980,70 L1060,150 L980,150 Z"/>
-            <path fill="url(#mountainShadow)" opacity="0.4" d="M1140,50 L1220,140 L1140,140 Z"/>
-            
-            <!-- Realistic snow caps with shape -->
-            <path fill="url(#snowHighlight)" d="M340,120 L360,100 L380,120 Q370,130, 360,125 Q350,130, 340,120"/>
-            <path fill="url(#snowHighlight)" d="M480,80 L500,60 L520,80 Q510,90, 500,85 Q490,90, 480,80"/>
-            <path fill="url(#snowHighlight)" d="M640,100 L660,80 L680,100 Q670,110, 660,105 Q650,110, 640,100"/>
-            <path fill="url(#snowHighlight)" d="M800,60 L820,40 L840,60 Q830,70, 820,65 Q810,70, 800,60"/>
-            <path fill="url(#snowHighlight)" d="M960,90 L980,70 L1000,90 Q990,100, 980,95 Q970,100, 960,90"/>
-            <path fill="url(#snowHighlight)" d="M1120,70 L1140,50 L1160,70 Q1150,80, 1140,75 Q1130,80, 1120,70"/>
-            <path fill="url(#snowHighlight)" d="M1280,110 L1300,90 L1320,110 Q1310,120, 1300,115 Q1290,120, 1280,110"/>
-        </svg>
-    </div>
-    
-    <!-- Mist Layer 1 (between back and mid mountains) -->
-    <div class="mist-layer mist-1"></div>
-    
-    <!-- Mountains Mid (Forested Hills) - REALISTIC -->
-    <div class="mountains-mid">
-        <svg viewBox="0 0 1440 320" preserveAspectRatio="none">
-            <defs>
-                <linearGradient id="forestHill" x1="0%" y1="0%" x2="0%" y2="100%">
-                    <stop offset="0%" style="stop-color:#5a9050"/>
-                    <stop offset="30%" style="stop-color:#4a8040"/>
-                    <stop offset="60%" style="stop-color:#3a7030"/>
-                    <stop offset="100%" style="stop-color:#2a5020"/>
-                </linearGradient>
-                <linearGradient id="forestShadow" x1="0%" y1="0%" x2="100%" y2="0%">
-                    <stop offset="0%" style="stop-color:#1a4020"/>
-                    <stop offset="100%" style="stop-color:#2a5030"/>
-                </linearGradient>
-            </defs>
-            
-            <!-- Main forested hills -->
-            <path fill="url(#forestHill)" d="M0,320 L0,220 L60,180 L140,210 L220,140 L320,180 L420,110 L520,160 L620,100 L720,150 L820,120 L920,160 L1020,100 L1120,150 L1220,130 L1320,170 L1440,140 L1440,320 Z"/>
-            
-            <!-- Shadow on some hills -->
-            <path fill="url(#forestShadow)" opacity="0.3" d="M220,140 L320,180 L220,180 Z"/>
-            <path fill="url(#forestShadow)" opacity="0.3" d="M420,110 L520,160 L420,160 Z"/>
-            <path fill="url(#forestShadow)" opacity="0.3" d="M620,100 L720,150 L620,150 Z"/>
-            <path fill="url(#forestShadow)" opacity="0.3" d="M820,120 L920,160 L820,160 Z"/>
-            <path fill="url(#forestShadow)" opacity="0.3" d="M1020,100 L1120,150 L1020,150 Z"/>
-            
-            <!-- Tree texture hints on ridges -->
-            <path fill="#2a6030" opacity="0.5" d="M140,210 Q150,200, 160,210 Q170,200, 180,210 Q190,200, 200,210 L220,140 L140,210"/>
-            <path fill="#2a6030" opacity="0.5" d="M520,160 Q530,150, 540,160 Q550,150, 560,160 Q570,150, 580,160 L620,100 L520,160"/>
-        </svg>
-    </div>
-    
-    <!-- Mist Layer 2 -->
-    <div class="mist-layer mist-2"></div>
-    
-    <!-- Mountains Front (Dark Dense Forest) - REALISTIC -->
-    <div class="mountains-front">
-        <svg viewBox="0 0 1440 280" preserveAspectRatio="none">
-            <defs>
-                <linearGradient id="denseForest" x1="0%" y1="0%" x2="0%" y2="100%">
-                    <stop offset="0%" style="stop-color:#2d5a2e"/>
-                    <stop offset="40%" style="stop-color:#1f4a20"/>
-                    <stop offset="100%" style="stop-color:#0f3010"/>
-                </linearGradient>
-                <linearGradient id="denseForestShadow" x1="0%" y1="0%" x2="100%" y2="0%">
-                    <stop offset="0%" style="stop-color:#0a2008"/>
-                    <stop offset="100%" style="stop-color:#153015"/>
-                </linearGradient>
-            </defs>
-            
-            <!-- Dense forest hills -->
-            <path fill="url(#denseForest)" d="M0,280 L0,200 L50,160 L120,190 L200,130 L300,170 L400,110 L500,150 L600,100 L700,140 L800,115 L900,150 L1000,110 L1100,145 L1200,120 L1300,155 L1400,130 L1440,150 L1440,280 Z"/>
-            
-            <!-- Shadows -->
-            <path fill="url(#denseForestShadow)" opacity="0.4" d="M200,130 L300,170 L200,170 Z"/>
-            <path fill="url(#denseForestShadow)" opacity="0.4" d="M400,110 L500,150 L400,150 Z"/>
-            <path fill="url(#denseForestShadow)" opacity="0.4" d="M600,100 L700,140 L600,140 Z"/>
-            <path fill="url(#denseForestShadow)" opacity="0.4" d="M800,115 L900,150 L800,150 Z"/>
-            <path fill="url(#denseForestShadow)" opacity="0.4" d="M1000,110 L1100,145 L1000,145 Z"/>
-            
-            <!-- Pine tree silhouettes on ridge -->
-            <path fill="#0f3010" d="M100,190 L105,175 L110,190 M115,190 L120,172 L125,190 M130,190 L135,178 L140,190"/>
-            <path fill="#0f3010" d="M300,170 L305,155 L310,170 M315,170 L320,152 L325,170 M330,170 L335,158 L340,170"/>
-            <path fill="#0f3010" d="M500,150 L505,135 L510,150 M515,150 L520,132 L525,150 M530,150 L535,138 L540,150"/>
-            <path fill="#0f3010" d="M700,140 L705,125 L710,140 M715,140 L720,122 L725,140 M730,140 L735,128 L740,140"/>
-        </svg>
-    </div>
-    
-    <!-- Mist Layer 3 (lowest) -->
-    <div class="mist-layer mist-3"></div>
-    
-    <!-- SVG Pine Trees with Wind Sway -->
-    <div class="trees-container">
-        <svg class="pine-tree" width="40" height="80" viewBox="0 0 40 80">
-            <polygon points="20,5 35,35 28,35 38,55 25,55 40,80 0,80 15,55 2,55 12,35 5,35" fill="#1a5c3a"/>
-            <rect x="17" y="65" width="6" height="15" fill="#4a3728"/>
-        </svg>
-        <svg class="pine-tree" width="30" height="60" viewBox="0 0 30 60" style="margin-left:-10px">
-            <polygon points="15,3 26,26 21,26 29,42 19,42 30,60 0,60 11,42 1,42 9,26 4,26" fill="#2d7a3e"/>
-            <rect x="12" y="50" width="5" height="10" fill="#5c4033"/>
-        </svg>
-        <svg class="pine-tree" width="45" height="90" viewBox="0 0 45 90">
-            <polygon points="22,2 40,38 32,38 44,62 28,62 45,90 0,90 17,62 1,62 13,38 5,38" fill="#1a5c3a"/>
-            <rect x="18" y="75" width="8" height="15" fill="#4a3728"/>
-        </svg>
-        <svg class="pine-tree" width="35" height="70" viewBox="0 0 35 70" style="margin-left:-5px">
-            <polygon points="17,3 31,30 25,30 34,50 22,50 35,70 0,70 13,50 1,50 10,30 4,30" fill="#2d7a3e"/>
-            <rect x="14" y="58" width="6" height="12" fill="#5c4033"/>
-        </svg>
-        <svg class="pine-tree" width="38" height="75" viewBox="0 0 38 75">
-            <polygon points="19,4 34,32 27,32 37,54 24,54 38,75 0,75 14,54 1,54 11,32 4,32" fill="#1a5c3a"/>
-            <rect x="15" y="62" width="7" height="13" fill="#4a3728"/>
-        </svg>
-    </div>
-    
-    <!-- Animated Grass -->
-    <div class="grass-container" id="grassContainer"></div>
-    
-    <!-- Children with Himachali Caps - Enhanced -->
-    <div class="children-group">
-        <!-- Boy 1 with Red Himachali Cap -->
-        <svg class="child-svg" width="55" height="110" viewBox="0 0 55 110">
-            <!-- Head -->
-            <ellipse cx="27" cy="22" rx="14" ry="16" fill="#d2a679"/>
-            <!-- Eyes -->
-            <ellipse cx="22" cy="22" rx="2" ry="2.5" fill="#1a1a1a"/>
-            <ellipse cx="32" cy="22" rx="2" ry="2.5" fill="#1a1a1a"/>
-            <!-- Smile -->
-            <path d="M22 28 Q27 32, 32 28" stroke="#1a1a1a" stroke-width="1.5" fill="none"/>
-            <!-- Himachali Cap -->
-            <path d="M13 18 Q27 0, 41 18" fill="#d91c1c"/>
-            <ellipse cx="27" cy="18" rx="14" ry="4" fill="#d91c1c"/>
-            <circle cx="27" cy="6" r="4" fill="#d91c1c"/>
-            <circle cx="27" cy="6" r="2" fill="#ffd700"/>
-            <!-- Body (Green Kurta) -->
-            <path d="M18 38 L12 70 L42 70 L36 38 Q27 42, 18 38" fill="#2e7d32"/>
-            <!-- Arms -->
-            <rect x="8" y="42" width="8" height="25" rx="4" fill="#2e7d32"/>
-            <rect x="38" y="42" width="8" height="25" rx="4" fill="#2e7d32"/>
-            <!-- Legs -->
-            <rect x="16" y="70" width="10" height="35" rx="3" fill="#5d4037"/>
-            <rect x="29" y="70" width="10" height="35" rx="3" fill="#5d4037"/>
-        </svg>
-        
-        <!-- Girl with Braids -->
-        <svg class="child-svg" width="48" height="95" viewBox="0 0 48 95">
-            <!-- Hair -->
-            <ellipse cx="24" cy="20" rx="14" ry="15" fill="#1a1a1a"/>
-            <!-- Face -->
-            <ellipse cx="24" cy="22" rx="11" ry="13" fill="#e8c4a0"/>
-            <!-- Eyes -->
-            <ellipse cx="20" cy="21" rx="2" ry="2" fill="#1a1a1a"/>
-            <ellipse cx="28" cy="21" rx="2" ry="2" fill="#1a1a1a"/>
-            <!-- Smile -->
-            <path d="M20 27 Q24 30, 28 27" stroke="#1a1a1a" stroke-width="1.2" fill="none"/>
-            <!-- Braids -->
-            <rect x="8" y="20" width="5" height="30" rx="2.5" fill="#1a1a1a"/>
-            <rect x="35" y="20" width="5" height="30" rx="2.5" fill="#1a1a1a"/>
-            <!-- Pink Dress -->
-            <path d="M16 36 L10 65 L38 65 L32 36 Q24 40, 16 36" fill="#e91e63"/>
-            <path d="M10 65 L5 95 L43 95 L38 65 Z" fill="#e91e63"/>
-            <!-- Ribbon -->
-            <ellipse cx="24" cy="8" rx="6" ry="3" fill="#ff4081"/>
-        </svg>
-        
-        <!-- Tall Boy with Blue Dress -->
-        <svg class="child-svg" width="60" height="120" viewBox="0 0 60 120">
-            <!-- Head -->
-            <ellipse cx="30" cy="24" rx="15" ry="17" fill="#c9a06d"/>
-            <!-- Eyes -->
-            <ellipse cx="25" cy="24" rx="2.5" ry="3" fill="#1a1a1a"/>
-            <ellipse cx="35" cy="24" rx="2.5" ry="3" fill="#1a1a1a"/>
-            <!-- Smile -->
-            <path d="M24 31 Q30 36, 36 31" stroke="#1a1a1a" stroke-width="1.5" fill="none"/>
-            <!-- Himachali Cap -->
-            <path d="M15 20 Q30 0, 45 20" fill="#d91c1c"/>
-            <ellipse cx="30" cy="20" rx="15" ry="5" fill="#d91c1c"/>
-            <circle cx="30" cy="6" r="5" fill="#d91c1c"/>
-            <circle cx="30" cy="6" r="2.5" fill="#ffd700"/>
-            <!-- Body (Blue Kurta) -->
-            <path d="M20 42 L14 80 L46 80 L40 42 Q30 46, 20 42" fill="#1565c0"/>
-            <!-- Arms -->
-            <rect x="8" y="46" width="9" height="28" rx="4" fill="#1565c0"/>
-            <rect x="43" y="46" width="9" height="28" rx="4" fill="#1565c0"/>
-            <!-- Legs -->
-            <rect x="18" y="80" width="11" height="38" rx="3" fill="#4a3728"/>
-            <rect x="32" y="80" width="11" height="38" rx="3" fill="#4a3728"/>
-        </svg>
-        
-        <!-- Small Boy with Green -->
-        <svg class="child-svg" width="45" height="90" viewBox="0 0 45 90">
-            <!-- Head -->
-            <ellipse cx="22" cy="18" rx="12" ry="14" fill="#deb887"/>
-            <!-- Eyes -->
-            <ellipse cx="18" cy="18" rx="2" ry="2" fill="#1a1a1a"/>
-            <ellipse cx="26" cy="18" rx="2" ry="2" fill="#1a1a1a"/>
-            <!-- Smile -->
-            <path d="M18 23 Q22 27, 26 23" stroke="#1a1a1a" stroke-width="1" fill="none"/>
-            <!-- Himachali Cap -->
-            <path d="M10 15 Q22 0, 34 15" fill="#d91c1c"/>
-            <ellipse cx="22" cy="15" rx="12" ry="4" fill="#d91c1c"/>
-            <circle cx="22" cy="5" r="3" fill="#d91c1c"/>
-            <!-- Body (Green) -->
-            <path d="M14 32 L9 58 L35 58 L30 32 Q22 36, 14 32" fill="#4caf50"/>
-            <!-- Legs -->
-            <rect x="12" y="58" width="9" height="30" rx="3" fill="#5d4037"/>
-            <rect x="24" y="58" width="9" height="30" rx="3" fill="#5d4037"/>
-        </svg>
-        
-        <!-- Small Girl with Purple -->
-        <svg class="child-svg" width="42" height="85" viewBox="0 0 42 85">
-            <!-- Hair -->
-            <ellipse cx="21" cy="16" rx="12" ry="13" fill="#3d2314"/>
-            <!-- Face -->
-            <ellipse cx="21" cy="18" rx="10" ry="11" fill="#f5d5c8"/>
-            <!-- Eyes -->
-            <ellipse cx="17" cy="17" rx="1.5" ry="2" fill="#1a1a1a"/>
-            <ellipse cx="25" cy="17" rx="1.5" ry="2" fill="#1a1a1a"/>
-            <!-- Smile -->
-            <path d="M17 22 Q21 25, 25 22" stroke="#1a1a1a" stroke-width="1" fill="none"/>
-            <!-- Purple Dress -->
-            <path d="M14 30 L9 52 L33 52 L28 30 Q21 34, 14 30" fill="#9c27b0"/>
-            <path d="M9 52 L5 85 L37 85 L33 52 Z" fill="#9c27b0"/>
-            <!-- Hair bands -->
-            <circle cx="10" cy="12" r="3" fill="#ff4081"/>
-            <circle cx="32" cy="12" r="3" fill="#ff4081"/>
-        </svg>
-    </div>
-    
-    <!-- Fireflies -->
-    <div class="fireflies">
-        <div class="firefly"></div>
-        <div class="firefly"></div>
-        <div class="firefly"></div>
-        <div class="firefly"></div>
-        <div class="firefly"></div>
-    </div>
-    
-    <!-- Green Ground -->
-    <div class="ground"></div>
-    
-    <!-- Hero Content -->
-    <div class="container hero-content">
-        <div class="row">
-            <div class="col-lg-8 text-lg-start text-center">
-                <div class="hero-badge">
-                    <i class="fas fa-star text-warning"></i>
-                    जन हिमाचल की पहल
-                </div>
-                
-                <h1 class="hero-title">{{ program.name_hindi }}</h1>
-                <h2 class="hero-subtitle">हिमाचल के बच्चों की आवाज़</h2>
-                
-                <p class="hero-desc">
-                    मोबाइल से हटकर, बच्चों को पत्रकार बनने का अवसर। कहानियाँ, विचार, भाषण और वीडियो Publish करें।
-                </p>
-                
-                <div class="d-flex flex-column flex-sm-row gap-3 justify-content-lg-start justify-content-center">
-                    <a href="{% url 'nanhe_patrakar:register' %}" class="hero-btn-primary">
-                        <i class="fas fa-pen-nib"></i> पंजीकरण करें
-                    </a>
-                    <a href="#about" class="hero-btn-outline">
-                        <i class="fas fa-info-circle"></i> और जानें
-                    </a>
-                </div>
-            </div>
+    <!-- Static Banner Image (User Requested Structure) -->
+    <div class="container mt-3 mb-4">
+        <div class="form-header" style="padding: 0; background: none; box-shadow: none;">
+            <img class="w-100" src="{% static 'nanhe_patrakar/img/registration_banner.jpg' %}" alt="नन्हे पत्रकार पंजीकरण" class="registration-banner width-100">
         </div>
     </div>
 </section>
