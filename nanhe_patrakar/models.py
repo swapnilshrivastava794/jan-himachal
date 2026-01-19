@@ -100,8 +100,8 @@ class ChildProfile(models.Model):
 
     parent = models.ForeignKey(ParentProfile, on_delete=models.CASCADE, related_name='children')
     name = models.CharField(max_length=200)
-    date_of_birth = models.DateField()
-    age = models.IntegerField(validators=[MinValueValidator(8), MaxValueValidator(16)])
+    date_of_birth = models.DateField(null=True, blank=True)  # Made optional since age_group is selected directly
+    age = models.IntegerField(validators=[MinValueValidator(8), MaxValueValidator(16)], null=True, blank=True)
     age_group = models.CharField(max_length=1, choices=AGE_GROUP_CHOICES)
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES, null=True, blank=True)
     school_name = models.CharField(max_length=255, null=True, blank=True)

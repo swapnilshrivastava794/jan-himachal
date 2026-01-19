@@ -269,17 +269,172 @@
     padding: 16px 20px;
     border: 2px solid #e8e8e8;
     border-radius: 12px;
-    font-size: 15px;
-    background: #fafafa;
+    font-size: 15px !important;
+    background-color: #fafafa !important;
     transition: all 0.3s ease;
     cursor: pointer;
+    color: #000 !important;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23333' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 15px center;
+    background-size: 16px 12px;
+    padding-right: 45px;
   }
 
   .custom-select:focus {
     outline: none;
     border-color: #000;
     box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.1);
+    background-color: #fff !important;
+  }
+  
+  .custom-select option {
+    padding: 10px;
+    color: #000 !important;
+    background: #fff !important;
+  }
+  
+  select.custom-select {
+    color: #000 !important;
+  }
+
+  /* Age Group Radio Options */
+  .age-group-options {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  
+  .age-option {
+    flex: 1;
+    min-width: 100px;
+    cursor: pointer;
+  }
+  
+  .age-option input[type="radio"] {
+    display: none;
+  }
+  
+  .age-option-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 15px 10px;
+    border: 2px solid #e0e0e0;
+    border-radius: 12px;
+    background: #fafafa;
+    transition: all 0.3s ease;
+    text-align: center;
+  }
+  
+  .age-option-box:hover {
+    border-color: #999;
     background: #fff;
+  }
+  
+  .age-option input[type="radio"]:checked + .age-option-box {
+    border-color: #4CAF50;
+    background: #e8f5e9;
+    box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.2);
+  }
+  
+  .age-option-box.group-a { border-top: 4px solid #4CAF50; }
+  .age-option-box.group-b { border-top: 4px solid #FFC107; }
+  .age-option-box.group-c { border-top: 4px solid #F44336; }
+  
+  .age-option input[type="radio"]:checked + .age-option-box.group-b {
+    border-color: #FFC107;
+    background: #fff8e1;
+    box-shadow: 0 0 0 3px rgba(255, 193, 7, 0.2);
+  }
+  
+  .age-option input[type="radio"]:checked + .age-option-box.group-c {
+    border-color: #F44336;
+    background: #ffebee;
+    box-shadow: 0 0 0 3px rgba(244, 67, 54, 0.2);
+  }
+  
+  .age-title {
+    font-weight: 700;
+    font-size: 16px;
+    color: #000;
+  }
+  
+  .age-years {
+    font-size: 13px;
+    color: #d91c1c;
+    font-weight: 600;
+    margin-top: 4px;
+  }
+
+  /* Gender Radio Options */
+  .gender-options {
+    display: flex;
+    gap: 10px;
+  }
+  
+  .gender-option {
+    flex: 1;
+    cursor: pointer;
+  }
+  
+  .gender-option input[type="radio"] {
+    display: none;
+  }
+  
+  .gender-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 8px;
+    border: 2px solid #e0e0e0;
+    border-radius: 12px;
+    background: #fafafa;
+    transition: all 0.3s ease;
+    text-align: center;
+  }
+  
+  .gender-box i {
+    font-size: 24px;
+    margin-bottom: 5px;
+  }
+  
+  .gender-box span {
+    font-size: 13px;
+    font-weight: 600;
+    color: #333;
+  }
+  
+  .gender-box:hover {
+    border-color: #999;
+    background: #fff;
+  }
+  
+  .gender-box.male i { color: #2196F3; }
+  .gender-box.female i { color: #E91E63; }
+  .gender-box.other i { color: #9C27B0; }
+  
+  .gender-option input[type="radio"]:checked + .gender-box.male {
+    border-color: #2196F3;
+    background: #e3f2fd;
+    box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.2);
+  }
+  
+  .gender-option input[type="radio"]:checked + .gender-box.female {
+    border-color: #E91E63;
+    background: #fce4ec;
+    box-shadow: 0 0 0 3px rgba(233, 30, 99, 0.2);
+  }
+  
+  .gender-option input[type="radio"]:checked + .gender-box.other {
+    border-color: #9C27B0;
+    background: #f3e5f5;
+    box-shadow: 0 0 0 3px rgba(156, 39, 176, 0.2);
   }
 
   .form-label {
@@ -455,6 +610,55 @@
       min-height: 150px;
     }
   }
+
+  /* File Upload Styles */
+  .upload-wrapper {
+      position: relative;
+  }
+  .hidden-file-input {
+      display: none;
+  }
+  .upload-box {
+      border: 2px dashed #e8e8e8;
+      border-radius: 12px;
+      padding: 30px;
+      text-align: center;
+      cursor: pointer;
+      background: #fafafa;
+      transition: all 0.3s ease;
+      display: block;
+  }
+  .upload-box:hover {
+      border-color: #000;
+      background: #fff;
+  }
+  .upload-icon {
+      font-size: 32px;
+      color: var(--accent-color);
+      margin-bottom: 10px;
+      display: block;
+  }
+  .upload-text {
+      font-weight: 700;
+      color: #000;
+      display: block;
+      margin-bottom: 5px;
+  }
+  .upload-sub {
+      font-size: 12px;
+      color: #666;
+      display: block;
+  }
+  .file-name {
+      margin-top: 10px;
+      font-size: 13px;
+      color: #000;
+      font-weight: 600;
+      display: block;
+  }
+
+  /* File Upload Styles */
+
 </style>
 {% endblock %}
 
@@ -469,8 +673,23 @@
       </div>
 
       <!-- Form -->
-      <form method="post" id="registrationForm" novalidate>
+      <form method="post" id="registrationForm" enctype="multipart/form-data" novalidate>
         {% csrf_token %}
+        
+        <!-- Show all form errors for debugging -->
+        {% if form.errors %}
+        <div style="background: #ffebee; border: 1px solid #f44336; border-radius: 12px; padding: 15px; margin: 20px; color: #c62828;">
+          <strong><i class="fas fa-exclamation-triangle"></i> कृपया निम्न त्रुटियाँ ठीक करें:</strong>
+          <ul style="margin: 10px 0 0 20px;">
+            {% for field, errors in form.errors.items %}
+              {% for error in errors %}
+                <li><strong>{{ field }}:</strong> {{ error }}</li>
+              {% endfor %}
+            {% endfor %}
+          </ul>
+        </div>
+        {% endif %}
+        
         <div class="form-body">
 
           <!-- Guardian Information Section -->
@@ -522,86 +741,99 @@
             </div>
           </div>
 
-          <!-- Username -->
-          <div class="mb-4">
-            <label class="form-label">
-              <i class="fas fa-at"></i>
-              यूजरनेम / Username <span class="required-star">*</span>
-            </label>
-            <input type="text" name="username" id="id_username" 
-                   class="custom-input" placeholder="यूजरनेम चुनें (जैसे: rahul123)"
-                   value="{{ form.username.value|default:'' }}" required>
-            <div class="form-hint"><i class="fas fa-info-circle"></i> लॉगिन के लिए उपयोग होगा / Used for login</div>
-            {% if form.username.errors %}
-            <div class="error-msg"><i class="fas fa-exclamation-circle"></i> {{ form.username.errors.0 }}</div>
-            {% endif %}
-          </div>
-
-          <!-- Mobile -->
-          <div class="mb-4">
-            <label class="form-label">
-              <i class="fas fa-mobile-alt"></i>
-              मोबाइल नंबर / Mobile Number <span class="required-star">*</span>
-            </label>
-            <input type="tel" name="mobile" id="id_mobile" 
-                   class="custom-input" placeholder="Mobile Number"
-                   value="{{ form.mobile.value|default:'' }}" maxlength="10" required>
-            <div class="form-hint"><i class="fas fa-info-circle"></i> इस नंबर से ऐप में लॉगिन होगा / App login with this number</div>
-            {% if form.mobile.errors %}
-            <div class="error-msg"><i class="fas fa-exclamation-circle"></i> {{ form.mobile.errors.0 }}</div>
-            {% endif %}
-          </div>
-
-          <!-- Email -->
-          <div class="mb-4">
-            <label class="form-label">
-              <i class="fas fa-envelope"></i>
-              ईमेल / Email <span class="required-star">*</span>
-            </label>
-            <input type="email" name="email" id="id_email" 
-                   class="custom-input" placeholder="आपका ईमेल पता"
-                   value="{{ form.email.value|default:'' }}" required>
-            {% if form.email.errors %}
-            <div class="error-msg"><i class="fas fa-exclamation-circle"></i> {{ form.email.errors.0 }}</div>
-            {% endif %}
-          </div>
-
-          <!-- Password -->
-          <div class="mb-4">
-            <label class="form-label">
-              <i class="fas fa-lock"></i>
-              पासवर्ड / Password <span class="required-star">*</span>
-            </label>
-            <div class="position-relative">
-              <input type="password" name="password" id="id_password" 
-                     class="custom-input" placeholder="कम से कम 6 अक्षर" required>
-              <button type="button" class="password-toggle-btn" onclick="togglePassword()">
-                <i class="fas fa-eye" id="toggleIcon"></i>
-              </button>
+          <!-- Row: Username & Mobile -->
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label class="form-label">
+                <i class="fas fa-at"></i>
+                यूजरनेम / Username <span class="required-star">*</span>
+              </label>
+              <input type="text" name="username" id="id_username" 
+                     class="custom-input" placeholder="यूजरनेम (जैसे: rahul123)"
+                     value="{{ form.username.value|default:'' }}" required>
+              {% if form.username.errors %}
+              <div class="error-msg"><i class="fas fa-exclamation-circle"></i> {{ form.username.errors.0 }}</div>
+              {% endif %}
             </div>
-            <div class="form-hint"><i class="fas fa-info-circle"></i> कम से कम 6 अक्षर / Minimum 6 characters</div>
-            {% if form.password.errors %}
-            <div class="error-msg"><i class="fas fa-exclamation-circle"></i> {{ form.password.errors.0 }}</div>
-            {% endif %}
+            <div class="col-md-6 mb-3">
+              <label class="form-label">
+                <i class="fas fa-mobile-alt"></i>
+                मोबाइल नंबर / Mobile <span class="required-star">*</span>
+              </label>
+              <input type="tel" name="mobile" id="id_mobile" 
+                     class="custom-input" placeholder="10-digit Mobile"
+                     value="{{ form.mobile.value|default:'' }}" maxlength="10" required>
+              {% if form.mobile.errors %}
+              <div class="error-msg"><i class="fas fa-exclamation-circle"></i> {{ form.mobile.errors.0 }}</div>
+              {% endif %}
+            </div>
           </div>
 
-          <!-- Location Section -->
-          <div class="section-header mt-5">
+          <!-- Row: Email & Password -->
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label class="form-label">
+                <i class="fas fa-envelope"></i>
+                ईमेल / Email <span class="required-star">*</span>
+              </label>
+              <input type="email" name="email" id="id_email" 
+                     class="custom-input" placeholder="आपका ईमेल"
+                     value="{{ form.email.value|default:'' }}" required>
+              {% if form.email.errors %}
+              <div class="error-msg"><i class="fas fa-exclamation-circle"></i> {{ form.email.errors.0 }}</div>
+              {% endif %}
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label">
+                <i class="fas fa-lock"></i>
+                पासवर्ड / Password <span class="required-star">*</span>
+              </label>
+              <div class="position-relative">
+                <input type="password" name="password" id="id_password" 
+                       class="custom-input" placeholder="कम से कम 6 अक्षर" required>
+                <button type="button" class="password-toggle-btn" onclick="togglePassword()">
+                  <i class="fas fa-eye" id="toggleIcon"></i>
+                </button>
+              </div>
+              {% if form.password.errors %}
+              <div class="error-msg"><i class="fas fa-exclamation-circle"></i> {{ form.password.errors.0 }}</div>
+              {% endif %}
+            </div>
+          </div>
+
+          <!-- Row: City & District -->
+          
+
+          <!-- Child Section Header (Compact) -->
+          <div class="section-header mt-4">
             <div class="section-icon">
-              <i class="fas fa-map-marker-alt"></i>
+              <i class="fas fa-child"></i>
             </div>
             <div>
-              <h5>स्थान विवरण</h5>
-              <small>Location Details</small>
+              <h5>बच्चे का विवरण / Child Details</h5>
             </div>
           </div>
 
           <div class="row">
-            <!-- City -->
-            <div class="col-md-6 mb-4">
+            <div class="col-md-6 mb-3">
+              <label class="form-label">
+                <i class="fas fa-map"></i>
+                ज़िला / District <span class="required-star">*</span>
+              </label>
+              <select name="district" id="id_district" class="form-control" style="color: #000 !important; background-color: #fff; padding: 12px 16px; border: 2px solid #ccc; border-radius: 12px; font-size: 15px; font-weight: 500; height: auto; line-height: 1.5;" required>
+                <option value="" style="color: #333; font-weight: 500;">-- जिला चुनें / Select District --</option>
+                {% for district in districts %}
+                <option value="{{ district.id }}" style="color: #000; background: #fff; font-weight: 500;" {% if form.district.value == district.id %}selected{% endif %}>{{ district.name }}</option>
+                {% endfor %}
+              </select>
+              {% if form.district.errors %}
+              <div class="error-msg"><i class="fas fa-exclamation-circle"></i> {{ form.district.errors.0 }}</div>
+              {% endif %}
+            </div>
+            <div class="col-md-6 mb-3">
               <label class="form-label">
                 <i class="fas fa-city"></i>
-                शहर/गाँव / City/Village <span class="required-star">*</span>
+                शहर/गाँव / City <span class="required-star">*</span>
               </label>
               <input type="text" name="city" id="id_city" 
                      class="custom-input" placeholder="शहर/गाँव"
@@ -610,21 +842,103 @@
               <div class="error-msg"><i class="fas fa-exclamation-circle"></i> {{ form.city.errors.0 }}</div>
               {% endif %}
             </div>
+            
+          </div>
 
-            <!-- District -->
+          <!-- Age Group Selection (Radio Buttons) -->
+          <div class="mb-4">
+            <label class="form-label">
+              <i class="fas fa-users"></i>
+              आयु वर्ग चुनें / Select Age Group <span class="required-star">*</span>
+            </label>
+            {% if form.age_group.errors %}
+              <div class="error-msg mb-2"><i class="fas fa-exclamation-circle"></i> {{ form.age_group.errors.0 }}</div>
+            {% endif %}
+            <div class="age-group-options">
+              <label class="age-option">
+                <input type="radio" name="age_group" value="A" {% if form.age_group.value == 'A' %}checked{% endif %} required>
+                <div class="age-option-box group-a">
+                  <span class="age-title">समूह A</span>
+                  <span class="age-years">8–10 वर्ष</span>
+                </div>
+              </label>
+              <label class="age-option">
+                <input type="radio" name="age_group" value="B" {% if form.age_group.value == 'B' %}checked{% endif %}>
+                <div class="age-option-box group-b">
+                  <span class="age-title">समूह B</span>
+                  <span class="age-years">11–13 वर्ष</span>
+                </div>
+              </label>
+              <label class="age-option">
+                <input type="radio" name="age_group" value="C" {% if form.age_group.value == 'C' %}checked{% endif %}>
+                <div class="age-option-box group-c">
+                  <span class="age-title">समूह C</span>
+                  <span class="age-years">14–16 वर्ष</span>
+                </div>
+              </label>
+            </div>
+          </div>
+
+          <div class="row">
+            <!-- Child Name -->
             <div class="col-md-6 mb-4">
               <label class="form-label">
-                <i class="fas fa-map"></i>
-                ज़िला / District <span class="required-star">*</span>
+                <i class="fas fa-user-graduate"></i>
+                बच्चे का नाम / Child Name <span class="required-star">*</span>
               </label>
-              <select name="district" id="id_district" class="custom-select" required>
-                <option value="">-- जिला चुनें --</option>
-                {% for district in districts %}
-                <option value="{{ district.id }}" {% if form.district.value == district.id %}selected{% endif %}>{{ district.name }}</option>
-                {% endfor %}
-              </select>
-              {% if form.district.errors %}
-              <div class="error-msg"><i class="fas fa-exclamation-circle"></i> {{ form.district.errors.0 }}</div>
+              <input type="text" name="child_name" id="id_child_name" 
+                     class="custom-input" placeholder="बच्चे का पूरा नाम"
+                     value="{{ form.child_name.value|default:'' }}" required>
+              {% if form.child_name.errors %}
+              <div class="error-msg"><i class="fas fa-exclamation-circle"></i> {{ form.child_name.errors.0 }}</div>
+              {% endif %}
+            </div>
+
+            <!-- Child Gender (Radio Buttons) -->
+            <div class="col-md-6 mb-4">
+              <label class="form-label">
+                <i class="fas fa-venus-mars"></i>
+                लिंग / Gender <span class="required-star">*</span>
+              </label>
+              {% if form.child_gender.errors %}
+              <div class="error-msg mb-2"><i class="fas fa-exclamation-circle"></i> {{ form.child_gender.errors.0 }}</div>
+              {% endif %}
+              <div class="gender-options">
+                <label class="gender-option">
+                  <input type="radio" name="child_gender" value="M" {% if form.child_gender.value == 'M' %}checked{% endif %} required>
+                  <div class="gender-box male">
+                    <i class="fas fa-male"></i>
+                    <span>लड़का</span>
+                  </div>
+                </label>
+                <label class="gender-option">
+                  <input type="radio" name="child_gender" value="F" {% if form.child_gender.value == 'F' %}checked{% endif %}>
+                  <div class="gender-box female">
+                    <i class="fas fa-female"></i>
+                    <span>लड़की</span>
+                  </div>
+                </label>
+                <!-- <label class="gender-option">
+                  <input type="radio" name="child_gender" value="O" {% if form.child_gender.value == 'O' %}checked{% endif %}>
+                  <div class="gender-box other">
+                    <i class="fas fa-genderless"></i>
+                    <span>अन्य</span>
+                  </div>
+                </label> -->
+              </div>
+            </div>
+
+             <!-- Child School -->
+            <div class="col-md-6 mb-4">
+              <label class="form-label">
+                <i class="fas fa-school"></i>
+                स्कूल का नाम / School Name <span class="required-star">*</span>
+              </label>
+              <input type="text" name="child_school_name" id="id_child_school_name" 
+                     class="custom-input" placeholder="स्कूल का नाम"
+                     value="{{ form.child_school_name.value|default:'' }}" required>
+              {% if form.child_school_name.errors %}
+              <div class="error-msg"><i class="fas fa-exclamation-circle"></i> {{ form.child_school_name.errors.0 }}</div>
               {% endif %}
             </div>
           </div>
@@ -699,6 +1013,7 @@
       toggleIcon.classList.add('fa-eye');
     }
   }
+
 
   // Mobile number - only digits
   const mobileField = document.getElementById("id_mobile");

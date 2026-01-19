@@ -10,7 +10,7 @@ from django.utils.decorators import method_decorator
 from django.utils import timezone
 from django.urls import reverse
 from .forms import ParentRegistrationForm
-from .models import ParentProfile, ParticipationOrder, Program
+from .models import ParentProfile, ParticipationOrder, Program, ChildProfile, District
 import razorpay
 
 
@@ -66,7 +66,12 @@ class ParentRegistrationView(View):
             return redirect('nanhe_patrakar:landing')
 
         form = self.form_class()
-        return render(request, self.template_name, {'form': form, 'program': program})
+        districts = District.objects.filter(is_active=True).order_by('name')
+        return render(request, self.template_name, {
+            'form': form, 
+            'program': program,
+            'districts': districts
+        })
 
     def post(self, request):
         program = Program.get_active_program()
@@ -74,7 +79,7 @@ class ParentRegistrationView(View):
             messages.error(request, 'पंजीकरण बंद है / Registration is closed')
             return redirect('nanhe_patrakar:landing')
 
-        form = self.form_class(request.POST)
+        form = self.form_class(request.POST, request.FILES)
         
         if form.is_valid():
             try:
@@ -95,8 +100,23 @@ class ParentRegistrationView(View):
                     city=form.cleaned_data['city'],
                     district=form.cleaned_data['district'],
                     status='PAYMENT_PENDING',
+                    id_proof=form.cleaned_data.get('parent_id_proof'),
                     terms_accepted=form.cleaned_data['terms_accepted'],
                     terms_accepted_at=timezone.now() if form.cleaned_data['terms_accepted'] else None
+                )
+
+                # Create Child Profile (DOB removed - using age_group selection instead)
+                ChildProfile.objects.create(
+                    parent=parent_profile,
+                    name=form.cleaned_data['child_name'],
+                    gender=form.cleaned_data['child_gender'],
+                    date_of_birth=None,  # Not collecting DOB
+                    age=None,  # Will be determined from age_group
+                    school_name=form.cleaned_data['child_school_name'],
+                    district=form.cleaned_data['district'],
+                    photo=form.cleaned_data.get('child_photo'),
+                    age_group=form.cleaned_data['age_group'],  # Selected by user
+                    is_active=True
                 )
 
                 ParticipationOrder.objects.create(
@@ -115,7 +135,12 @@ class ParentRegistrationView(View):
             except Exception as e:
                 messages.error(request, f'पंजीकरण में त्रुटि / Registration error: {str(e)}')
 
-        return render(request, self.template_name, {'form': form, 'program': program})
+        districts = District.objects.filter(is_active=True).order_by('name')
+        return render(request, self.template_name, {
+            'form': form, 
+            'program': program,
+            'districts': districts
+        })
     
     
 class PaymentView(LoginRequiredMixin, View):
@@ -124,11 +149,14 @@ class PaymentView(LoginRequiredMixin, View):
     login_url = 'nanhe_patrakar:register'
 
     def get(self, request):
+        print("------- PaymentView GET Triggered -------")
         try:
             parent_profile = request.user.parent_profile
+            print(f"User: {request.user.username}, Parent: {parent_profile.mobile}")
             
             # Check if already paid
             if parent_profile.status == 'PAYMENT_COMPLETED':
+                print("Payment already completed, redirecting to download.")
                 return redirect('nanhe_patrakar:download_app')
             
             # Get or create pending order
@@ -144,8 +172,12 @@ class PaymentView(LoginRequiredMixin, View):
                     amount=parent_profile.program.price,
                     payment_status='PENDING'
                 )
+                print(f"Created new Pending Order: {order.order_id}")
+            else:
+                print(f"Found existing Pending Order: {order.order_id}")
             
             # Create Razorpay order
+            print(f"Creating Razorpay Order with Key ID: {settings.RAZORPAY_KEY_ID}")
             client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
             
             razorpay_order = client.order.create({
@@ -154,6 +186,7 @@ class PaymentView(LoginRequiredMixin, View):
                 'receipt': order.order_id,
                 'payment_capture': 1  # Auto capture
             })
+            print(f"Razorpay Order Created: {razorpay_order['id']}")
             
             # Save Razorpay order ID
             order.razorpay_order_id = razorpay_order['id']
@@ -179,8 +212,12 @@ class PaymentView(LoginRequiredMixin, View):
             return render(request, self.template_name, context)
             
         except ParentProfile.DoesNotExist:
+            print("Error: ParentProfile not found for user")
             messages.error(request, 'कृपया पहले पंजीकरण करें / Please register first')
             return redirect('nanhe_patrakar:register')
+        except Exception as e:
+            print(f"Error in PaymentView: {str(e)}")
+            raise e
 
 
 @method_decorator(csrf_exempt, name='dispatch')
@@ -188,14 +225,19 @@ class PaymentVerifyView(View):
     """Verify Razorpay payment"""
     
     def post(self, request):
+        print("------- PaymentVerifyView POST Triggered -------")
         try:
             # Get payment details from request
             razorpay_payment_id = request.POST.get('razorpay_payment_id')
             razorpay_order_id = request.POST.get('razorpay_order_id')
             razorpay_signature = request.POST.get('razorpay_signature')
             
+            print(f"Received Payment ID: {razorpay_payment_id}")
+            print(f"Received Order ID: {razorpay_order_id}")
+            
             # Find the order
             order = ParticipationOrder.objects.get(razorpay_order_id=razorpay_order_id)
+            print(f"Found Local Order: {order.order_id}")
             
             # Verify signature
             client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
@@ -207,7 +249,9 @@ class PaymentVerifyView(View):
             }
             
             # Verify payment signature
+            print("Verifying Signature...")
             client.utility.verify_payment_signature(params_dict)
+            print("Signature Verified Successfully!")
             
             # Signature verified - Payment successful
             order.razorpay_payment_id = razorpay_payment_id
@@ -220,11 +264,13 @@ class PaymentVerifyView(View):
             parent_profile = order.parent
             parent_profile.status = 'PAYMENT_COMPLETED'
             parent_profile.save()
+            print(f"Updated Parent Profile Status to PAYMENT_COMPLETED for {parent_profile.mobile}")
             
             messages.success(request, 'भुगतान सफल! Payment successful!')
             return redirect('nanhe_patrakar:download_app')
             
         except razorpay.errors.SignatureVerificationError:
+            print("!!! Signature Verification FAILED !!!")
             # Signature verification failed
             if 'order' in locals():
                 order.payment_status = 'FAILED'
@@ -233,10 +279,12 @@ class PaymentVerifyView(View):
             return redirect('nanhe_patrakar:payment_failed')
             
         except ParticipationOrder.DoesNotExist:
+            print(f"Error: Order not found for Razorpay Order ID {razorpay_order_id}")
             messages.error(request, 'ऑर्डर नहीं मिला / Order not found')
             return redirect('nanhe_patrakar:payment_failed')
             
         except Exception as e:
+            print(f"Exception in Verify: {str(e)}")
             messages.error(request, f'त्रुटि / Error: {str(e)}')
             return redirect('nanhe_patrakar:payment_failed')
 

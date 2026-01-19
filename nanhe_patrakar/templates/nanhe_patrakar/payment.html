@@ -168,6 +168,96 @@
 {% endblock %}
 
 {% block content %}
+<!-- Load Razorpay SDK and define startPayment FIRST -->
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+  window.startPayment = function() {
+      var btn = document.getElementById('rzp-button');
+      if(!btn) return;
+
+      var keyId = "{{ razorpay_key_id }}";
+      if (keyId.startsWith("rzp_live") && window.location.protocol === "http:") {
+          alert("Error: Razorpay LIVE keys don't work on HTTP. Use TEST keys for localhost.");
+          return;
+      }
+      
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Processing...';
+      
+      try {
+          if (typeof Razorpay === 'undefined') {
+              throw new Error("Razorpay SDK not loaded. Check internet.");
+          }
+
+          var options = {
+            "key": keyId,
+            "amount": parseInt("{{ amount }}"),
+            "currency": "{{ currency }}",
+            "name": "जन हिमाचल",
+            "description": "{{ program.name_hindi }}",
+            "image": "https://janhimachal.com/static/images/logo.png",
+            "order_id": "{{ razorpay_order_id }}",
+            "handler": function (response) {
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Verifying...';
+                var payload = {
+                    'razorpay_order_id': response.razorpay_order_id,
+                    'razorpay_payment_id': response.razorpay_payment_id,
+                    'razorpay_signature': response.razorpay_signature
+                };
+
+                fetch('/nanhe-patrakar/payment/verify/', { 
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    },
+                    body: new URLSearchParams(payload)
+                })
+                .then(res => {
+                    if (res.redirected) return window.location.href = res.url;
+                    if(res.ok) window.location.href = "{% url 'nanhe_patrakar:download_app' %}";
+                    else throw new Error("Server Verification Failed");
+                })
+                .catch(error => {
+                    console.error("Verification Error:", error);
+                    var form = document.getElementById('payment-verification-form');
+                    document.getElementById('razorpay_payment_id').value = response.razorpay_payment_id;
+                    document.getElementById('razorpay_order_id').value = response.razorpay_order_id;
+                    document.getElementById('razorpay_signature').value = response.razorpay_signature;
+                    form.submit();
+                });
+            },
+            "prefill": {
+              "name": "{{ parent.user.get_full_name }}",
+              "email": "{{ parent.user.email }}",
+              "contact": "{{ parent.mobile }}"
+            },
+            "notes": { "address": "{{ parent.city }}" },
+            "theme": { "color": "#dc3545" },
+            "modal": {
+              "ondismiss": function() {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-lock me-2"></i>सुरक्षित भुगतान करें / Pay Securely';
+              }
+            }
+          };
+          
+          var rzp = new Razorpay(options);
+          rzp.on('payment.failed', function (response){
+              alert("भुगतान विफल / Payment Failed: " + response.error.description);
+              btn.disabled = false;
+              btn.innerHTML = '<i class="fas fa-lock me-2"></i>सुरक्षित भुगतान करें / Pay Securely';
+          });
+          rzp.open();
+          
+      } catch (err) {
+          alert("त्रुटि / Error: " + err.message);
+          btn.disabled = false;
+          btn.innerHTML = '<i class="fas fa-lock me-2"></i>सुरक्षित भुगतान करें / Pay Securely';
+      }
+  };
+</script>
+
 <div class="payment-page">
   <div class="container">
     <div class="payment-card">
@@ -221,7 +311,7 @@
 
       <!-- Payment Form -->
       <form id="razorpay-form">
-        <button type="button" id="rzp-button" class="payment-button">
+        <button type="button" id="rzp-button" class="payment-button" onclick="startPayment();">
           <i class="fas fa-lock me-2"></i>सुरक्षित भुगतान करें / Pay Securely
         </button>
       </form>
@@ -247,108 +337,4 @@
     </div>
   </div>
 </div>
-{% endblock %}
-
-{% block extra_js %}
-<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
-<script>
-  document.getElementById('rzp-button').onclick = function(e) {
-    e.preventDefault();
-    
-    // Disable button
-    var btn = this;
-    btn.disabled = true;
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Processing...';
-
-    var options = {
-      "key": "{{ razorpay_key_id }}",
-      "amount": "{{ amount }}",
-      "currency": "{{ currency }}",
-      "name": "जन हिमाचल",
-      "description": "{{ program.name_hindi }}",
-      "image": "https://janhimachal.com/static/images/logo.png",
-      "order_id": "{{ razorpay_order_id }}",
-      
-      // Manual Handler for AJAX Control
-      "handler": function (response) {
-          console.log("PAYMENT SUCCESS! Starting Verification...", response);
-          
-          btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Verifying...';
-          
-          // Prepare payload for API
-          var payload = {
-              'razorpay_order_id': response.razorpay_order_id,
-              'razorpay_payment_id': response.razorpay_payment_id,
-              'razorpay_signature': response.razorpay_signature
-          };
-
-          // Use Fetch API to call Backend
-          fetch('/api/nanhe-patrakar/payment/verify/', {
-              method: 'POST',
-              headers: {
-                  'Content-Type': 'application/json',
-                  'X-CSRFToken': '{{ csrf_token }}',  // Important for Django
-                  // Add Authorization header if using JWT on web, 
-                  // BUT since this is a session-based web view, we rely on session cookies.
-                  // The API View is [IsAuthenticated], which works with SessionAuth if configured.
-              },
-              body: JSON.stringify(payload)
-          })
-          .then(res => {
-              console.log("API Response Status:", res.status);
-              return res.json().then(data => ({status: res.status, body: data}));
-          })
-          .then(result => {
-              console.log("API Response Body:", result);
-              
-              if (result.status === 200 || result.status === 201) {
-                  alert("भुगतान सफल! Payment Successful! \nRedirecting...");
-                  // Success - Redirect
-                  window.location.href = "{% url 'nanhe_patrakar:download_app' %}";
-              } else {
-                  // Failure from Backend
-                  var errorMsg = result.body.message || JSON.stringify(result.body);
-                  alert("Payment Verification Failed on Server: " + errorMsg);
-                  btn.disabled = false;
-                  btn.innerHTML = 'Retry Verification';
-              }
-          })
-          .catch(error => {
-              console.error("AJAX Error:", error);
-              alert("Network Error during Verification: " + error);
-              btn.disabled = false;
-              btn.innerHTML = 'Retry Verification';
-          });
-      },
-      "prefill": {
-        "name": "{{ parent.user.get_full_name }}",
-        "email": "{{ parent.user.email }}",
-        "contact": "{{ parent.mobile }}"
-      },
-      "notes": {
-        "address": "{{ parent.city }}"
-      },
-      "theme": {
-        "color": "#dc3545"
-      },
-      "modal": {
-        "ondismiss": function() {
-          console.log('Payment modal closed');
-          btn.disabled = false;
-          btn.innerHTML = '<i class="fas fa-lock me-2"></i>सुरक्षित भुगतान करें / Pay Securely';
-        }
-      }
-    };
-    
-    try {
-        var rzp = new Razorpay(options);
-        rzp.open();
-    } catch (err) {
-        console.error("Razorpay Error:", err);
-        alert("Payment initialization failed");
-        btn.disabled = false;
-        btn.innerHTML = '<i class="fas fa-lock me-2"></i>Pay Securely';
-    }
-  };
-</script>
 {% endblock %}

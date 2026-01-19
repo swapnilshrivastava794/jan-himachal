@@ -3,6 +3,7 @@ import re
 from django import forms
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
+from django.utils import timezone
 from nanhe_patrakar.models import District, ParentProfile
 
 User = get_user_model()
@@ -253,6 +254,57 @@ class ParentRegistrationForm(forms.Form):
         empty_label="जिला चुनें / Select District",
         widget=forms.Select(attrs={
             'class': 'form-control'
+        })
+    )
+
+    # DOCS UPLOAD
+    parent_id_proof = forms.FileField(
+        required=False,
+        widget=forms.FileInput(attrs={
+            'class': 'form-control',
+            'accept': 'image/*,application/pdf'
+        })
+    )
+
+    child_photo = forms.ImageField(
+        required=False,
+        widget=forms.FileInput(attrs={
+            'class': 'form-control',
+            'accept': 'image/*'
+        })
+    )
+
+    # CHILD DETAILS
+    age_group = forms.ChoiceField(
+        choices=[('A', 'Group A (8-10 वर्ष)'), ('B', 'Group B (11-13 वर्ष)'), ('C', 'Group C (14-16 वर्ष)')],
+        widget=forms.RadioSelect(),
+        required=True,
+        error_messages={'required': 'कृपया एक आयु वर्ग चुनें / Please select an age group'}
+    )
+
+    child_name = forms.CharField(
+        max_length=200,
+        required=True,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'बच्चे का नाम / Child Name'
+        })
+    )
+
+    child_gender = forms.ChoiceField(
+        choices=[('', 'लिंग चुनें / Select Gender'), ('M', 'Male'), ('F', 'Female'), ('O', 'Other')],
+        required=True,
+        widget=forms.Select(attrs={
+            'class': 'form-control'
+        })
+    )
+
+    child_school_name = forms.CharField(
+        max_length=255,
+        required=True,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'स्कूल का नाम / School Name'
         })
     )
     
