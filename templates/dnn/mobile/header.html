@@ -24,12 +24,15 @@
     </div>
 
     <!-- Search Form-->
-    <div class="search-form">
+    <div class="d-flex align-items-center gap-3">
+      <!-- APK Download Button -->
+      <a href="/static/apk/janhimachal.apk" class="d-flex align-items-center" style="background: #28a745; color: #fff; padding: 6px 10px; border-radius: 4px; font-size: 12px; text-decoration: none;" download="JanHimachal.apk">
+        <i class="fab fa-android me-1"></i> App
+      </a>
       <!-- Search Icon -->
-            <a type="button" class="d-flex align-items-center mt-2" data-bs-toggle="modal"
-              data-bs-target="#ModalSearch">
-              <i class="bi bi-search " style="font-size: 18px;"></i>
-            </a>
+      <a type="button" class="d-flex align-items-center" data-bs-toggle="modal" data-bs-target="#ModalSearch">
+        <i class="bi bi-search" style="font-size: 18px;"></i>
+      </a>
     </div>
   </div>
 </div>
@@ -81,6 +84,15 @@
   <div class="menu-item"><a style="color: white !important;" href="{% url 'cms' page.slug %}"></i>{{ page.pagename }}</a></div>
   {% endfor %}
   <!-- <div class="menu-item"><a href="{% url 'setting' %}"><i class="fas fa-cog"></i> Settings</a></div> -->
+  
+  <!-- APK Download -->
+  <div class="menu-item" style="background: linear-gradient(135deg, #28a745, #20c997); margin: 10px; border-radius: 8px;">
+    <a href="/static/apk/janhimachal.apk" style="color: white !important; display: flex; align-items: center; gap: 10px;" download="JanHimachal.apk">
+      <i class="fab fa-android" style="font-size: 20px;"></i> 
+      <span>Download App</span>
+      <i class="fas fa-download" style="margin-left: auto;"></i>
+    </a>
+  </div>
 
 
   <!-- Main Submenu -->
