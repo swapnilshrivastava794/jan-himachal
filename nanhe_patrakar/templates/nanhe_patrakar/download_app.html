@@ -1,5 +1,5 @@
 {% extends 'nanhe_patrakar/base.html' %}
-
+{% load static %}
 {% block title %}ऐप डाउनलोड करें - {{ program.name_hindi }} - जन हिमाचल{% endblock %}
 
 {% block extra_css %}
@@ -191,6 +191,123 @@
         margin-bottom: 15px;
         font-weight: 700;
     }
+
+    /* Direct APK Download Styles */
+    .direct-download-box {
+        background: rgba(40, 167, 69, 0.1);
+        border: 2px dashed #28a745;
+        border-radius: 12px;
+        padding: 25px;
+    }
+
+    .download-countdown {
+        background: #fff3cd;
+        color: #856404;
+        padding: 10px 20px;
+        border-radius: 30px;
+        margin-bottom: 20px;
+        display: inline-block;
+        font-weight: 600;
+        animation: pulse 1s infinite;
+    }
+
+    .download-countdown.hidden {
+        display: none;
+    }
+
+    @keyframes pulse {
+        0%, 100% {
+            opacity: 1;
+        }
+        50% {
+            opacity: 0.7;
+        }
+    }
+
+    .direct-download-btn {
+        background: linear-gradient(135deg, #28a745, #20c997) !important;
+        color: #fff !important;
+        border-color: #28a745 !important;
+        padding: 20px 40px !important;
+        font-size: 18px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .direct-download-btn:hover {
+        background: linear-gradient(135deg, #20c997, #28a745) !important;
+        color: #fff !important;
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(40, 167, 69, 0.4) !important;
+    }
+
+    .direct-download-btn .download-icon {
+        margin-left: 15px;
+        font-size: 24px;
+        animation: bounce 1s infinite;
+    }
+
+    @keyframes bounce {
+        0%, 100% {
+            transform: translateY(0);
+        }
+        50% {
+            transform: translateY(-5px);
+        }
+    }
+
+    .download-note {
+        color: rgba(255, 255, 255, 0.8);
+        font-size: 14px;
+    }
+
+    .divider-text {
+        position: relative;
+        text-align: center;
+    }
+
+    .divider-text::before,
+    .divider-text::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        width: 40%;
+        height: 1px;
+        background: rgba(255, 255, 255, 0.3);
+    }
+
+    .divider-text::before {
+        left: 0;
+    }
+
+    .divider-text::after {
+        right: 0;
+    }
+
+    .divider-text span {
+        background: transparent;
+        padding: 0 15px;
+        color: rgba(255, 255, 255, 0.7);
+        font-size: 14px;
+    }
+
+    .app-btn.secondary-btn {
+        opacity: 0.7;
+        border-style: dashed;
+    }
+
+    .app-btn.secondary-btn:hover {
+        opacity: 1;
+    }
+
+    .download-started {
+        background: #d4edda !important;
+        color: #155724 !important;
+    }
+
+    .download-started i.fa-spinner {
+        display: none;
+    }
 </style>
 {% endblock %}
 
@@ -198,6 +315,7 @@
 <div class="download-page">
     <div class="container">
         <div class="download-card">
+            
             <!-- Success Message -->
             <div class="card mb-4">
                 <div class="card-body p-5">
@@ -213,131 +331,124 @@
                 </div>
             </div>
 
-            <!-- Order Summary -->
-            <div class="order-summary">
-                <h5 class="mb-3"><i class="fas fa-check-circle me-2" style="color: #28a745;"></i>पंजीकरण विवरण / Registration Details</h5>
-                <div class="row">
-                    <div class="col-6 label">ऑर्डर ID / Order ID:</div>
-                    <div class="col-6 text-end"><strong>{{ order.order_id }}</strong></div>
-                </div>
-                <div class="row">
-                    <div class="col-6 label">नाम / Name:</div>
-                    <div class="col-6 text-end">{{ parent.user.get_full_name }}</div>
-                </div>
-                <div class="row">
-                    <div class="col-6 label">मोबाइल / Mobile:</div>
-                    <div class="col-6 text-end">{{ parent.mobile }}</div>
-                </div>
-                <div class="row">
-                    <div class="col-6 label">कार्यक्रम / Program:</div>
-                    <div class="col-6 text-end">{{ program.name_hindi }}</div>
-                </div>
-                <div class="row">
-                    <div class="col-6 label">स्थिति / Status:</div>
-                    <div class="col-6 text-end"><span class="badge bg-success">पूर्ण / Complete</span></div>
-                </div>
-            </div>
-
-            <!-- Download Section -->
-            <div class="download-section">
-                <h3><i class="fas fa-mobile-alt me-2"></i>जन हिमाचल ऐप डाउनलोड करें</h3>
-                <p class="mb-4">Download Jan Himachal Mobile App</p>
-                <div class="app-buttons">
-                    {% if program.android_app_url %}
-                    <a href="{{ program.android_app_url }}" class="app-btn" target="_blank">
-                        <i class="fab fa-google-play"></i>
-                        <div class="text">
-                            <small>Download on</small>
-                            <strong>Google Play</strong>
-                        </div>
-                    </a>
-                    {% else %}
-                    <a href="#" class="app-btn" onclick="alert('जल्द उपलब्ध होगा / Coming soon'); return false;">
-                        <i class="fab fa-google-play"></i>
-                        <div class="text">
-                            <small>Download on</small>
-                            <strong>Google Play</strong>
-                        </div>
-                    </a>
-                    {% endif %}
+            <!-- APK Download Section - Prominent -->
+            <div class="card mb-4 border-dark border-2">
+                <div class="card-body p-4 text-center">
+                    <div class="py-3" style="border-bottom: 2px dashed #000;">
+                        <h4 class="fw-bold text-dark mb-2">
+                            <i class="fas fa-arrow-down me-2"></i>
+                            अब ऐप डाउनलोड करें
+                        </h4>
+                        <p class="text-muted mb-0">Download the App to Continue</p>
+                    </div>
                     
-                    {% if program.ios_app_url %}
-                    <a href="{{ program.ios_app_url }}" class="app-btn" target="_blank">
-                        <i class="fab fa-app-store-ios"></i>
-                        <div class="text">
-                            <small>Download on</small>
-                            <strong>App Store</strong>
-                        </div>
-                    </a>
-                    {% else %}
-                    <a href="#" class="app-btn" onclick="alert('जल्द उपलब्ध होगा / Coming soon'); return false;">
-                        <i class="fab fa-app-store-ios"></i>
-                        <div class="text">
-                            <small>Download on</small>
-                            <strong>App Store</strong>
-                        </div>
-                    </a>
-                    {% endif %}
+                    <div class="py-4">
+                        <a href="{% static 'apk/janhimachal.apk' %}" class="btn btn-dark btn-lg px-5 py-3" download="JanHimachal.apk">
+                            <i class="fab fa-android me-2 fa-lg text-white"></i>
+                            <span class="fw-bold text-white">Download APK</span>
+                            <i class="fas fa-download ms-2 text-white"></i>
+                        </a>
+                    </div>
+                    
+                    <p class="text-muted small mb-0">
+                        <i class="fas fa-info-circle me-1"></i>
+                        डाउनलोड के बाद APK को Install करें
+                    </p>
                 </div>
             </div>
 
-            <!-- Next Steps -->
-            <div class="steps-section">
-                <h5 class="mb-4"><i class="fas fa-list-ol me-2"></i>अगले कदम / Next Steps</h5>
+            <!-- Registration Details -->
+            <div class="card mb-4 border-0" style="background: #f8f9fa;">
+                <div class="card-body p-4">
+                    <h5 class="fw-bold mb-4 text-dark border-bottom pb-3">
+                        <i class="fas fa-receipt me-2"></i>पंजीकरण विवरण / Registration Details
+                    </h5>
+                    <div class="row mb-3">
+                        <div class="col-6 text-muted">ऑर्डर ID / Order ID:</div>
+                        <div class="col-6 text-end fw-bold text-dark">{{ order.order_id }}</div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-6 text-muted">नाम / Name:</div>
+                        <div class="col-6 text-end text-dark">{{ parent.user.get_full_name }}</div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-6 text-muted">मोबाइल / Mobile:</div>
+                        <div class="col-6 text-end text-dark">{{ parent.mobile }}</div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-6 text-muted">कार्यक्रम / Program:</div>
+                        <div class="col-6 text-end text-dark">{{ program.name_hindi }}</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-6 text-muted">स्थिति / Status:</div>
+                        <div class="col-6 text-end"><span class="badge" style="background: #000;">भुगतान पूर्ण ✓</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Next Steps - Original Format with Black & White -->
+            <div class="steps-section" style="background: #fff; border: 1px solid #000; padding: 30px; margin-bottom: 30px;">
+                <h5 class="mb-4 fw-bold text-dark border-bottom pb-3">
+                    <i class="fas fa-list-ol me-2"></i>अगले कदम / Next Steps
+                </h5>
                 
                 <div class="step-item">
-                    <div class="step-number">1</div>
+                    <div class="step-number" style="background: #000;">1</div>
                     <div class="step-content">
-                        <h5>ऐप डाउनलोड करें / Download App</h5>
-                        <p>ऊपर दिए गए लिंक से जन हिमाचल मोबाइल ऐप डाउनलोड और इंस्टॉल करें।<br>
-                        Download and install Jan Himachal mobile app from above links.</p>
+                        <h5 class="text-dark">ऐप डाउनलोड करें / Download App</h5>
+                        <p class="text-muted">ऊपर दिए गए लिंक से जन हिमाचल मोबाइल ऐप डाउनलोड और इंस्टॉल करें।<br>
+                        Download and install Jan Himachal mobile app from above link.</p>
                     </div>
                 </div>
                 
                 <div class="step-item">
-                    <div class="step-number">2</div>
+                    <div class="step-number" style="background: #000;">2</div>
                     <div class="step-content">
-                        <h5>लॉगिन करें / Login</h5>
-                        <p>अपने रजिस्टर्ड मोबाइल नंबर <strong>{{ parent.mobile }}</strong> का उपयोग करके ऐप में लॉगिन करें।<br>
-                        Login to the app using your registered mobile number.</p>
+                        <h5 class="text-dark">लॉगिन करें / Login</h5>
+                        <p class="text-muted">अपने Username <strong class="text-dark">{{ parent.user.username }}</strong> से ऐप में लॉगिन करें।<br>
+                        Login to the app using your username.</p>
                     </div>
                 </div>
                 
                 <div class="step-item">
-                    <div class="step-number">3</div>
+                    <div class="step-number" style="background: #000;">3</div>
                     <div class="step-content">
-                        <h5>बच्चे की प्रोफाइल बनाएं / Create Child Profile</h5>
-                        <p>ऐप में अपने बच्चे की प्रोफाइल बनाएं और आवश्यक जानकारी भरें।<br>
+                        <h5 class="text-dark">बच्चे की प्रोफाइल बनाएं / Create Child Profile</h5>
+                        <p class="text-muted">ऐप में अपने बच्चे की प्रोफाइल बनाएं और आवश्यक जानकारी भरें।<br>
                         Create your child's profile in the app with required information.</p>
                     </div>
                 </div>
                 
                 <div class="step-item">
-                    <div class="step-number">4</div>
+                    <div class="step-number" style="background: #000;">4</div>
                     <div class="step-content">
-                        <h5>सामग्री जमा करें / Submit Content</h5>
-                        <p>लेख, कविता, या अन्य सामग्री लिखें और समीक्षा के लिए जमा करें।<br>
+                        <h5 class="text-dark">सामग्री जमा करें / Submit Content</h5>
+                        <p class="text-muted mb-0">लेख, कविता, या अन्य सामग्री लिखें और समीक्षा के लिए जमा करें।<br>
                         Write articles, poems or other content and submit for review.</p>
                     </div>
                 </div>
             </div>
 
-            <!-- Support Box -->
-            <div class="support-box">
-                <h6><i class="fas fa-headset me-2"></i>सहायता चाहिए? / Need Help?</h6>
-                <p class="mb-2">
-                    <i class="fas fa-envelope me-2"></i>
-                    <strong>Email:</strong> support@janhimachal.com
-                </p>
-                <p class="mb-0">
-                    <i class="fas fa-phone me-2"></i>
-                    <strong>Phone:</strong> +91-XXXXXXXXXX
-                </p>
+            <!-- Support Box - Black & White -->
+            <div class="card mb-4" style="border-left: 4px solid #000;">
+                <div class="card-body">
+                    <h6 class="fw-bold mb-3 text-dark">
+                        <i class="fas fa-headset me-2"></i>सहायता चाहिए? / Need Help?
+                    </h6>
+                    <p class="mb-2 text-muted">
+                        <i class="fas fa-envelope me-2"></i>
+                        <strong class="text-dark">Email:</strong> support@janhimachal.com
+                    </p>
+                    <p class="mb-0 text-muted">
+                        <i class="fas fa-phone me-2"></i>
+                        <strong class="text-dark">Phone:</strong> +91-XXXXXXXXXX
+                    </p>
+                </div>
             </div>
 
             <!-- Back to Home -->
-            <div class="text-center mt-4">
-                <a href="{% url 'home' %}" class="btn btn-outline-secondary">
+            <div class="text-center">
+                <a href="{% url 'home' %}" class="btn btn-outline-dark px-4 py-2">
                     <i class="fas fa-home me-2"></i>होम पर वापस जाएं / Back to Home
                 </a>
             </div>

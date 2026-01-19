@@ -80,62 +80,110 @@ class ParentRegistrationView(View):
             return redirect('nanhe_patrakar:landing')
 
         form = self.form_class(request.POST, request.FILES)
+        districts = District.objects.filter(is_active=True).order_by('name')
         
         if form.is_valid():
+            # =============================================
+            # STEP 1: VALIDATE UNIQUENESS BEFORE CREATING
+            # =============================================
+            username = form.cleaned_data['username']
+            email = form.cleaned_data['email']
+            mobile = form.cleaned_data['mobile']
+            
+            # Check if username already exists
+            if User.objects.filter(username=username).exists():
+                form.add_error('username', 'यह उपयोगकर्ता नाम पहले से मौजूद है / This username already exists')
+                return render(request, self.template_name, {
+                    'form': form, 
+                    'program': program,
+                    'districts': districts
+                })
+            
+            # Check if email already exists
+            if User.objects.filter(email=email).exists():
+                form.add_error('email', 'यह ईमेल पहले से पंजीकृत है / This email is already registered')
+                return render(request, self.template_name, {
+                    'form': form, 
+                    'program': program,
+                    'districts': districts
+                })
+            
+            # Check if mobile already exists in ParentProfile
+            if ParentProfile.objects.filter(mobile=mobile).exists():
+                form.add_error('mobile', 'यह मोबाइल नंबर पहले से पंजीकृत है / This mobile number is already registered')
+                return render(request, self.template_name, {
+                    'form': form, 
+                    'program': program,
+                    'districts': districts
+                })
+            
+            # =============================================
+            # STEP 2: CREATE ALL RECORDS IN A TRANSACTION
+            # =============================================
+            from django.db import transaction
+            
             try:
-                # ONLY CHANGE THIS PART - Create user with username and password
-                user = User.objects.create_user(
-                    username=form.cleaned_data['username'],  # Changed from mobile
-                    email=form.cleaned_data['email'],
-                    first_name=form.cleaned_data['first_name'],
-                    last_name=form.cleaned_data['last_name'],
-                    password=form.cleaned_data['password']  # Added password
-                )
+                with transaction.atomic():
+                    # Create user
+                    user = User.objects.create_user(
+                        username=username,
+                        email=email,
+                        first_name=form.cleaned_data['first_name'],
+                        last_name=form.cleaned_data['last_name'],
+                        password=form.cleaned_data['password']
+                    )
 
-                # Rest remains the same
-                parent_profile = ParentProfile.objects.create(
-                    user=user,
-                    program=program,
-                    mobile=form.cleaned_data['mobile'],
-                    city=form.cleaned_data['city'],
-                    district=form.cleaned_data['district'],
-                    status='PAYMENT_PENDING',
-                    id_proof=form.cleaned_data.get('parent_id_proof'),
-                    terms_accepted=form.cleaned_data['terms_accepted'],
-                    terms_accepted_at=timezone.now() if form.cleaned_data['terms_accepted'] else None
-                )
+                    # Create parent profile
+                    parent_profile = ParentProfile.objects.create(
+                        user=user,
+                        program=program,
+                        mobile=mobile,
+                        city=form.cleaned_data['city'],
+                        district=form.cleaned_data['district'],
+                        status='PAYMENT_PENDING',
+                        id_proof=form.cleaned_data.get('parent_id_proof'),
+                        terms_accepted=form.cleaned_data['terms_accepted'],
+                        terms_accepted_at=timezone.now() if form.cleaned_data['terms_accepted'] else None
+                    )
 
-                # Create Child Profile (DOB removed - using age_group selection instead)
-                ChildProfile.objects.create(
-                    parent=parent_profile,
-                    name=form.cleaned_data['child_name'],
-                    gender=form.cleaned_data['child_gender'],
-                    date_of_birth=None,  # Not collecting DOB
-                    age=None,  # Will be determined from age_group
-                    school_name=form.cleaned_data['child_school_name'],
-                    district=form.cleaned_data['district'],
-                    photo=form.cleaned_data.get('child_photo'),
-                    age_group=form.cleaned_data['age_group'],  # Selected by user
-                    is_active=True
-                )
+                    # Create Child Profile
+                    ChildProfile.objects.create(
+                        parent=parent_profile,
+                        name=form.cleaned_data['child_name'],
+                        gender=form.cleaned_data['child_gender'],
+                        date_of_birth=None,
+                        age=None,
+                        school_name=form.cleaned_data['child_school_name'],
+                        district=form.cleaned_data['district'],
+                        photo=form.cleaned_data.get('child_photo'),
+                        age_group=form.cleaned_data['age_group'],
+                        is_active=True
+                    )
 
-                ParticipationOrder.objects.create(
-                    parent=parent_profile,
-                    program=program,
-                    amount=program.price,
-                    payment_status='PENDING'
-                )
+                    # Create order
+                    ParticipationOrder.objects.create(
+                        parent=parent_profile,
+                        program=program,
+                        amount=program.price,
+                        payment_status='PENDING'
+                    )
 
-                # Auto-login user
-                login(request, user)
+                    # Auto-login user
+                    login(request, user)
 
                 messages.success(request, 'पंजीकरण सफल! अब भुगतान के साथ आगे बढ़ें / Registration successful! Please proceed with payment')
-                return redirect('nanhe_patrakar:payment')  # Same redirect
+                return redirect('nanhe_patrakar:payment')
 
             except Exception as e:
+                # Transaction will be rolled back automatically
                 messages.error(request, f'पंजीकरण में त्रुटि / Registration error: {str(e)}')
+                return render(request, self.template_name, {
+                    'form': form, 
+                    'program': program,
+                    'districts': districts
+                })
 
-        districts = District.objects.filter(is_active=True).order_by('name')
+        # Form is not valid
         return render(request, self.template_name, {
             'form': form, 
             'program': program,

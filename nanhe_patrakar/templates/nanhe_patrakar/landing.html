@@ -1038,7 +1038,9 @@
     <!-- Static Banner Image (User Requested Structure) -->
     <div class="container mt-3 mb-4">
         <div class="form-header" style="padding: 0; background: none; box-shadow: none;">
-            <img class="w-100" src="{% static 'nanhe_patrakar/img/registration_banner.jpg' %}" alt="नन्हे पत्रकार पंजीकरण" class="registration-banner width-100">
+            <a href="{% url 'nanhe_patrakar:register' %}">
+                <img class="w-100 registration-banner" src="{% static 'nanhe_patrakar/img/registration_banner.jpg' %}" alt="नन्हे पत्रकार पंजीकरण">
+            </a>
         </div>
     </div>
 </section>
@@ -1615,8 +1617,8 @@
         <h2 class="fw-bold mb-3 text-black">आज ही शुरुआत करें!</h2>
         <p class="lead mb-2 text-secondary">नन्हे पत्रकार केवल लेखन का मंच नहीं, बल्कि हिमाचल के बच्चों के लिए</p>
         <p class="h5 mb-4 text-black">एक सोचने, समझने और जिम्मेदार बनने की यात्रा है।</p>
-        <a href="{% url 'nanhe_patrakar:register' %}" class="btn btn-lg rounded-0 px-5 fw-bold text-uppercase" style="background-color: #000; color: #fff; border: 2px solid #000; transition: all 0.3s ease;" onmouseover="this.style.backgroundColor='#333'; this.style.borderColor='#333';" onmouseout="this.style.backgroundColor='#000'; this.style.borderColor='#000';">
-            Start Now <i class="fas fa-arrow-right ms-2"></i>
+        <a href="{% url 'nanhe_patrakar:register' %}" class="btn btn-lg rounded-0 px-5 fw-bold text-uppercase" style="background-color: #000 !important; color: #fff !important; border: 2px solid #000; transition: all 0.3s ease;" onmouseover="this.style.backgroundColor='#333'; this.style.borderColor='#333';" onmouseout="this.style.backgroundColor='#000'; this.style.borderColor='#000';">
+            Start Now <i class="fas fa-arrow-right ms-2" style="color: #fff !important;"></i>
         </a>
     </div>
 </section>
