@@ -25,11 +25,13 @@
                 {{ news.post_title|truncatechars:180 }}
               </a>
      {% endfor %}
-    <div class="col-lg-6 col-md-12 col-sm-12 mb-3 row-p-0">     
+    <div class="col-12 mb-3">
      <div class="mb-3">
-            <div class="section-title">मौसम</div>
+            <div class="section-title">ताज़ा ख़बरें</div>
             <div class="double-underline"></div>
         </div>
+    </div>
+    <div class="col-lg-6 col-md-12 col-sm-12 mb-3 row-p-0">     
       <div class="block-content mt-4">
          {% for news in LatestNews|slice:":2" %}
         <article class="align-items-stretch news-card">
@@ -73,10 +75,7 @@
 
     </div>
     <div class="col-lg-6 col-md-12 col-sm-12 mb-3 row-p-0">     
-     <div class="mb-3">
-            <div class="section-title">बड़ी खबरें</div>
-            <div class="double-underline"></div>
-        </div>
+
       <div class="block-content mt-4">
          {% for news in headline|slice:":2" %}
         <article class="align-items-stretch news-card2">
