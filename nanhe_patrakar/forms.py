@@ -8,182 +8,8 @@ from nanhe_patrakar.models import District, ParentProfile
 
 User = get_user_model()
 
-
-# class ParentRegistrationForm(forms.Form):
-#     """Parent registration form with username and password"""
-    
-#     first_name = forms.CharField(
-#         max_length=150,
-#         required=True,
-#         widget=forms.TextInput(attrs={
-#             'class': 'form-control',
-#             'placeholder': 'अपना नाम दर्ज करें / Enter your first name'
-#         })
-#     )
-    
-#     last_name = forms.CharField(
-#         max_length=150,
-#         required=True,
-#         widget=forms.TextInput(attrs={
-#             'class': 'form-control',
-#             'placeholder': 'अपना उपनाम दर्ज करें / Enter your last name'
-#         })
-#     )
-    
-#     username = forms.CharField(
-#         max_length=150,
-#         required=True,
-#         widget=forms.TextInput(attrs={
-#             'class': 'form-control',
-#             'placeholder': 'यूजरनेम / Username (for login)'
-#         }),
-#         help_text='लॉगिन के लिए उपयोग किया जाएगा / Will be used for login'
-#     )
-    
-#     mobile = forms.CharField(
-#         max_length=15,
-#         required=True,
-#         widget=forms.TextInput(attrs={
-#             'class': 'form-control',
-#             'placeholder': 'मोबाइल नंबर / 10-digit mobile number'
-#         })
-#     )
-    
-#     email = forms.EmailField(
-#         required=True,
-#         widget=forms.EmailInput(attrs={
-#             'class': 'form-control',
-#             'placeholder': 'ईमेल पता / Email address'
-#         })
-#     )
-    
-#     password = forms.CharField(
-#         required=True,
-#         widget=forms.PasswordInput(attrs={
-#             'class': 'form-control',
-#             'placeholder': 'पासवर्ड / Password'
-#         }),
-#         help_text='कम से कम 6 अक्षर / Minimum 6 characters'
-#     )
-    
-#     confirm_password = forms.CharField(
-#         required=True,
-#         widget=forms.PasswordInput(attrs={
-#             'class': 'form-control',
-#             'placeholder': 'पासवर्ड पुष्टि करें / Confirm Password'
-#         })
-#     )
-    
-#     city = forms.CharField(
-#         max_length=100,
-#         required=True,
-#         widget=forms.TextInput(attrs={
-#             'class': 'form-control',
-#             'placeholder': 'शहर / City'
-#         })
-#     )
-    
-#     district = forms.ModelChoiceField(
-#         queryset=District.objects.filter(is_active=True),
-#         required=True,
-#         empty_label="जिला चुनें / Select District",
-#         widget=forms.Select(attrs={
-#             'class': 'form-control'
-#         })
-#     )
-    
-#     terms_accepted = forms.BooleanField(
-#         required=True,
-#         widget=forms.CheckboxInput(attrs={
-#             'class': 'form-check-input'
-#         }),
-#         error_messages={
-#             'required': 'आपको नियम और शर्तें स्वीकार करनी होंगी / You must accept the terms and conditions'
-#         }
-#     )
-
-#     def clean_username(self):
-#         username = self.cleaned_data.get('username')
-        
-#         # Remove leading/trailing spaces
-#         username = username.strip()
-        
-#         # Check minimum length
-#         if len(username) < 3:
-#             raise ValidationError('यूजरनेम कम से कम 3 अक्षरों का होना चाहिए / Username must be at least 3 characters')
-        
-#         # Check for valid characters (alphanumeric, underscore, hyphen)
-#         if not re.match(r'^[a-zA-Z0-9_-]+$', username):
-#             raise ValidationError('यूजरनेम में केवल अक्षर, संख्या, अंडरस्कोर और हाइफन हो सकते हैं / Username can only contain letters, numbers, underscore and hyphen')
-        
-#         # Check if username already exists
-#         if User.objects.filter(username__iexact=username).exists():
-#             raise ValidationError('यह यूजरनेम पहले से उपयोग में है / This username is already taken')
-        
-#         return username.lower()
-
-#     def clean_mobile(self):
-#         mobile = self.cleaned_data.get('mobile')
-        
-#         # Remove spaces and special characters
-#         mobile = re.sub(r'[^\d+]', '', mobile)
-        
-#         # Validate Indian mobile number format
-#         if not re.match(r'^[6-9]\d{9}$', mobile):
-#             raise ValidationError('कृपया वैध 10 अंकों का मोबाइल नंबर दर्ज करें / Please enter a valid 10-digit Indian mobile number')
-        
-#         # Check if mobile already exists
-#         if ParentProfile.objects.filter(mobile=mobile).exists():
-#             raise ValidationError('यह मोबाइल नंबर पहले से पंजीकृत है / This mobile number is already registered')
-        
-#         return mobile
-
-#     def clean_email(self):
-#         email = self.cleaned_data.get('email')
-        
-#         # Check if email already exists
-#         if User.objects.filter(email__iexact=email).exists():
-#             raise ValidationError('यह ईमेल पहले से पंजीकृत है / This email is already registered')
-        
-#         return email.lower()
-
-#     def clean_password(self):
-#         password = self.cleaned_data.get('password')
-        
-#         # Check minimum length
-#         if len(password) < 6:
-#             raise ValidationError('पासवर्ड कम से कम 6 अक्षरों का होना चाहिए / Password must be at least 6 characters')
-        
-#         return password
-
-#     def clean(self):
-#         cleaned_data = super().clean()
-#         password = cleaned_data.get('password')
-#         confirm_password = cleaned_data.get('confirm_password')
-        
-#         # Check if passwords match
-#         if password and confirm_password:
-#             if password != confirm_password:
-#                 raise ValidationError({
-#                     'confirm_password': 'पासवर्ड मेल नहीं खाते / Passwords do not match'
-#                 })
-        
-#         return cleaned_data
-
-
-# # views.py
-# from django.shortcuts import render, redirect
-# from django.contrib.auth import login, get_user_model
-# from django.contrib import messages
-# from django.utils import timezone
-# from django.views import View
-# from nanhe_patrakar.models import Program, ParentProfile, ParticipationOrder
-
-# User = get_user_model()
-
-
 class ParentRegistrationForm(forms.Form):
-    """Parent registration form - add username and password fields"""
+    """Simplified parent registration form - mobile number becomes username"""
     
     first_name = forms.CharField(
         max_length=150,
@@ -191,7 +17,10 @@ class ParentRegistrationForm(forms.Form):
         widget=forms.TextInput(attrs={
             'class': 'form-control',
             'placeholder': 'अपना नाम दर्ज करें / Enter your first name'
-        })
+        }),
+        error_messages={
+            'required': 'कृपया अपना नाम दर्ज करें / Please enter your first name'
+        }
     )
     
     last_name = forms.CharField(
@@ -200,26 +29,23 @@ class ParentRegistrationForm(forms.Form):
         widget=forms.TextInput(attrs={
             'class': 'form-control',
             'placeholder': 'अपना उपनाम दर्ज करें / Enter your last name'
-        })
-    )
-    
-    # NEW FIELD - Username
-    username = forms.CharField(
-        max_length=150,
-        required=True,
-        widget=forms.TextInput(attrs={
-            'class': 'form-control',
-            'placeholder': 'यूजरनेम / Username'
-        })
+        }),
+        error_messages={
+            'required': 'कृपया अपना उपनाम दर्ज करें / Please enter your last name'
+        }
     )
     
     mobile = forms.CharField(
-        max_length=15,
+        max_length=10,
         required=True,
         widget=forms.TextInput(attrs={
             'class': 'form-control',
-            'placeholder': 'मोबाइल नंबर / 10-digit mobile number'
-        })
+            'placeholder': 'मोबाइल नंबर / 10-digit mobile number',
+            'maxlength': '10'
+        }),
+        error_messages={
+            'required': 'कृपया मोबाइल नंबर दर्ज करें / Please enter mobile number'
+        }
     )
     
     email = forms.EmailField(
@@ -227,85 +53,22 @@ class ParentRegistrationForm(forms.Form):
         widget=forms.EmailInput(attrs={
             'class': 'form-control',
             'placeholder': 'ईमेल पता / Email address'
-        })
+        }),
+        error_messages={
+            'required': 'कृपया ईमेल पता दर्ज करें / Please enter email address',
+            'invalid': 'कृपया वैध ईमेल पता दर्ज करें / Please enter valid email address'
+        }
     )
     
-    # NEW FIELD - Password
     password = forms.CharField(
         required=True,
         widget=forms.PasswordInput(attrs={
             'class': 'form-control',
-            'placeholder': 'पासवर्ड / Password'
-        })
-    )
-    
-    city = forms.CharField(
-        max_length=100,
-        required=True,
-        widget=forms.TextInput(attrs={
-            'class': 'form-control',
-            'placeholder': 'शहर / City'
-        })
-    )
-    
-    district = forms.ModelChoiceField(
-        queryset=District.objects.filter(is_active=True),
-        required=True,
-        empty_label="जिला चुनें / Select District",
-        widget=forms.Select(attrs={
-            'class': 'form-control'
-        })
-    )
-
-    # DOCS UPLOAD
-    parent_id_proof = forms.FileField(
-        required=False,
-        widget=forms.FileInput(attrs={
-            'class': 'form-control',
-            'accept': 'image/*,application/pdf'
-        })
-    )
-
-    child_photo = forms.ImageField(
-        required=False,
-        widget=forms.FileInput(attrs={
-            'class': 'form-control',
-            'accept': 'image/*'
-        })
-    )
-
-    # CHILD DETAILS
-    age_group = forms.ChoiceField(
-        choices=[('A', 'Group A (8-10 वर्ष)'), ('B', 'Group B (11-13 वर्ष)'), ('C', 'Group C (14-16 वर्ष)')],
-        widget=forms.RadioSelect(),
-        required=True,
-        error_messages={'required': 'कृपया एक आयु वर्ग चुनें / Please select an age group'}
-    )
-
-    child_name = forms.CharField(
-        max_length=200,
-        required=True,
-        widget=forms.TextInput(attrs={
-            'class': 'form-control',
-            'placeholder': 'बच्चे का नाम / Child Name'
-        })
-    )
-
-    child_gender = forms.ChoiceField(
-        choices=[('', 'लिंग चुनें / Select Gender'), ('M', 'Male'), ('F', 'Female'), ('O', 'Other')],
-        required=True,
-        widget=forms.Select(attrs={
-            'class': 'form-control'
-        })
-    )
-
-    child_school_name = forms.CharField(
-        max_length=255,
-        required=True,
-        widget=forms.TextInput(attrs={
-            'class': 'form-control',
-            'placeholder': 'स्कूल का नाम / School Name'
-        })
+            'placeholder': 'पासवर्ड / Password (कम से कम 6 अक्षर)'
+        }),
+        error_messages={
+            'required': 'कृपया पासवर्ड दर्ज करें / Please enter password'
+        }
     )
     
     terms_accepted = forms.BooleanField(
@@ -318,45 +81,50 @@ class ParentRegistrationForm(forms.Form):
         }
     )
 
-    # Validation for username
-    def clean_username(self):
-        username = self.cleaned_data.get('username')
-        username = username.strip()
-        
-        if len(username) < 3:
-            raise ValidationError('यूजरनेम कम से कम 3 अक्षरों का होना चाहिए / Username must be at least 3 characters')
-        
-        if User.objects.filter(username__iexact=username).exists():
-            raise ValidationError('यह यूजरनेम पहले से उपयोग में है / This username is already taken')
-        
-        return username
-
-    # Validation for password
-    def clean_password(self):
-        password = self.cleaned_data.get('password')
-        
-        if len(password) < 6:
-            raise ValidationError('पासवर्ड कम से कम 6 अक्षरों का होना चाहिए / Password must be at least 6 characters')
-        
-        return password
-
     def clean_mobile(self):
+        """Validate mobile number"""
         mobile = self.cleaned_data.get('mobile')
-        mobile = re.sub(r'[^\d+]', '', mobile)
         
+        # Remove any non-digit characters
+        mobile = re.sub(r'\D', '', mobile)
+        
+        # Check if exactly 10 digits
+        if len(mobile) != 10:
+            raise ValidationError('मोबाइल नंबर 10 अंकों का होना चाहिए / Mobile number must be 10 digits')
+        
+        # Check if starts with valid digit (6-9 for Indian numbers)
         if not re.match(r'^[6-9]\d{9}$', mobile):
-            raise ValidationError('कृपया वैध 10 अंकों का मोबाइल नंबर दर्ज करें / Please enter a valid 10-digit Indian mobile number')
+            raise ValidationError('कृपया वैध 10 अंकों का मोबाइल नंबर दर्ज करें / Please enter a valid 10-digit mobile number')
         
+        # Check if mobile already exists as username
+        if User.objects.filter(username=mobile).exists():
+            raise ValidationError('यह मोबाइल नंबर पहले से पंजीकृत है / This mobile number is already registered')
+        
+        # Check if mobile already exists in ParentProfile
         if ParentProfile.objects.filter(mobile=mobile).exists():
             raise ValidationError('यह मोबाइल नंबर पहले से पंजीकृत है / This mobile number is already registered')
         
         return mobile
 
     def clean_email(self):
+        """Validate email"""
         email = self.cleaned_data.get('email')
         
+        # Convert to lowercase
+        email = email.lower().strip()
+        
+        # Check if email already exists
         if User.objects.filter(email__iexact=email).exists():
             raise ValidationError('यह ईमेल पहले से पंजीकृत है / This email is already registered')
         
-        return email.lower()
-    
+        return email
+
+    def clean_password(self):
+        """Validate password"""
+        password = self.cleaned_data.get('password')
+        
+        # Minimum 6 characters
+        if len(password) < 6:
+            raise ValidationError('पासवर्ड कम से कम 6 अक्षरों का होना चाहिए / Password must be at least 6 characters')
+        
+        return password

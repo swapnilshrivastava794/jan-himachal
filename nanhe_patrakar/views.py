@@ -52,7 +52,7 @@ class LandingPageView(View):
 
 
 class ParentRegistrationView(View):
-    """Parent registration view"""
+    """Parent registration view - Simplified with mobile as username"""
     template_name = 'nanhe_patrakar/registration.html'
     form_class = ParentRegistrationForm
 
@@ -66,11 +66,9 @@ class ParentRegistrationView(View):
             return redirect('nanhe_patrakar:landing')
 
         form = self.form_class()
-        districts = District.objects.filter(is_active=True).order_by('name')
         return render(request, self.template_name, {
             'form': form, 
-            'program': program,
-            'districts': districts
+            'program': program
         })
 
     def post(self, request):
@@ -80,23 +78,23 @@ class ParentRegistrationView(View):
             return redirect('nanhe_patrakar:landing')
 
         form = self.form_class(request.POST, request.FILES)
-        districts = District.objects.filter(is_active=True).order_by('name')
         
         if form.is_valid():
             # =============================================
-            # STEP 1: VALIDATE UNIQUENESS BEFORE CREATING
+            # STEP 1: EXTRACT AND VALIDATE DATA
             # =============================================
-            username = form.cleaned_data['username']
-            email = form.cleaned_data['email']
             mobile = form.cleaned_data['mobile']
+            email = form.cleaned_data['email']
             
-            # Check if username already exists
+            # Use mobile number as username
+            username = mobile
+            
+            # Check if mobile (username) already exists
             if User.objects.filter(username=username).exists():
-                form.add_error('username', 'यह उपयोगकर्ता नाम पहले से मौजूद है / This username already exists')
+                form.add_error('mobile', 'यह मोबाइल नंबर पहले से पंजीकृत है / This mobile number is already registered')
                 return render(request, self.template_name, {
                     'form': form, 
-                    'program': program,
-                    'districts': districts
+                    'program': program
                 })
             
             # Check if email already exists
@@ -104,17 +102,15 @@ class ParentRegistrationView(View):
                 form.add_error('email', 'यह ईमेल पहले से पंजीकृत है / This email is already registered')
                 return render(request, self.template_name, {
                     'form': form, 
-                    'program': program,
-                    'districts': districts
+                    'program': program
                 })
             
-            # Check if mobile already exists in ParentProfile
+            # Check if mobile already exists in ParentProfile (redundant but safe)
             if ParentProfile.objects.filter(mobile=mobile).exists():
                 form.add_error('mobile', 'यह मोबाइल नंबर पहले से पंजीकृत है / This mobile number is already registered')
                 return render(request, self.template_name, {
                     'form': form, 
-                    'program': program,
-                    'districts': districts
+                    'program': program
                 })
             
             # =============================================
@@ -124,39 +120,40 @@ class ParentRegistrationView(View):
             
             try:
                 with transaction.atomic():
-                    # Create user
+                    # Create user with mobile as username
                     user = User.objects.create_user(
-                        username=username,
+                        username=username,  # Mobile number as username
                         email=email,
                         first_name=form.cleaned_data['first_name'],
                         last_name=form.cleaned_data['last_name'],
                         password=form.cleaned_data['password']
                     )
 
-                    # Create parent profile
+                    # Create parent profile (city and district are optional now)
                     parent_profile = ParentProfile.objects.create(
                         user=user,
                         program=program,
                         mobile=mobile,
-                        city=form.cleaned_data['city'],
-                        district=form.cleaned_data['district'],
+                        city=None,  # Will be updated later
+                        district=None,  # Will be updated later
                         status='PAYMENT_PENDING',
-                        id_proof=form.cleaned_data.get('parent_id_proof'),
+                        id_proof=None,
                         terms_accepted=form.cleaned_data['terms_accepted'],
                         terms_accepted_at=timezone.now() if form.cleaned_data['terms_accepted'] else None
                     )
 
-                    # Create Child Profile
+                    # Create a placeholder/temporary Child Profile
+                    # This will be updated later by the parent with complete information
                     ChildProfile.objects.create(
                         parent=parent_profile,
-                        name=form.cleaned_data['child_name'],
-                        gender=form.cleaned_data['child_gender'],
-                        date_of_birth=None,
-                        age=None,
-                        school_name=form.cleaned_data['child_school_name'],
-                        district=form.cleaned_data['district'],
-                        photo=form.cleaned_data.get('child_photo'),
-                        age_group=form.cleaned_data['age_group'],
+                        name="To be updated",  # Placeholder name
+                        gender=None,  # Will be updated later
+                        date_of_birth=None,  # Will be updated later
+                        age=None,  # Will be updated later
+                        school_name=None,  # Will be updated later
+                        district=None,  # Will be updated later
+                        photo=None,  # Will be updated later
+                        age_group='A',  # Default age group, will be updated later
                         is_active=True
                     )
 
@@ -171,7 +168,10 @@ class ParentRegistrationView(View):
                     # Auto-login user
                     login(request, user)
 
-                messages.success(request, 'पंजीकरण सफल! अब भुगतान के साथ आगे बढ़ें / Registration successful! Please proceed with payment')
+                messages.success(
+                    request, 
+                    'पंजीकरण सफल! अब भुगतान के साथ आगे बढ़ें। भुगतान के बाद आप अपने बच्चे का पूरा विवरण अपडेट कर सकते हैं। / Registration successful! Please proceed with payment. After payment, you can update your child\'s complete details.'
+                )
                 return redirect('nanhe_patrakar:payment')
 
             except Exception as e:
@@ -179,17 +179,15 @@ class ParentRegistrationView(View):
                 messages.error(request, f'पंजीकरण में त्रुटि / Registration error: {str(e)}')
                 return render(request, self.template_name, {
                     'form': form, 
-                    'program': program,
-                    'districts': districts
+                    'program': program
                 })
 
         # Form is not valid
         return render(request, self.template_name, {
             'form': form, 
-            'program': program,
-            'districts': districts
+            'program': program
         })
-    
+           
     
 class PaymentView(LoginRequiredMixin, View):
     """Display payment page with Razorpay integration"""

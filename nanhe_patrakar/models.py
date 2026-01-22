@@ -17,8 +17,8 @@ class ParentProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='parent_profile')
     program = models.ForeignKey('Program', on_delete=models.PROTECT, related_name='participants')
     mobile = models.CharField(max_length=15, unique=True)
-    city = models.CharField(max_length=100)
-    district = models.ForeignKey('District', on_delete=models.PROTECT)
+    city = models.CharField(max_length=100, blank=True, null=True)
+    district = models.ForeignKey('District', on_delete=models.PROTECT, blank=True, null=True)
     
     status = models.CharField(max_length=50, choices=STATUS_CHOICES, default='REGISTERED')
     id_proof = models.FileField(upload_to='parent_docs/', null=True, blank=True)
@@ -105,7 +105,7 @@ class ChildProfile(models.Model):
     age_group = models.CharField(max_length=1, choices=AGE_GROUP_CHOICES)
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES, null=True, blank=True)
     school_name = models.CharField(max_length=255, null=True, blank=True)
-    district = models.ForeignKey('District', on_delete=models.PROTECT)
+    district = models.ForeignKey('District', on_delete=models.PROTECT, blank=True, null=True)
     photo = models.ImageField(upload_to='child_photos/', null=True, blank=True)
     id_proof = models.FileField(
         upload_to='child_docs/',
