@@ -256,6 +256,15 @@
           btn.innerHTML = '<i class="fas fa-lock me-2"></i>सुरक्षित भुगतान करें / Pay Securely';
       }
   };
+
+  // AUTO-OPEN: Razorpay popup opens automatically when page loads
+  document.addEventListener('DOMContentLoaded', function() {
+      setTimeout(function() {
+          if (typeof startPayment === 'function') {
+              startPayment();
+          }
+      }, 500); // Small delay to ensure everything is loaded
+  });
 </script>
 
 <div class="payment-page">
