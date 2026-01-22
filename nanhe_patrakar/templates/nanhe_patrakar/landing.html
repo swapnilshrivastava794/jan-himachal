@@ -695,11 +695,74 @@
         .children-group { display: none; }
     }
 
+    @media (max-width: 768px) {
+        .hero-title { font-size: 2.2rem; }
+        .sun { width: 80px; height: 80px; top: 10%; right: 5%; }
+        .sun-rays { width: 220px; height: 220px; }
+        .sun-ray { width: 110px; }
+        .mountains-back { height: 250px; bottom: 80px; }
+        .mountains-mid { height: 200px; bottom: 60px; }
+        .mountains-front { height: 160px; bottom: 50px; }
+        .trees-container { bottom: 60px; }
+        .ground { height: 80px; }
+        .grass-container { bottom: 60px; }
+        
+        .content-section, .content-section-alt { padding: 10px 0; }
+        .section-header { margin-bottom: 15px; }
+        .section-header h2 { font-size: 1.8rem; }
+    }
+
     @media (max-width: 576px) {
-        .hero-himachal { min-height: 500px; }
-        .hero-title { font-size: 2rem; }
-        .hero-subtitle { font-size: 1rem; }
-        .trees { display: none; }
+        .hero-himachal { min-height: auto; padding-bottom: 20px; }
+        .hero-content { padding: 30px 0 50px; }
+        
+        .hero-title { 
+            font-size: 2rem; 
+            margin-bottom: 10px;
+        }
+        
+        .hero-subtitle { 
+            font-size: 1.1rem; 
+            margin-bottom: 15px;
+        }
+        
+        .hero-desc { 
+            font-size: 1rem; 
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+        
+        .hero-badge {
+            padding: 8px 16px;
+            font-size: 0.9rem;
+            margin-bottom: 20px;
+        }
+        
+        .hero-btn-primary, .hero-btn-outline {
+            width: 100%;
+            justify-content: center;
+            margin-bottom: 10px;
+            padding: 14px 20px;
+        }
+        
+        .sun-container { top: 10%; right: -20px; transform: scale(0.7); }
+        
+        /* Hide complex animations on mobile for performance */
+        .magic-particles, .fireflies, .light-rays { display: none; }
+        
+        .mountains-back { height: 180px; bottom: 70px; }
+        .mountains-mid { height: 140px; bottom: 50px; }
+        .mountains-front { height: 120px; bottom: 40px; }
+        .trees-container { display: none; }
+        
+        .section-header h2 { font-size: 1.6rem; }
+        .section-header p { font-size: 1rem; }
+        
+        .feature-card { padding: 25px 20px; margin-bottom: 15px; }
+        .feature-card .icon-wrap { width: 50px; height: 50px; font-size: 20px; }
+        .feature-card h5 { font-size: 1.1rem; }
+        
+        .process-step { padding: 15px 10px; }
     }
 
     /* ============================================
@@ -710,7 +773,7 @@
     /* Section Base Styling */
     .content-section {
         background: #fff;
-        padding: 80px 0;
+        padding: 10px 0;
     }
 
     .content-section-alt {
@@ -967,6 +1030,9 @@
         padding-bottom: 30px;
         border-left: 3px solid #dee2e6;
     }
+    @media (max-width: 576px) {
+        .timeline-item { padding-bottom: 20px; padding-left: 30px; }
+    }
     .timeline-item:last-child { border-left: 3px solid transparent; padding-bottom: 0; }
     .timeline-item::before {
         content: '';
@@ -1036,19 +1102,22 @@
 <section class="hero-himachal">
     
     <!-- Static Banner Image (User Requested Structure) -->
-    <div class="container mt-3 mb-4">
+    <div class="container pt-4 mt-3 mb-4">
         <div class="form-header" style="padding: 0; background: none; box-shadow: none;">
             <a href="{% url 'nanhe_patrakar:register' %}">
-                <img class="w-100 registration-banner" src="{% static 'nanhe_patrakar/img/registration_banner.jpg' %}" alt="नन्हे पत्रकार पंजीकरण">
+                <picture>
+                    <source media="(max-width: 576px)" srcset="{% static 'nanhe_patrakar/img/nanhe-patarkar.jpg' %}">
+                    <img class="w-100 registration-banner" src="{% static 'nanhe_patrakar/img/registration_banner.jpg' %}" alt="नन्हे पत्रकार पंजीकरण">
+                </picture>
             </a>
         </div>
     </div>
 </section>
 
 <!-- Why This Initiative Section - BLACK & WHITE -->
-<section class="py-5 bg-white" id="about">
+<section class="content-section" id="about">
     <div class="container">
-        <div class="row align-items-center g-5">
+        <div class="row align-items-center">
             <div class="col-lg-6">
                 <span class="text-secondary fw-bold text-uppercase small ls-2 mb-2 d-block">इस पहल की आवश्यकता</span>
                 <h2 class="fw-bold mb-4 text-black">आज के समय में बच्चों को सही दिशा की जरूरत है</h2>
@@ -1119,17 +1188,17 @@
 </section>
 
 <!-- Who Can Participate Section - BLACK & WHITE -->
-<section class="py-5 border-top border-bottom" style="background:#fff;">
+<section class="content-section border-top border-bottom">
     <div class="container">
-        <div class="text-center mb-5">
+        <div class="section-header text-center">
             <span class="text-muted fw-semibold text-uppercase small">Eligibility</span>
             <h2 class="fw-bold mt-2 text-black">कौन भाग ले सकता है?</h2>
-            <div style="width:60px;height:3px;background:#000;margin:15px auto 0;"></div>
+            <div class="accent-line"></div>
         </div>
         
-        <div class="row g-4 justify-content-center">
-            <div class="col-lg-3 col-md-6">
-                <div class="bg-white p-4 rounded-0 text-center h-100" style="border:1px solid #eee;">
+        <div class="row g-3 g-md-4 justify-content-center">
+            <div class="col-6 col-md-6 col-lg-3">
+                <div class="bg-white p-3 p-md-4 rounded-0 text-center h-100" style="border:1px solid #eee;">
                     <div class="mx-auto mb-3 rounded-circle d-flex align-items-center justify-content-center" style="width:60px;height:60px;background:#f8f9fa;color:#000;">
                         <i class="fas fa-child fa-lg"></i>
                     </div>
@@ -1137,8 +1206,8 @@
                     <p class="h4 fw-bold mb-0 text-black">8-16 वर्ष</p>
                 </div>
             </div>
-            <div class="col-lg-3 col-md-6">
-                <div class="bg-white p-4 rounded-0 text-center h-100" style="border:1px solid #eee;">
+            <div class="col-6 col-md-6 col-lg-3">
+                <div class="bg-white p-3 p-md-4 rounded-0 text-center h-100" style="border:1px solid #eee;">
                     <div class="mx-auto mb-3 rounded-circle d-flex align-items-center justify-content-center" style="width:60px;height:60px;background:#f8f9fa;color:#000;">
                         <i class="fas fa-map-marker-alt fa-lg"></i>
                     </div>
@@ -1146,8 +1215,8 @@
                     <p class="text-muted mb-0">केवल <strong>हिमाचल प्रदेश</strong></p>
                 </div>
             </div>
-            <div class="col-lg-3 col-md-6">
-                <div class="bg-white p-4 rounded-0 text-center h-100" style="border:1px solid #eee;">
+            <div class="col-6 col-md-6 col-lg-3">
+                <div class="bg-white p-3 p-md-4 rounded-0 text-center h-100" style="border:1px solid #eee;">
                     <div class="mx-auto mb-3 rounded-circle d-flex align-items-center justify-content-center" style="width:60px;height:60px;background:#f8f9fa;color:#000;">
                         <i class="fas fa-school fa-lg"></i>
                     </div>
@@ -1155,8 +1224,8 @@
                     <p class="text-muted mb-0">सरकारी और निजी विद्यालय</p>
                 </div>
             </div>
-            <div class="col-lg-3 col-md-6">
-                <div class="bg-white p-4 rounded-0 text-center h-100" style="border:1px solid #eee;">
+            <div class="col-6 col-md-6 col-lg-3">
+                <div class="bg-white p-3 p-md-4 rounded-0 text-center h-100" style="border:1px solid #eee;">
                     <div class="mx-auto mb-3 rounded-circle d-flex align-items-center justify-content-center" style="width:60px;height:60px;background:#f8f9fa;color:#000;">
                         <i class="fas fa-users fa-lg"></i>
                     </div>
@@ -1167,14 +1236,13 @@
         </div>
     </div>
 </section>
-
 <!-- Age Groups Section - BLACK & WHITE -->
-<section class="py-5 bg-light">
+<section class="content-section-alt">
     <div class="container">
-        <div class="text-center mb-5">
+        <div class="section-header text-center">
             <span class="text-muted fw-semibold text-uppercase small">Categories</span>
             <h2 class="fw-bold mt-2 text-black">आयु वर्ग और लेखन स्तर</h2>
-            <div style="width:60px;height:3px;background:#000;margin:15px auto 0;"></div>
+            <div class="accent-line"></div>
             <p class="text-muted mt-3">हर बच्चा अपनी समझ और क्षमता के अनुसार लिख सके</p>
         </div>
         
@@ -1240,12 +1308,12 @@
 </section>
 
 <!-- Writing Formats Section - BLACK & WHITE -->
-<section class="py-5 bg-white border-top">
+<section class="content-section border-top">
     <div class="container">
-        <div class="text-center mb-5">
+        <div class="section-header text-center">
             <span class="text-muted fw-semibold text-uppercase small">Submission Formats</span>
             <h2 class="fw-bold mt-2 text-black">लेखन और प्रस्तुति के माध्यम</h2>
-            <div style="width:60px;height:3px;background:#000;margin:15px auto 0;"></div>
+            <div class="accent-line"></div>
         </div>
         
         <div class="row g-3 justify-content-center">
@@ -1303,7 +1371,7 @@
 </section>
 
 <!-- Language Policy Section - BLACK & WHITE -->
-<section class="py-5 bg-light">
+<section class="content-section-alt">
     <div class="container">
         <div class="row align-items-center g-4">
             <div class="col-lg-6">
@@ -1351,12 +1419,12 @@
 </section>
 
 <!-- Process Section - BLACK & WHITE -->
-<section class="py-5 bg-white border-top">
+<section class="content-section border-top">
     <div class="container">
-        <div class="text-center mx-auto mb-5" style="max-width: 800px;">
+        <div class="section-header text-center mx-auto" style="max-width: 800px;">
             <span class="text-muted fw-semibold text-uppercase small">Step by Step</span>
             <h2 class="section-title mt-2 text-black">ऐप के माध्यम से भागीदारी की प्रक्रिया</h2>
-            <div style="width:60px;height:3px;background:#000;margin:15px auto 0;"></div>
+            <div class="accent-line"></div>
         </div>
         
         <div class="row justify-content-center">
@@ -1407,7 +1475,7 @@
 </section>
 
 <!-- Pricing Section - BLACK & WHITE -->
-<section class="py-5 position-relative bg-light border-top">
+<section class="content-section-alt position-relative border-top">
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-lg-8">
@@ -1423,9 +1491,9 @@
                         ₹<span class="fs-2 me-1"></span><span>{{ program.price }}</span>
                     </div>
                     
-                    <p class="text-secondary mb-5">शुल्क का भुगतान सामग्री जमा करने से पहले अनिवार्य है</p>
+                    <p class="text-secondary mb-3 mb-md-5">शुल्क का भुगतान सामग्री जमा करने से पहले अनिवार्य है</p>
                     
-                    <div class="row g-3 mb-5 text-start justify-content-center">
+                    <div class="row g-3 mb-4 mb-md-5 text-start justify-content-center">
                         <div class="col-md-5">
                             <div class="d-flex align-items-center mb-2">
                                 <i class="fas fa-check text-black me-3"></i>
@@ -1459,7 +1527,7 @@
 </section>
 
 <!-- Rules & Parent Role Section - BLACK & WHITE -->
-<section class="py-5 bg-white">
+<section class="content-section">
     <div class="container">
         <div class="row g-4">
             <!-- Rules -->
@@ -1525,7 +1593,7 @@
 </section>
 
 <!-- Privacy & Certificate Section - BLACK & WHITE -->
-<section class="py-5 bg-white border-top">
+<section class="content-section border-top">
     <div class="container">
         <div class="row g-4">
             <!-- Privacy -->
