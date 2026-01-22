@@ -73,8 +73,10 @@
 </head>
 <body>
 
-    <!-- Use Main Site Header (Already Properly Styled) -->
-    {% include 'header.html' %}
+    <!-- Use Main Site Mobile Header -->
+    <link rel="stylesheet" href="{% static 'mobile/style.css' %}">
+    <link rel="stylesheet" href="{% static 'mobile/mdxbstyle.css' %}">
+    {% include "mobile/header.html" %}
 
     <!-- Global Messages -->
     {% if messages %}
