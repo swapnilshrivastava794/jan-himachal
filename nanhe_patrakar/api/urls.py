@@ -11,7 +11,7 @@ from .views import (
     ChildProfilesByRecentSubmissionsAPIView, 
     DistrictListAPIView, ParentRegistrationAPIView, TopicListAPIView, SubmissionListAPIView,
     SubmissionDetailAPIView, SubmissionStatsAPIView,
-    CreateRazorpayOrderAPI, VerifyRazorpayPaymentAPI, CertificateCheckAPIView
+    CreateRazorpayOrderAPI, VerifyRazorpayPaymentAPI, CertificateCheckAPIView,create_topics_from_payload
 )
 
 urlpatterns = [
@@ -46,6 +46,11 @@ urlpatterns = [
     path('submissions/stats/', SubmissionStatsAPIView.as_view(), name='submission-stats'),
     
     path('districts/', DistrictListAPIView.as_view(), name='district-list'),
+    path(
+        'topics/create-from-payload/',
+        create_topics_from_payload,
+        name='create_topics_from_payload'
+    ),
     
     # Razorpay Payment APIs
     path('payment/create-order/', CreateRazorpayOrderAPI.as_view(), name='razorpay-create-order'),

@@ -1884,3 +1884,74 @@ class CertificateCheckAPIView(APIView):
                 },
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
+
+
+import json
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from nanhe_patrakar.models import Topic
+
+import json
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.db import transaction
+from nanhe_patrakar.models import Topic
+
+
+@csrf_exempt
+def create_topics_from_payload(request):
+    if request.method != "POST":
+        return JsonResponse(
+            {"status": "error", "message": "Only POST allowed"},
+            status=405
+        )
+
+    try:
+        payload = json.loads(request.body)
+        age_groups_data = payload.get("age_groups", [])
+
+        created = []
+
+        with transaction.atomic():
+            display_order = 1
+
+            for group_block in age_groups_data:
+                group_code = group_block.get("group")  # A / B / C
+                topics = group_block.get("topics", [])
+
+                for topic in topics:
+                    title = topic.get("en")
+                    title_hindi = topic.get("hi")
+
+                    if not title:
+                        continue  # safety
+
+                    obj = Topic.objects.create(
+                        title=title,
+                        title_hindi=title_hindi,
+                        age_groups=group_code,
+                        is_active=True,
+                        display_order=display_order
+                    )
+
+                    created.append({
+                        "id": obj.id,
+                        "title": obj.title,
+                        "age_group": group_code
+                    })
+
+                    display_order += 1
+
+        return JsonResponse({
+            "status": "success",
+            "message": "Topics inserted successfully",
+            "total_created": len(created),
+            "data": created
+        }, status=201)
+
+    except Exception as e:
+        return JsonResponse({
+            "status": "error",
+            "message": str(e)
+        }, status=400)
+
