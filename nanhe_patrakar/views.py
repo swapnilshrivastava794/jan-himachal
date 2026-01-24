@@ -12,6 +12,7 @@ from django.urls import reverse
 from .forms import ParentRegistrationForm
 from .models import ParentProfile, ParticipationOrder, Program, ChildProfile, District
 import razorpay
+from django_user_agents.utils import get_user_agent
 
 
 class LandingPageView(View):
@@ -23,9 +24,10 @@ class LandingPageView(View):
         
         if not program:
             messages.error(request, 'कोई सक्रिय कार्यक्रम उपलब्ध नहीं है / No active program available')
-            return render(request, self.template_name, {'program': None})
+            return render(request, self.template_name, {'program': None, 'is_mobile': get_user_agent(request).is_mobile})
         
         context = {
+            'is_mobile': get_user_agent(request).is_mobile,
             'program': program,
             'age_groups': [
                 {
@@ -68,7 +70,8 @@ class ParentRegistrationView(View):
         form = self.form_class()
         return render(request, self.template_name, {
             'form': form, 
-            'program': program
+            'program': program,
+            'is_mobile': get_user_agent(request).is_mobile
         })
 
     def post(self, request):
@@ -94,7 +97,8 @@ class ParentRegistrationView(View):
                 form.add_error('mobile', 'यह मोबाइल नंबर पहले से पंजीकृत है / This mobile number is already registered')
                 return render(request, self.template_name, {
                     'form': form, 
-                    'program': program
+                    'program': program,
+                    'is_mobile': get_user_agent(request).is_mobile
                 })
             
             # Check if email already exists
@@ -102,7 +106,8 @@ class ParentRegistrationView(View):
                 form.add_error('email', 'यह ईमेल पहले से पंजीकृत है / This email is already registered')
                 return render(request, self.template_name, {
                     'form': form, 
-                    'program': program
+                    'program': program,
+                    'is_mobile': get_user_agent(request).is_mobile
                 })
             
             # Check if mobile already exists in ParentProfile (redundant but safe)
@@ -110,7 +115,8 @@ class ParentRegistrationView(View):
                 form.add_error('mobile', 'यह मोबाइल नंबर पहले से पंजीकृत है / This mobile number is already registered')
                 return render(request, self.template_name, {
                     'form': form, 
-                    'program': program
+                    'program': program,
+                    'is_mobile': get_user_agent(request).is_mobile
                 })
             
             # =============================================
@@ -179,13 +185,15 @@ class ParentRegistrationView(View):
                 messages.error(request, f'पंजीकरण में त्रुटि / Registration error: {str(e)}')
                 return render(request, self.template_name, {
                     'form': form, 
-                    'program': program
+                    'program': program,
+                    'is_mobile': get_user_agent(request).is_mobile
                 })
 
         # Form is not valid
         return render(request, self.template_name, {
             'form': form, 
-            'program': program
+            'program': program,
+            'is_mobile': get_user_agent(request).is_mobile
         })
            
     
@@ -253,6 +261,7 @@ class PaymentView(LoginRequiredMixin, View):
                 'amount': int(order.amount * 100),
                 'currency': settings.RAZORPAY_CURRENCY,
                 'callback_url': callback_url,
+                'is_mobile': get_user_agent(request).is_mobile,
             }
             
             return render(request, self.template_name, context)
@@ -348,6 +357,7 @@ class PaymentFailedView(LoginRequiredMixin, View):
             context = {
                 'parent': parent_profile,
                 'program': program,
+                'is_mobile': get_user_agent(request).is_mobile,
             }
             
             return render(request, self.template_name, context)
@@ -384,7 +394,9 @@ class DownloadAppView(LoginRequiredMixin, View):
             context = {
                 'parent': parent_profile,
                 'program': program,
-                'order': order
+                'program': program,
+                'order': order,
+                'is_mobile': get_user_agent(request).is_mobile,
             }
             
             return render(request, self.template_name, context)
