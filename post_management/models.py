@@ -309,4 +309,19 @@ class AppUser(models.Model):
 
     def __str__(self):
         return self.name
+
+class CustomNotification(models.Model):
+    title = models.CharField(max_length=255, verbose_name="Notification Title")
+    message = models.TextField(verbose_name="Notification Body")
+    image = models.ImageField(upload_to='notifications/', null=True, blank=True, verbose_name="Big Image (Optional)")
+    created_at = models.DateTimeField(auto_now_add=True)
+    is_sent = models.BooleanField(default=False, verbose_name="Sent to Users?")
+
+    def __str__(self):
+        return self.title
+
+    class Meta:
+        verbose_name = "Custom Notification"
+        verbose_name_plural = "Custom Notifications"
+
     
