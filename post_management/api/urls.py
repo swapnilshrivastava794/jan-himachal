@@ -1,7 +1,8 @@
 from django.urls import path
 from .views import (
     CategoryListAPI, GlobalSearchAPI, NewsListAPI, NewsDetailAPI , VideoListAPI, VideoDetailAPI, 
-    AppSignupAPI, AppLoginAPI, AppProfileUpdateAPI, UserRegistrationAPIView
+    AppSignupAPI, AppLoginAPI, AppProfileUpdateAPI, UserRegistrationAPIView,
+    TriggerNewsNotificationAPI
 )
 urlpatterns = [
     
@@ -20,5 +21,7 @@ urlpatterns = [
     path('auth/signup/', AppSignupAPI.as_view(), name='auth-signup'),
     path('auth/login/', AppLoginAPI.as_view(), name='auth-login'),
     path('auth/update-profile/', AppProfileUpdateAPI.as_view(), name='auth-update-profile'),
+    
+    path('notifications/send/', TriggerNewsNotificationAPI.as_view(), name='api-trigger-notification'),
 
 ]

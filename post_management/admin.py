@@ -1,4 +1,4 @@
-from django.contrib import admin
+from django.contrib import admin, messages
 from post_management.models import category, sub_category, NewsPost, VideoNews, CMS, slider,newstype
 from django.contrib.auth.models import User
 import csv
@@ -259,3 +259,45 @@ class slideradmin(admin.ModelAdmin):
     list_editable=('status','order',)
     cropping_fields = {'image_crop': ('sliderimage',)}
 admin.site.register(slider,slideradmin)
+
+from post_management.models import CustomNotification
+from post_management.api.utils import send_custom_notification
+
+@admin.register(CustomNotification)
+class CustomNotificationAdmin(admin.ModelAdmin):
+    list_display = ('title', 'message', 'created_at', 'is_sent')
+    list_filter = ('is_sent', 'created_at')
+    readonly_fields = ('created_at', 'is_sent')
+    actions = ['resend_notification']
+
+    def save_model(self, request, obj, form, change):
+        """
+        Send notification immediately when saved.
+        """
+        super().save_model(request, obj, form, change)
+        
+        # Only send if not already sent (though re-saving might be intended to re-send? 
+        # Let's assume re-sending requires a manual action or creating new one to avoid accidents)
+        # But for 'Add', it definitely sends.
+        if not obj.is_sent:
+            result = send_custom_notification(obj)
+            
+            if result.get('status') == 'success':
+                # Update status
+                obj.is_sent = True
+                obj.save() # Save again to update is_sent
+                self.message_user(request, f"Notification '{obj.title}' sent successfully!", messages.SUCCESS)
+            else:
+                self.message_user(request, f"Error sending notification: {result.get('message')}", messages.ERROR)
+
+    @admin.action(description="Resend Selected Notifications")
+    def resend_notification(self, request, queryset):
+        count = 0
+        for obj in queryset:
+            result = send_custom_notification(obj)
+            if result.get('status') == 'success':
+                obj.is_sent = True
+                obj.save()
+                count += 1
+        
+        self.message_user(request, f"{count} notifications resent successfully.", messages.SUCCESS)

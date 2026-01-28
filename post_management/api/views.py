@@ -412,4 +412,21 @@ class UserRegistrationAPIView(APIView):
                 error_response(f"Failed to register user: {str(e)}"),
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
+
+from .utils import send_news_notification
+
+class TriggerNewsNotificationAPI(APIView):
+    permission_classes = [AllowAny] # Or IsAuthenticated/IsAdminUser as needed
+
+    def post(self, request):
+        news_id = request.data.get('news_id')
+        if not news_id:
+            return Response({"status": "error", "message": "news_id is required"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        result = send_news_notification(news_id)
+        
+        if result['status'] == 'success':
+            return Response(result, status=status.HTTP_200_OK)
+        else:
+            return Response(result, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
                

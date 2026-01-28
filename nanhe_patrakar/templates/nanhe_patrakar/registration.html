@@ -338,9 +338,16 @@
     <div class="main-card">
       
       <!-- Header -->
-      <div class="form-header" style="padding: 0; background: none; box-shadow: none;">
-        <img src="{% static 'nanhe_patrakar/img/registration_banner.jpg' %}" alt="नन्हे पत्रकार पंजीकरण" class="registration-banner">
-      </div>
+      <div class="container pt-4 mt-3 mb-4">
+        <div class="form-header" style="padding: 0; background: none; box-shadow: none;">
+            <a href="{% url 'nanhe_patrakar:register' %}">
+                <picture>
+                    <source media="(max-width: 576px)" srcset="{% static 'nanhe_patrakar/img/nanhe-patarkar.jpg' %}">
+                    <img class="w-100 registration-banner" src="{% static 'nanhe_patrakar/img/registration_banner.jpg' %}" alt="नन्हे पत्रकार पंजीकरण">
+                </picture>
+            </a>
+        </div>
+    </div>
 
       <!-- Form -->
       <form method="post" id="registrationForm" enctype="multipart/form-data" novalidate>
