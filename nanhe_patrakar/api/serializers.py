@@ -46,6 +46,9 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
 
         data.update({
             "user_id": self.user.id,
+            "first_name":self.user.first_name,
+            "last_name":self.user.last_name,
+            "email":self.user.email,
             "user_type": user_type,
             "refresh_expires": refresh.payload.get('exp'),
             "access_expires": data['access'] and None,
