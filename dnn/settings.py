@@ -52,7 +52,7 @@ INSTALLED_APPS = [
     'ckeditor',
     'ckeditor_uploader',
     'service',
-    'post_management',
+    'post_management.apps.PostManagementConfig',
     'ad_management',
     'seo_management',
     'django.contrib.sites',
