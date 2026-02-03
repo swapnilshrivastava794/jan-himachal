@@ -4,572 +4,510 @@
 
 {% block extra_css %}
 <style>
+  @import url('https://fonts.googleapis.com/css2?family=Mulish:wght@400;600;700;800&display=swap');
+
   :root {
-    --primary-gradient: linear-gradient(135deg, #000000 0%, #333333 100%);
-    --accent-color: #000000;
-    --card-shadow: 0 20px 60px rgba(0,0,0,0.1);
+    --razorpay-blue: #3395ff;  /* approximate button color */
+    --razorpay-bg: #f5f7fa; 
+    --text-dark: #091e42;
+    --text-muted: #5e6c84;
+    --border-color: #ebecf0;
   }
 
-  .registration-page {
-    background: linear-gradient(135deg, #f5f7fa 0%, #e4e8eb 100%);
-    min-height: 100vh;
-    padding: 40px 0;
+  body {
+    font-family: 'Mulish', sans-serif;
+    background-color: #fff;
+    color: var(--text-dark);
   }
 
-  .main-card {
-    background: #fff;
-    border-radius: 24px;
-    box-shadow: var(--card-shadow);
-    overflow: hidden;
-    max-width: 700px;
+  /* Layout */
+  .page-container {
+    max-width: 1200px;
     margin: 0 auto;
-    border: 1px solid #eee;
+    padding: 0 20px;
+    display: flex;
+    flex-wrap: wrap;
+    min-height: 100vh;
   }
 
-  /* Header */
-  .form-header {
-    background: linear-gradient(135deg, #d91c1c 0%, #b71c1c 100%);
-    padding: 40px 30px;
-    text-align: center;
-    color: #fff;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .form-header::before {
-    content: '';
-    position: absolute;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 60%);
-    animation: pulse 4s ease-in-out infinite;
-  }
-
-  @keyframes pulse {
-    0%, 100% { transform: scale(1); opacity: 0.5; }
-    50% { transform: scale(1.1); opacity: 0.3; }
-  }
-
-  .form-header h1 {
-    font-size: 28px;
-    font-weight: 800;
-    margin-bottom: 10px;
-    position: relative;
-  }
-
-  .form-header p {
-    opacity: 0.9;
-    font-size: 15px;
-    margin: 0;
-    position: relative;
-  }
-
-  /* Form Body */
-  .form-body {
+  .left-panel {
+    flex: 1;
     padding: 40px;
+    padding-right: 60px;
+    min-width: 350px;
   }
 
-  /* Section Headers */
-  .section-header {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 25px;
-    padding-bottom: 15px;
-    border-bottom: 2px solid #f0f0f0;
-  }
-
-  .section-icon {
-    width: 45px;
-    height: 45px;
-    background: linear-gradient(135deg, #000 0%, #333 100%);
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #fff;
-    font-size: 18px;
-  }
-
-  .section-header h5 {
-    margin: 0;
-    font-weight: 700;
-    color: #000;
-    font-size: 18px;
-  }
-
-  .section-header small {
-    display: block;
-    color: #666;
-    font-weight: 400;
-    font-size: 13px;
-    margin-top: 2px;
-  }
-
-  /* Password Toggle */
-  .password-toggle-btn {
-    position: absolute;
-    right: 15px;
-    top: 50%;
-    transform: translateY(-50%);
-    background: none;
-    border: none;
-    color: #aaa;
-    cursor: pointer;
-    padding: 5px;
-    z-index: 5;
-  }
-
-  .password-toggle-btn:hover {
-    color: #000;
-  }
-
-  /* Custom Form Control */
-  .custom-input {
-    width: 100%;
-    padding: 16px 20px;
-    border: 2px solid #e8e8e8;
-    border-radius: 12px;
-    font-size: 15px;
-    background: #fafafa;
-    transition: all 0.3s ease;
-  }
-
-  .custom-input:focus {
-    outline: none;
-    border-color: #000;
-    box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.1);
-    background: #fff;
-  }
-
-  .form-label {
-    font-weight: 600;
-    color: #000;
-    font-size: 14px;
-    margin-bottom: 8px;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
-
-  .form-label i {
-    color: #000;
-  }
-
-  .required-star {
-    color: var(--accent-color);
-    font-weight: bold;
-  }
-
-  .form-hint {
-    font-size: 12px;
-    color: #666;
-    margin-top: 6px;
-    display: flex;
-    align-items: center;
-    gap: 5px;
-  }
-
-  .form-hint i {
-    color: #333;
-  }
-
-  /* Error Messages */
-  .error-msg {
-    color: var(--accent-color);
-    font-size: 13px;
-    margin-top: 6px;
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    font-weight: 500;
-  }
-
-  /* Terms Checkbox */
-  .terms-box {
-    background: #f8f9fa;
-    border: 2px solid #e8e8e8;
-    border-radius: 12px;
-    padding: 20px;
-    margin-bottom: 25px;
-  }
-
-  .terms-box .form-check-input {
-    width: 22px;
-    height: 22px;
-    border: 2px solid #ccc;
-    margin-top: 0;
-    cursor: pointer;
-  }
-
-  .terms-box .form-check-input:checked {
-    background-color: #000;
-    border-color: #000;
-  }
-
-  .terms-box .form-check-label {
-    padding-left: 10px;
-    font-size: 14px;
-    line-height: 1.6;
-    cursor: pointer;
-    color: #333;
-  }
-
-  .terms-box a {
-    color: #000;
-    font-weight: 700;
-    text-decoration: underline;
-  }
-
-  .terms-box a:hover {
-    text-decoration: none;
-  }
-
-  /* Submit Button */
-  .submit-btn {
-    width: 100%;
-    padding: 18px;
-    font-size: 17px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    background: #000;
-    border: 2px solid #000;
-    border-radius: 14px;
-    color: #fff;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-  }
-
-  .submit-btn:hover {
-    background: #333;
-    border-color: #333;
-    transform: translateY(-3px);
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-  }
-
-  .submit-btn:active {
-    transform: translateY(-1px);
-  }
-
-  /* Login Link */
-  .login-section {
-    text-align: center;
-    padding: 25px;
-    background: #f8f9fa;
-    border-top: 1px solid #eee;
-  }
-
-  .login-section p {
-    margin: 0;
-    color: #666;
-    font-size: 14px;
-  }
-
-  .login-section a {
-    color: #000;
-    font-weight: 700;
-    text-decoration: none;
-  }
-
-  /* Banner Image */
-  .registration-banner {
-    width: 100%;
-    height: 145px;
-    object-fit: fill;
-    display: block;
-  }
-
-  .login-section a:hover {
-    text-decoration: underline;
-  }
-
-  /* Info Note */
-  .info-note {
-    background: #e3f2fd;
-    border-radius: 12px;
-    padding: 15px;
-    margin-bottom: 25px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-
-  .info-note i {
-    color: #1976d2;
-    font-size: 20px;
+  .right-panel {
+    width: 450px;
+    padding: 40px 0;
     flex-shrink: 0;
   }
 
-  .info-note p {
-    margin: 0;
-    color: #0d47a1;
-    font-size: 14px;
-    font-weight: 600;
+  /* Left Panel Styles */
+  .brand-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 30px;
+  }
+  
+  .brand-logo { 
+    height: 90px; 
+    object-fit: contain;
   }
 
-  /* Responsive */
-  @media (max-width: 768px) {
-    .registration-page {
-      padding: 20px 15px;
-    }
+  .main-title {
+    font-size: 28px;
+    font-weight: 800;
+    color: #0c2a52; /* Razorpay Dark Blue */
+    margin-bottom: 20px;
+    line-height: 1.3;
+  }
 
-    .form-body {
-      padding: 25px 20px;
-    }
+  .blue-line {
+    width: 40px;
+    height: 4px;
+    background-color: #3395ff;
+    margin-bottom: 25px;
+    border-radius: 2px;
+  }
 
-    .registration-banner {
-      height: auto;
-      min-height: 150px;
-    }
+  .description {
+    font-size: 15px;
+    color: #42526e;
+    line-height: 1.6;
+    margin-bottom: 20px;
+  }
+
+  .description ul {
+    padding-left: 20px;
+    margin-top: 10px;
+  }
+  
+  .description li {
+    margin-bottom: 5px;
+  }
+
+  .poster-image {
+    width: 100%;
+    max-width: 600px;
+    border-radius: 12px;
+    margin: 25px 0;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+  }
+
+  .contact-info {
+    font-size: 14px;
+    color: var(--text-muted);
+    margin-top: 40px;
+    border-top: 1px solid var(--border-color);
+    padding-top: 20px;
+  }
+
+  .contact-info strong { color: var(--text-dark); }
+  .contact-info a { color: var(--razorpay-blue); text-decoration: none; }
+
+  /* Right Panel (Card) */
+  .payment-card {
+    background: #fff;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.06);
+    padding: 30px;
+    position: sticky;
+    top: 20px;
+  }
+
+  .card-header-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: #0c2a52;
+    margin-bottom: 5px;
+  }
+
+  .card-header-line {
+    width: 25px;
+    height: 3px;
+    background-color: #3395ff;
+    margin-bottom: 30px;
+  }
+
+  .form-group {
+    margin-bottom: 20px;
+  }
+
+  .form-label {
+    font-size: 13px;
+    color: #7a869a;
+    margin-bottom: 8px;
+    display: block;
+    font-weight: 500;
+  }
+
+  .form-input {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #dfe1e6;
+    border-radius: 4px;
+    font-size: 16px;
+    color: #172b4d;
+    transition: all 0.2s;
+  }
+
+  .form-input:focus {
+    border-color: #3395ff;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(51, 149, 255, 0.2);
+  }
+
+  /* Payment Amount Field Special Style */
+  .amount-input-group {
+    position: relative;
+  }
+  .amount-input-group span {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #172b4d;
+    font-weight: 700;
+  }
+  .amount-input {
+    padding-left: 25px;
+    background-color: #f4f5f7;
+    font-weight: 700;
+    color: #172b4d;
+    cursor: default;
+  }
+
+  /* Submit Button */
+  .pay-btn {
+    width: 100%;
+    background-color: #3395ff; /* Razorpay Blue */
+    color: white;
+    font-size: 16px;
+    font-weight: 700;
+    padding: 14px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    margin-top: 10px;
+  }
+
+  .pay-btn:hover {
+    background-color: #258ae6;
+  }
+
+  .secure-badges {
+    margin-top: 20px;
+    display: flex;
+    gap: 10px;
+    opacity: 0.6;
+    filter: grayscale(100%);
+  }
+
+  .secure-badges img { height: 20px; }
+
+  /* Mobile Responsive */
+  @media (max-width: 850px) {
+    .left-panel { padding-right: 0; min-width: 100%; }
+    .right-panel { width: 100%; padding-top: 0; }
+    .payment-card { position: static; box-shadow: none; border: none; padding: 0; }
   }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="registration-page">
-  <div class="container">
-    <div class="main-card">
-      
-      <!-- Header -->
-      <div class="container pt-4 mt-3 mb-4">
-        <div class="form-header" style="padding: 0; background: none; box-shadow: none;">
-            <a href="{% url 'nanhe_patrakar:register' %}">
-                <picture>
-                    <source media="(max-width: 576px)" srcset="{% static 'nanhe_patrakar/img/nanhe-patarkar.jpg' %}">
-                    <img class="w-100 registration-banner" src="{% static 'nanhe_patrakar/img/registration_banner.jpg' %}" alt="नन्हे पत्रकार पंजीकरण">
-                </picture>
-            </a>
-        </div>
+<div class="page-container">
+  
+  <!-- LEFT COLUMN: Info & Branding -->
+  <div class="left-panel">
+    <div class="brand-header">
+      <img src="{% static 'nanhe_patrakar/img/nanhe-patarkar.jpg' %}" alt="Logo" class="brand-logo" onerror="this.style.display='none'">
+      <h3 style="margin:0; font-weight:700; font-size:18px;">Jan Himachal</h3>
     </div>
 
-      <!-- Form -->
-      <form method="post" id="registrationForm" enctype="multipart/form-data" novalidate>
-        {% csrf_token %}
-        
-        <!-- Show all form errors for debugging -->
-        {% if form.errors %}
-        <div style="background: #ffebee; border: 1px solid #f44336; border-radius: 12px; padding: 15px; margin: 20px; color: #c62828;">
-          <strong><i class="fas fa-exclamation-triangle"></i> कृपया निम्न त्रुटियाँ ठीक करें:</strong>
-          <ul style="margin: 10px 0 0 20px;">
-            {% for field, errors in form.errors.items %}
-              {% for error in errors %}
-                <li><strong>{{ field }}:</strong> {{ error }}</li>
-              {% endfor %}
-            {% endfor %}
-          </ul>
-        </div>
-        {% endif %}
-        
-        <div class="form-body">
+    <h1 class="main-title">Nanhe Patrakar – by Jan Himachal News</h1>
+    <div class="blue-line"></div>
 
-          <!-- Sign Up Section Header -->
-          <div class="section-header">
-            <div class="section-icon">
-              <i class="fas fa-user-plus"></i>
-            </div>
-            <div>
-              <h5>साइन अप करें</h5>
-              <small>Sign Up</small>
-            </div>
-          </div>
+    <div class="description">
+      <p>Nanhe Patrakar is a special media initiative by Jan Himachal News for children of Himachal Pradesh.</p>
+      <p>Through this platform, children can actively participate by submitting:</p>
+      <ul>
+        <li>Essays & Articles</li>
+        <li>Speeches</li>
+        <li>Awareness Videos</li>
+        <li>Social & Civic Awareness Content</li>
+      </ul>
+      
+      <img src="{% static 'nanhe_patrakar/img/registration_banner.jpg' %}" class="poster-image" alt="Poster">
 
-          <!-- Note -->
-          {% comment %} <div class="info-note">
-            <i class="fas fa-info-circle"></i>
-            <p>
-              नोट: प्रोफाइल बनने के बाद आप अपने बच्चे का पूरा विवरण (Child Profile) और फोटो अपडेट कर सकते हैं।
-            </p>
-          </div> {% endcomment %}
+      <p class="mt-4"><strong>Eligibility:</strong></p>
+      <ul><li>Only for children belonging to Himachal Pradesh</li></ul>
+      
+      <p><strong>Note:</strong><br>
+      This is a one-time registration and certification fee.<br>
+      There are NO monthly or recurring charges.</p>
+    </div>
 
-          <div class="row">
-            <!-- First Name -->
-            <div class="col-md-6 mb-4">
-              <label class="form-label">
-                <i class="fas fa-user"></i>
-                अभिभावक का नाम <span class="required-star">*</span>
-              </label>
-              <input type="text" name="first_name" id="id_first_name" 
-                     class="custom-input" placeholder="First Name"
-                     value="{{ form.first_name.value|default:'' }}" required>
-              {% if form.first_name.errors %}
-              <div class="error-msg"><i class="fas fa-exclamation-circle"></i> {{ form.first_name.errors.0 }}</div>
-              {% endif %}
-            </div>
-
-            <!-- Last Name -->
-            <div class="col-md-6 mb-4">
-              <label class="form-label">
-                <i class="fas fa-user"></i>
-                अभिभावक का उपनाम <span class="required-star">*</span>
-              </label>
-              <input type="text" name="last_name" id="id_last_name" 
-                     class="custom-input" placeholder="Last Name"
-                     value="{{ form.last_name.value|default:'' }}" required>
-              {% if form.last_name.errors %}
-              <div class="error-msg"><i class="fas fa-exclamation-circle"></i> {{ form.last_name.errors.0 }}</div>
-              {% endif %}
-            </div>
-          </div>
-
-          <!-- Mobile Number -->
-          <div class="mb-4">
-            <label class="form-label">
-              <i class="fas fa-mobile-alt"></i>
-              मोबाइल नंबर / Mobile <span class="required-star">*</span>
-            </label>
-            <input type="tel" name="mobile" id="id_mobile" 
-                   class="custom-input" placeholder="10-digit Mobile Number"
-                   value="{{ form.mobile.value|default:'' }}" maxlength="10" required>
-            <div class="form-hint">
-              <i class="fas fa-info-circle"></i>
-              <span>यह आपका यूजरनेम होगा / This will be your username</span>
-            </div>
-            {% if form.mobile.errors %}
-            <div class="error-msg"><i class="fas fa-exclamation-circle"></i> {{ form.mobile.errors.0 }}</div>
-            {% endif %}
-          </div>
-
-          <!-- Email -->
-          <div class="mb-4">
-            <label class="form-label">
-              <i class="fas fa-envelope"></i>
-              ईमेल / Email <span class="required-star">*</span>
-            </label>
-            <input type="email" name="email" id="id_email" 
-                   class="custom-input" placeholder="your.email@example.com"
-                   value="{{ form.email.value|default:'' }}" required>
-            {% if form.email.errors %}
-            <div class="error-msg"><i class="fas fa-exclamation-circle"></i> {{ form.email.errors.0 }}</div>
-            {% endif %}
-          </div>
-
-          <!-- Password -->
-          <div class="mb-4">
-            <label class="form-label">
-              <i class="fas fa-lock"></i>
-              पासवर्ड / Password <span class="required-star">*</span>
-            </label>
-            <div class="position-relative">
-              <input type="password" name="password" id="id_password" 
-                     class="custom-input" placeholder="कम से कम 6 अक्षर / Minimum 6 characters" required>
-              <button type="button" class="password-toggle-btn" onclick="togglePassword()">
-                <i class="fas fa-eye" id="toggleIcon"></i>
-              </button>
-            </div>
-            {% if form.password.errors %}
-            <div class="error-msg"><i class="fas fa-exclamation-circle"></i> {{ form.password.errors.0 }}</div>
-            {% endif %}
-          </div>
-
-          <!-- Terms Section -->
-          <div class="section-header mt-4">
-            <div class="section-icon">
-              <i class="fas fa-file-signature"></i>
-            </div>
-            <div>
-              <h5>नियम और शर्तें</h5>
-              <small>Terms & Conditions</small>
-            </div>
-          </div>
-
-          <div class="terms-box">
-            <div class="form-check d-flex align-items-start">
-              <input type="checkbox" name="terms_accepted" id="id_terms_accepted" 
-                     class="form-check-input" required>
-              <label class="form-check-label" for="id_terms_accepted">
-                मैं <a href="/terms" target="_blank">नियम और शर्तें</a> तथा 
-                <a href="/privacy" target="_blank">गोपनीयता नीति</a> से सहमत हूं। 
-                <br>
-                <strong style="color: #d32f2f;">महत्वपूर्ण सहमति:</strong> मैं अपने बच्चे की फोटो, वीडियो और रचनाओं (Content) को <strong>'Jan Himachal News' और 'नन्हे पत्रकार'</strong> प्लेटफॉर्म पर प्रकाशित करने की पूर्ण अनुमति देता/देती हूँ। मैं पुष्टि करता/करती हूँ कि दी गई जानकारी सत्य है।
-                <span class="required-star">*</span>
-              </label>
-            </div>
-            {% if form.terms_accepted.errors %}
-            <div class="error-msg mt-2"><i class="fas fa-exclamation-circle"></i> {{ form.terms_accepted.errors.0 }}</div>
-            {% endif %}
-          </div>
-
-          <!-- Submit Button -->
-          <button type="submit" class="submit-btn">
-            <i class="fas fa-arrow-right"></i>
-            आगे बढ़ें / Continue
-          </button>
-
-        </div>
-      </form>
-
-      <!-- Login Link -->
-      <div class="login-section">
-        <p>
-          पहले से पंजीकृत हैं? 
-          <a href="{% url 'nanhe_patrakar:landing' %}">यहां लॉगिन करें / Login here</a>
-        </p>
-      </div>
-
+    <div class="contact-info">
+      <p><strong>Contact Us:</strong></p>
+      <p><i class="fas fa-envelope"></i> janhimachalnews@gmail.com</p>
+      <p><i class="fas fa-phone"></i> 8558002598</p>
+      <br>
+      <p style="font-size: 12px;">
+        <a href="/terms" target="_blank">Terms & Conditions</a> | 
+        <a href="/privacy" target="_blank">Privacy Policy</a>
+      </p>
     </div>
   </div>
+
+  <!-- RIGHT COLUMN: Payment/Registration Form -->
+  <div class="right-panel">
+    <div class="payment-card">
+      <div class="card-header-title">Payment Details</div>
+      <div class="card-header-line"></div>
+
+      <form method="post" id="regForm">
+        {% csrf_token %}
+
+        {% if form.errors %}
+          <div style="background:#ffebee; color:#c62828; padding:10px; border-radius:4px; margin-bottom:20px; font-size:13px;">
+             Please correct the errors inside the form.
+          </div>
+        {% endif %}
+
+        <!-- Amount (Read Only) -->
+        <div class="form-group">
+          <label class="form-label">Amount</label>
+          <div class="amount-input-group">
+            <span>₹</span>
+            <input type="text" class="form-input amount-input" value="369.00" readonly>
+          </div>
+        </div>
+
+        <!-- Name Fields -->
+        <div class="form-group">
+          <label class="form-label">Full Name</label>
+          <input type="text" name="full_name" class="form-input" placeholder="e.g. Rahul Sharma" value="{{ form.full_name.value|default:'' }}" required>
+          {% if form.full_name.errors %}<div style="color:#d32f2f; font-size:12px; margin-top:5px;">{{ form.full_name.errors.0 }}</div>{% endif %}
+        </div>
+        
+        <!-- Child Name (Optional) -->
+        <div class="form-group">
+            <label class="form-label">Child Name <span style="font-weight:400; color:#888;">(Optional)</span></label>
+            <input type="text" name="child_name" class="form-input" placeholder="e.g. Aarav Sharma" value="{{ form.child_name.value|default:'' }}">
+            <small style="color:#7a869a; font-size:11px;">You can update this later in profile</small>
+        </div>
+
+        <!-- Phone -->
+        <div class="form-group">
+          <label class="form-label">Phone</label>
+          <input type="tel" name="mobile" id="mobile" class="form-input" placeholder="" value="{{ form.mobile.value|default:'' }}" maxlength="10" required>
+          <small style="color:#7a869a; font-size:11px;">This will be your Username</small>
+        </div>
+
+        <!-- Email -->
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input type="email" name="email" class="form-input" placeholder="" value="{{ form.email.value|default:'' }}" required>
+        </div>
+
+        <!-- Hidden Checkbox for Logic (Auto-check) -->
+        <input type="checkbox" name="terms_accepted" checked style="display:none;">
+
+        <!-- Pay Button -->
+        <button type="submit" class="pay-btn">
+          Pay ₹ 369.00
+        </button>
+        
+        <div class="secure-badges">
+          <!-- Icons provided by Razorpay usually, referencing static text here or fontawesome -->
+          <i class="fab fa-cc-visa fa-lg"></i>
+          <i class="fab fa-cc-mastercard fa-lg"></i>
+          <i class="fab fa-google-pay fa-lg"></i>
+          <span style="font-size:12px;">Secured by Razorpay</span>
+        </div>
+
+        <!-- Login -->
+        <div style="margin-top: 20px; text-align: center; font-size: 13px;">
+          Already registered? <a href="{% url 'nanhe_patrakar:landing' %}" style="color:#3395ff; font-weight:700;">Login</a>
+        </div>
+
+      </form>
+    </div>
+  </div>
+
+<!-- Modern Loader Overlay -->
+<div id="paymentLoader" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(255,255,255,0.9); z-index:10000; flex-direction:column; align-items:center; justify-content:center; backdrop-filter:blur(5px);">
+    <div class="spinner-border text-primary" style="width: 4rem; height: 4rem; border-width: 0.25rem;" role="status"></div>
+    <div style="margin-top:20px; font-weight:600; color:#333; font-size:18px;">प्रक्रिया चल रही है, कृपया प्रतीक्षा करें...</div>
+    <div style="color:#666; font-size:14px;">Processing your request, please wait...</div>
+</div>
+
+<!-- Custom Error Modal -->
+<div id="errorModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:10001; align-items:center; justify-content:center; padding:20px; backdrop-filter:blur(3px);">
+    <div style="background:#fff; width:100%; max-width:400px; border-radius:16px; overflow:hidden; box-shadow:0 10px 40px rgba(0,0,0,0.2); animation: modalSlideUp 0.3s ease-out;">
+        <div style="background:#d32f2f; height:6px;"></div>
+        <div style="padding:24px; text-align:center;">
+            <div style="width:60px; height:60px; background:#ffebee; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 20px;">
+                <i class="fas fa-exclamation-triangle" style="color:#d32f2f; font-size:24px;"></i>
+            </div>
+            <h4 style="color:#333; font-weight:700; margin-bottom:12px;">पंजीकरण में त्रुटि / Error</h4>
+            <div id="errorModalMessage" style="color:#666; font-size:15px; line-height:1.6; margin-bottom:24px;"></div>
+            <button onclick="closeErrorModal()" style="width:100%; padding:14px; background:#0c2a52; color:#fff; border:none; border-radius:12px; font-weight:600; cursor:pointer; transition:all 0.2s;">
+                ठीक है / Close
+            </button>
+        </div>
+    </div>
+</div>
+
+<style>
+@keyframes modalSlideUp {
+    from { transform: translateY(20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+</style>
+
+<!-- Razorpay SDK & jQuery -->
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+  // Mobile Number Validation
+  document.getElementById('mobile').addEventListener('input', function(e) {
+    this.value = this.value.replace(/[^0-9]/g, '').substring(0, 10);
+  });
+
+  function showError(msg) {
+    document.getElementById('errorModalMessage').innerText = msg;
+    document.getElementById('errorModal').style.display = 'flex';
+  }
+
+  function closeErrorModal() {
+    document.getElementById('errorModal').style.display = 'none';
+  }
+
+  $(document).ready(function() {
+      // Intercept Form Submission
+      $('#regForm').on('submit', function(e) {
+          e.preventDefault(); 
+
+          var $form = $(this);
+          var $btn = $('.float-register-btn');
+          var $loader = $('#paymentLoader');
+          
+          // Show Loading State
+          $btn.html('<i class="fas fa-circle-notch fa-spin"></i> Please Wait...');
+          $btn.prop('disabled', true);
+          $loader.css('display', 'flex');
+
+          $.ajax({
+              url: $form.attr('action'),
+              type: 'POST',
+              data: $form.serialize(),
+              headers: {
+                  'X-Requested-With': 'XMLHttpRequest',
+                  'X-CSRFToken': $('input[name="csrfmiddlewaretoken"]').val()
+              },
+              success: function(response) {
+                  if (response.success && response.trigger_payment) {
+                      // HIDE Loader and START RAZORPAY
+                      $loader.hide();
+                      startRazorpay(response);
+                  } else {
+                      // Handle custom error (e.g. invalid login redirect)
+                      $loader.hide();
+                      showError("Unexpected response. Please refresh.");
+                  }
+              },
+              error: function(xhr) {
+                  // Reset Button and Loader
+                  $loader.hide();
+                  $btn.html('Register & Pay <i class="fas fa-arrow-right ms-2"></i>');
+                  $btn.prop('disabled', false);
+
+                  // Show Errors
+                  if (xhr.status === 400 && xhr.responseJSON) {
+                     var errors = xhr.responseJSON.errors;
+                     var msg = "कृपया निम्नलिखित सुधारें: / Please correct:\n\n";
+                     for (var field in errors) {
+                         msg += "• " + errors[field] + "\n";
+                     }
+                     showError(msg);
+                  } else {
+                     // Parse HTML to find error? Too complex.
+                     // Just reload the page by submitting normally
+                     $form[0].submit(); 
+                  }
+              }
+          });
+      });
+
+      function startRazorpay(data) {
+          var options = {
+              "key": data.razorpay_key_id,
+              "amount": data.amount,
+              "currency": data.currency,
+              "name": "Jan Himachal",
+              "description": "Nanhe Patrakar Registration",
+              "image": "{% static 'nanhe_patrakar/img/nanhe-patarkar.jpg' %}",
+              "order_id": data.razorpay_order_id,
+              "handler": function (response) {
+                  verifyPayment(response, data.callback_url);
+              },
+              "prefill": data.prefill,
+              "theme": { "color": "#3395ff" }
+          };
+          
+          var rzp1 = new Razorpay(options);
+          rzp1.on('payment.failed', function (response){
+              showError("Payment Failed: " + response.error.description);
+              // Reset Button
+              $('.float-register-btn').html('Register & Pay <i class="fas fa-arrow-right ms-2"></i>');
+              $('.float-register-btn').prop('disabled', false);
+          });
+          rzp1.open();
+      }
+
+      function verifyPayment(response, url) {
+          // Create hidden form to verify payment
+          var form = document.createElement("form");
+          form.method = "POST";
+          form.action = url;
+
+          var orderField = document.createElement("input");
+          orderField.name = "razorpay_order_id";
+          orderField.value = response.razorpay_order_id;
+          form.appendChild(orderField);
+
+          var paymentField = document.createElement("input");
+          paymentField.name = "razorpay_payment_id";
+          paymentField.value = response.razorpay_payment_id;
+          form.appendChild(paymentField);
+
+          var signatureField = document.createElement("input");
+          signatureField.name = "razorpay_signature";
+          signatureField.value = response.razorpay_signature;
+          form.appendChild(signatureField);
+          
+          // Add CSRF Token
+          var csrfToken = document.createElement("input");
+          csrfToken.name = "csrfmiddlewaretoken";
+          csrfToken.value = '{{ csrf_token }}';
+          form.appendChild(csrfToken);
+
+          document.body.appendChild(form);
+          form.submit();
+      }
+  });
+</script>
+
 </div>
 {% endblock %}
 
-{% block extra_js %}
-<script>
-  // Toggle password visibility
-  function togglePassword() {
-    const passwordField = document.getElementById('id_password');
-    const toggleIcon = document.getElementById('toggleIcon');
-    
-    if (passwordField.type === 'password') {
-      passwordField.type = 'text';
-      toggleIcon.classList.remove('fa-eye');
-      toggleIcon.classList.add('fa-eye-slash');
-    } else {
-      passwordField.type = 'password';
-      toggleIcon.classList.remove('fa-eye-slash');
-      toggleIcon.classList.add('fa-eye');
-    }
-  }
 
-  // Mobile number - only digits
-  const mobileField = document.getElementById("id_mobile");
-  if (mobileField) {
-    mobileField.addEventListener("input", function (e) {
-      let value = e.target.value.replace(/\D/g, "");
-      if (value.length > 10) value = value.slice(0, 10);
-      e.target.value = value;
-    });
-  }
 
-  // Form validation
-  document.getElementById("registrationForm").addEventListener("submit", function (e) {
-    const mobile = document.getElementById("id_mobile").value;
-    const password = document.getElementById("id_password").value;
-    const terms = document.getElementById("id_terms_accepted").checked;
-    
-    let errors = [];
 
-    if (mobile.length !== 10) {
-      errors.push("कृपया वैध 10 अंकों का मोबाइल नंबर दर्ज करें");
-    }
 
-    if (password.length < 6) {
-      errors.push("पासवर्ड कम से कम 6 अक्षरों का होना चाहिए");
-    }
-
-    if (!terms) {
-      errors.push("कृपया नियम और शर्तें स्वीकार करें");
-    }
-
-    if (errors.length > 0) {
-      e.preventDefault();
-      alert(errors.join("\n\n"));
-    }
-  });
-</script>
-{% endblock %}

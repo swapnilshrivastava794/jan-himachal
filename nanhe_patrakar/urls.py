@@ -7,6 +7,8 @@ from .views import (
     PaymentVerifyView,
     PaymentFailedView,
     DownloadAppView,
+    PaymentSuccessView,
+    razorpay_webhook,
 )
 
 app_name = 'nanhe_patrakar'
@@ -23,4 +25,10 @@ urlpatterns = [
     
     # App Download (only accessible after payment)
     path('download-app/', DownloadAppView.as_view(), name='download_app'),
+    
+    # Manual Payment Success Page (Redirect Target)
+    path('payment/success/', PaymentSuccessView.as_view(), name='payment_success'),
+    
+    # Razorpay Webhook
+    path('razorpay/webhook/', razorpay_webhook, name='razorpay_webhook'),
 ]

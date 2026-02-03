@@ -2,167 +2,188 @@
 {% block title %}भुगतान - {{ program.name_hindi }} - जन हिमाचल{% endblock %}
 
 {% block extra_css %}
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root {
-    --primary-gradient: linear-gradient(135deg, #FF6B6B 0%, #D32F2F 100%);
-    --bg-pattern: radial-gradient(#e0e0e0 1px, transparent 1px);
-    --card-shadow: 0 10px 40px rgba(0,0,0,0.08);
+    --primary-color: #D32F2F;
+    --primary-gradient: linear-gradient(135deg, #FF5252 0%, #D32F2F 100%);
+    --success-color: #2e7d32;
+    --bg-color: #f4f7f6;
+    --card-shadow: 0 15px 35px rgba(0,0,0,0.1);
+    --hover-shadow: 0 20px 40px rgba(0,0,0,0.15);
+  }
+
+  body {
+    font-family: 'Poppins', sans-serif;
+    color: #333;
   }
 
   .payment-page {
-    background: #f8f9fa;
-    background-image: var(--bg-pattern);
-    background-size: 20px 20px;
+    background: var(--bg-color);
+    background-image: 
+        radial-gradient(at 0% 0%, rgba(255, 82, 82, 0.05) 0px, transparent 50%),
+        radial-gradient(at 100% 100%, rgba(211, 47, 47, 0.05) 0px, transparent 50%);
     padding: 60px 0;
     min-height: 100vh;
   }
 
   .payment-card {
-    max-width: 700px;
+    max-width: 650px;
     margin: 0 auto;
+    position: relative;
   }
 
   .card {
     border: none;
-    border-radius: 15px;
+    border-radius: 20px;
     box-shadow: var(--card-shadow);
     margin-bottom: 25px;
     overflow: hidden;
+    background: #fff;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--hover-shadow);
   }
 
   .card-header {
     background: var(--primary-gradient) !important;
     color: #fff !important;
     text-align: center;
-    font-size: 1.5rem;
+    font-size: 1.8rem;
     font-weight: 700;
-    padding: 25px;
+    padding: 30px 20px;
     border: none !important;
+    letter-spacing: 0.5px;
   }
-  
+
   .card-body {
-    padding: 25px;
-  }
-
-  .order-summary, .program-details {
-    background: #fff;
-    border: none;
-    border-radius: 15px;
     padding: 30px;
+  }
+
+  .program-details, .user-details {
+    background: #fff;
+    border-radius: 15px;
+    padding: 25px;
     margin-bottom: 25px;
-    box-shadow: 0 5px 20px rgba(0,0,0,0.05);
-    transition: transform 0.3s;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.03);
+    border: 1px solid #eee;
   }
   
-  .order-summary:hover, .program-details:hover {
-    transform: translateY(-3px);
+  .user-details ul li {
+      margin-bottom: 12px;
+      font-size: 0.95rem;
+      border-bottom: 1px dashed #eee;
+      padding-bottom: 8px;
+  }
+  .user-details ul li:last-child {
+      border-bottom: none;
   }
 
-  .order-summary h5, .program-details h6 {
-    color: #333;
-    font-weight: 800;
-    margin-bottom: 20px;
-    padding-bottom: 12px;
-    border-bottom: 2px solid #f0f0f0;
-    font-size: 18px;
-    position: relative;
-  }
-  
-  .order-summary h5::after, .program-details h6::after {
-    content: '';
-    position: absolute;
-    bottom: -2px;
-    left: 0;
-    width: 50px;
-    height: 2px;
-    background: var(--primary-color);
-  }
-
-  .summary-row {
-    display: flex;
-    justify-content: space-between;
-    padding: 15px 0;
-    border-bottom: 1px dashed #eee;
-    color: #555;
-    font-size: 15px;
-  }
-
-  .summary-row:last-child {
-    border-bottom: none;
-    font-weight: 800;
-    font-size: 20px;
-    color: #D32F2F;
-    margin-top: 15px;
-    padding-top: 20px;
-    border-top: 2px solid #eee;
-  }
-
-  .program-details ul {
-    margin-bottom: 0;
-    padding-left: 20px;
-    list-style: none;
-  }
-
-  .program-details li {
-    margin-bottom: 10px;
+  .program-details h6 {
     color: #444;
-    font-size: 15px;
-    position: relative;
-    padding-left: 5px;
+    font-weight: 700;
+    line-height: 1.6;
+    border-left: 4px solid var(--primary-color);
+    padding-left: 15px;
+  }
+
+  .program-details ul li {
+    margin-bottom: 15px;
+    padding: 12px 15px;
+    background: #fdfdfd;
+    border-radius: 8px;
+    border-left: 3px solid #e0e0e0;
+    transition: all 0.2s;
+  }
+  
+  .program-details ul li:hover {
+      background: #fff5f5;
+      border-left-color: var(--primary-color);
+      transform: translateX(5px);
   }
 
   .payment-button {
     width: 100%;
-    padding: 20px;
-    font-size: 18px;
-    font-weight: 800;
+    padding: 22px;
+    font-size: 1.2rem;
+    font-weight: 700;
     text-transform: uppercase;
     background: var(--primary-gradient);
     border: none;
     border-radius: 50px;
     color: #fff;
     cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 10px 25px rgba(211, 47, 47, 0.3);
+    box-shadow: 0 10px 20px rgba(211, 47, 47, 0.3);
     letter-spacing: 1px;
-    margin-top: 20px;
+    margin-top: 10px;
+    animation: pulse 2s infinite;
+    position: relative;
+    overflow: hidden;
   }
 
   .payment-button:hover {
     background: linear-gradient(135deg, #d32f2f 0%, #b71c1c 100%);
-    transform: translateY(-3px);
-    box-shadow: 0 15px 35px rgba(211, 47, 47, 0.4);
+    transform: translateY(-2px);
+    box-shadow: 0 15px 30px rgba(211, 47, 47, 0.4);
+    animation: none;
+  }
+  
+  @keyframes pulse {
+    0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(211, 47, 47, 0.7); }
+    70% { transform: scale(1.02); box-shadow: 0 0 0 15px rgba(211, 47, 47, 0); }
+    100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(211, 47, 47, 0); }
   }
 
   .secure-badge {
     text-align: center;
-    margin-top: 25px;
-    color: #666;
-    font-size: 13px;
+    color: #2e7d32;
+    font-size: 0.9rem;
     background: #e8f5e9;
-    padding: 8px 15px;
-    border-radius: 20px;
-    display: inline-block;
+    padding: 10px 20px;
+    border-radius: 50px;
+    display: table;
+    margin: 20px auto;
+    font-weight: 500;
     border: 1px solid #c8e6c9;
   }
+
+  .order-summary {
+      background: #fff;
+      padding: 25px;
+      border-radius: 15px;
+      border: 2px dashed #ddd;
+      text-align: center;
+      margin-top: 30px;
+  }
   
-  .secure-badge-wrapper {
-    text-align: center;
-  }
-
-  .secure-badge i {
-    color: #2e7d32;
-    margin-right: 5px;
-  }
-
-  .razorpay-logo {
-    text-align: center;
-    margin-top: 30px;
-    opacity: 0.8;
+  .summary-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 1.1rem;
+      font-weight: 600;
   }
 
   .razorpay-logo img {
-    height: 24px;
+    height: 28px;
+    opacity: 0.8;
+    filter: grayscale(100%);
+    transition: 0.3s;
+  }
+  .razorpay-logo:hover img {
+    filter: grayscale(0%);
+    opacity: 1;
+  }
+  
+  /* Confetti-like decoration */
+  .decoration-circle {
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(211, 47, 47, 0.1);
+      z-index: -1;
   }
 </style>
 {% endblock %}
@@ -237,7 +258,7 @@
             "modal": {
               "ondismiss": function() {
                 btn.disabled = false;
-                btn.innerHTML = '<i class="fas fa-lock me-2"></i>सुरक्षित भुगतान करें / Pay Securely';
+                btn.innerHTML = '₹{{ program.price }} Pay / भुगतान करें';
               }
             }
           };
@@ -246,14 +267,14 @@
           rzp.on('payment.failed', function (response){
               alert("भुगतान विफल / Payment Failed: " + response.error.description);
               btn.disabled = false;
-              btn.innerHTML = '<i class="fas fa-lock me-2"></i>सुरक्षित भुगतान करें / Pay Securely';
+              btn.innerHTML = '₹{{ program.price }} Pay / भुगतान करें';
           });
           rzp.open();
           
       } catch (err) {
           alert("त्रुटि / Error: " + err.message);
           btn.disabled = false;
-          btn.innerHTML = '<i class="fas fa-lock me-2"></i>सुरक्षित भुगतान करें / Pay Securely';
+          btn.innerHTML = '₹{{ program.price }} Pay / भुगतान करें';
       }
   };
 
@@ -263,65 +284,109 @@
           if (typeof startPayment === 'function') {
               startPayment();
           }
-      }, 500); // Small delay to ensure everything is loaded
+      }, 800); // Small delay to ensure everything is loaded
   });
 </script>
 
 <div class="payment-page">
   <div class="container">
     <div class="payment-card">
-      <!-- Page Header -->
+      
+      <!-- NEW SIMPLIFIED PAYMENT DESIGN (Manual Registration Flow) -->
       <div class="card mb-4">
         <div class="card-header">
-          <i class="fas fa-credit-card me-2"></i>
-          भुगतान / Payment
+           सहभागिता शुल्क / Participation Fee
         </div>
-        <div class="card-body">
-          <p class="text-center mb-0">
-            नन्हे पत्रकार कार्यक्रम में भागीदारी के लिए भुगतान करें
-          </p>
-          <p class="text-center text-muted mb-0">
-            <small>Pay to participate in Nanhe Patrakar program</small>
-          </p>
+        <div class="card-body text-center">
+            <h5 class="text-success mb-3">
+                <i class="fas fa-check-circle me-2"></i>
+                पंजीकरण सफल! / Registration Successful!
+            </h5>
+            <p class="text-muted mb-4">
+                कृपया नीचे दिए गए बटन पर क्लिक करके शुल्क का भुगतान करें।<br>
+                Please pay the fee by clicking the button below.
+            </p>
+
+            <div class="alert alert-warning text-center" role="alert" style="font-size: 0.95rem;">
+                <i class="fas fa-info-circle me-2"></i>
+                भुगतान के बाद हमारी टीम आपके खाते को सक्रिय करेगी और आपको संपर्क करेगी।<br>
+                After payment, our team will activate your account and contact you.
+            </div>
+
+            <!-- Pre-filled Razorpay Link -->
+            <a href="{% url 'nanhe_patrakar:register' %}" class="payment-button text-decoration-none d-block mt-4" style="line-height: 1.5;">
+                ₹{{ program.price }} Pay Now / अभी भुगतान करें
+            </a>
         </div>
       </div>
 
-      <!-- Program Details -->
-      <div class="program-details">
-        <h6>
-          <i class="fas fa-info-circle me-2"></i>कार्यक्रम विवरण / Program Details
-        </h6>
-        <ul>
-          <li><strong>कार्यक्रम:</strong> {{ program.name_hindi }}</li>
+      <!-- Secure Badge -->
+      <div class="text-center mt-3">
+        <p class="text-muted small mb-2"><i class="fas fa-lock me-1"></i> Secured by Razorpay</p>
+      </div>
+
+
+      <!-- OLD RAZORPAY INTEGRATION (Commented out for future reference) -->
+      {% comment %}
+      <!-- Confirmation Header -->
+      <div class="card mb-4">
+        <div class="card-header">
+           धन्यवाद! / Thank You!
+        </div>
+        <div class="card-body text-center">
+            <h5 class="text-success mb-3">
+                <i class="fas fa-check-circle me-2"></i>
+                आपके बच्चे की भागीदारी की जानकारी सफलतापूर्वक दर्ज हो गई है।
+            </h5>
+            <p class="text-muted">
+                Your child's participation details have been successfully recorded.
+            </p>
+        </div>
+      </div>
+
+      <!-- User Details (Restored) -->
+      <div class="user-details mb-4" style="color: #333;">
+        <ul style="list-style: none; padding: 0; background: #fff; border-radius: 10px; padding: 15px; border: 1px solid #eee;">
+          <li class="mb-2"><strong>कार्यक्रम:</strong> {{ program.name_hindi }}</li>
           <li><strong>नाम:</strong> {{ parent.user.get_full_name }}</li>
           <li><strong>मोबाइल:</strong> {{ parent.mobile }}</li>
           <li><strong>ईमेल:</strong> {{ parent.user.email }}</li>
         </ul>
       </div>
 
-      <!-- Order Summary -->
-      <div class="order-summary">
-        <h5>
-          <i class="fas fa-file-invoice me-2"></i>ऑर्डर सारांश / Order Summary
-        </h5>
-        <div class="summary-row">
-          <span>ऑर्डर ID / Order ID:</span>
-          <span><strong>{{ order.order_id }}</strong></span>
-        </div>
-        <div class="summary-row">
-          <span>भागीदारी शुल्क / Participation Fee:</span>
-          <span>₹{{ program.price }}</span>
-        </div>
-        <div class="summary-row">
-          <span>कुल राशि / Total Amount:</span>
-          <span>₹{{ program.price }}</span>
+      <!-- Features Section (Strict Copy) -->
+      <div class="program-details">
+        <h6 class="mb-3 text-dark font-weight-bold" style="font-size: 1.1rem; line-height: 1.5;">
+            अगले चरण में ₹{{ program.price }} का सहभागिता शुल्क देकर नन्हे पत्रकार में आधिकारिक भागीदारी पूरी की जाएगी।
+        </h6>
+        
+        <h6 class="mt-4 mb-3" style="color:#D32F2F; font-weight: 800;">भुगतान के बाद:</h6>
+        <ul style="list-style-type: none; padding-left: 0;">
+            <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i> बच्चे की प्रोफ़ाइल सक्रिय होगी</li>
+            <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i> कंटेंट सबमिशन की जानकारी मिलेगी</li>
+            <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i> चयनित सामग्री Jan Himachal News पर प्रकाशित होगी</li>
+            <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i> डिजिटल प्रमाण-पत्र जारी किया जाएगा</li>
+        </ul>
+      </div>
+
+      <!-- Trust Line -->
+      <div class="alert alert-info text-center" role="alert" style="font-size: 0.95rem;">
+        <i class="fas fa-shield-alt me-2"></i>
+        यह Jan Himachal News की आधिकारिक शैक्षिक पहल है। सभी भुगतान Razorpay के माध्यम से सुरक्षित हैं।
+      </div>
+
+      <!-- Order Summary (Price Visibility) -->
+      <div class="order-summary mt-4">
+        <div class="summary-row" style="border-top:none; margin-top:0; padding-top:0; border-bottom:none;">
+           <span style="font-size:1.1rem; color:#333;">सहभागिता शुल्क:</span>
+           <span style="font-size:1.3rem; color:#D32F2F; font-weight:bold;">₹{{ program.price }}</span>
         </div>
       </div>
 
       <!-- Payment Form -->
       <form id="razorpay-form">
         <button type="button" id="rzp-button" class="payment-button" onclick="startPayment();">
-          <i class="fas fa-lock me-2"></i>सुरक्षित भुगतान करें / Pay Securely
+          ₹{{ program.price }} Pay / भुगतान करें
         </button>
       </form>
 
@@ -333,17 +398,31 @@
       </form>
 
       <!-- Secure Badge -->
-      <div class="secure-badge">
-        <i class="fas fa-shield-alt"></i>
-        256-बिट एन्क्रिप्टेड सुरक्षित भुगतान / 256-bit Encrypted Secure Payment
-      </div>
-
-      <!-- Razorpay Logo -->
       <div class="razorpay-logo">
-        <p class="text-muted small mb-2">Powered by</p>
+        <p class="text-muted small mb-2">Secured by</p>
         <img src="https://razorpay.com/assets/razorpay-glyph.svg" alt="Razorpay">
       </div>
+      {% endcomment %}
+
     </div>
   </div>
 </div>
+
+<style>
+/* Mobile adjustments */
+@media (max-width: 768px) {
+    .payment-page {
+        padding: 30px 15px;
+    }
+    .card-header {
+        font-size: 1.4rem;
+        padding: 20px 15px;
+    }
+    .payment-button {
+        font-size: 1.1rem;
+        padding: 18px;
+    }
+}
+</style>
+
 {% endblock %}

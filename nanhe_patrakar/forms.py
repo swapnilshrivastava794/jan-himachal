@@ -11,28 +11,25 @@ User = get_user_model()
 class ParentRegistrationForm(forms.Form):
     """Simplified parent registration form - mobile number becomes username"""
     
-    first_name = forms.CharField(
+    full_name = forms.CharField(
         max_length=150,
         required=True,
         widget=forms.TextInput(attrs={
             'class': 'form-control',
-            'placeholder': 'अपना नाम दर्ज करें / Enter your first name'
+            'placeholder': 'पूरा नाम / Full Name'
         }),
         error_messages={
-            'required': 'कृपया अपना नाम दर्ज करें / Please enter your first name'
+            'required': 'कृपया अपना पूरा नाम दर्ज करें / Please enter your full name'
         }
     )
-    
-    last_name = forms.CharField(
+
+    child_name = forms.CharField(
         max_length=150,
-        required=True,
+        required=False,
         widget=forms.TextInput(attrs={
             'class': 'form-control',
-            'placeholder': 'अपना उपनाम दर्ज करें / Enter your last name'
-        }),
-        error_messages={
-            'required': 'कृपया अपना उपनाम दर्ज करें / Please enter your last name'
-        }
+            'placeholder': 'बच्चे का नाम (वैकल्पिक) / Child Name (Optional)'
+        })
     )
     
     mobile = forms.CharField(
@@ -57,17 +54,6 @@ class ParentRegistrationForm(forms.Form):
         error_messages={
             'required': 'कृपया ईमेल पता दर्ज करें / Please enter email address',
             'invalid': 'कृपया वैध ईमेल पता दर्ज करें / Please enter valid email address'
-        }
-    )
-    
-    password = forms.CharField(
-        required=True,
-        widget=forms.PasswordInput(attrs={
-            'class': 'form-control',
-            'placeholder': 'पासवर्ड / Password (कम से कम 6 अक्षर)'
-        }),
-        error_messages={
-            'required': 'कृपया पासवर्ड दर्ज करें / Please enter password'
         }
     )
     
@@ -118,13 +104,3 @@ class ParentRegistrationForm(forms.Form):
             raise ValidationError('यह ईमेल पहले से पंजीकृत है / This email is already registered')
         
         return email
-
-    def clean_password(self):
-        """Validate password"""
-        password = self.cleaned_data.get('password')
-        
-        # Minimum 6 characters
-        if len(password) < 6:
-            raise ValidationError('पासवर्ड कम से कम 6 अक्षरों का होना चाहिए / Password must be at least 6 characters')
-        
-        return password

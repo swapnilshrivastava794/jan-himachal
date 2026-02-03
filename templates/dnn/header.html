@@ -159,11 +159,12 @@
                 .gemini-text-gradient {
                   background: linear-gradient(to right, #4facfe, #00f2fe, #fff);
                   -webkit-background-clip: text;
+                  background-clip: text;
                   -webkit-text-fill-color: transparent;
                   font-weight: 800;
                 }
               </style>
-              <a href="/nanhe-patrakar" class="nav-gemini-btn">
+              <a href="{% url 'nanhe_patrakar:register' %}" class="nav-gemini-btn">
                 <span class="nav-gemini-inner">
                   <i class="fas fa-sparkles gemini-text-gradient"></i> 
                   <span class="gemini-text-gradient" style="-webkit-text-fill-color: #fff;">नन्हे पत्रकार</span>
@@ -240,7 +241,7 @@
               <a href="/reporters" class="nav-link text-white">Our Reporters</a>
             </div>
             <div class="nav-item">
-              <a href="/nanhe-patrakar" class="nav-link text-white">Nanhe Patrakar</a>
+              <a href="{% url 'nanhe_patrakar:register' %}" class="nav-link text-white">Nanhe Patrakar</a>
             </div>
           </div>
 

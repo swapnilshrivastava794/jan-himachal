@@ -247,17 +247,21 @@ SESSION_CACHE_ALIAS = "default"
 # EMAIL_PORT = 587
 # EMAIL_USE_TLS = True
 # EMAIL_USE_SSL = False
+# Gmail SMTP Configuration
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-
-EMAIL_HOST = 'smtp.titan.email'
+EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_USE_SSL = False
+EMAIL_HOST_USER = 'janhimachalnews@gmail.com'
+EMAIL_HOST_PASSWORD = 'rjyvzoutmpoohaib' # Updated from photo
+DEFAULT_FROM_EMAIL = 'janhimachalnews@gmail.com'
 
-EMAIL_HOST_USER = 'connect@janhimachal.com'
-EMAIL_HOST_PASSWORD = 'Connect@25122025'
-
-DEFAULT_FROM_EMAIL = 'connect@janhimachal.com'
+# Razorpay Settings
+RAZORPAY_KEY_ID = os.environ.get('RAZORPAY_KEY_ID', 'rzp_test_zPlkvA7h735Z5d') # Fallback to test key if not in env
+RAZORPAY_KEY_SECRET = os.environ.get('RAZORPAY_KEY_SECRET')
+RAZORPAY_WEBHOOK_SECRET = os.environ.get('RAZORPAY_WEBHOOK_SECRET')
+RAZORPAY_CURRENCY = 'INR'
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
@@ -300,6 +304,7 @@ SIMPLE_JWT = {
 
 RAZORPAY_KEY_ID= os.environ.get('RAZORPAY_KEY_ID','')
 RAZORPAY_KEY_SECRET= os.environ.get('RAZORPAY_KEY_SECRET','')
+RAZORPAY_WEBHOOK_SECRET= os.environ.get('RAZORPAY_WEBHOOK_SECRET','')
 RAZORPAY_CURRENCY = 'INR'
 
 # Firebase Configuration

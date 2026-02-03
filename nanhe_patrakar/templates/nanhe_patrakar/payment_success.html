@@ -1,0 +1,43 @@
+{% extends 'nanhe_patrakar/base.html' %}
+{% block title %}भुगतान सफल - जन हिमाचल{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow-lg border-0 rounded-lg">
+                <div class="card-body text-center p-5">
+                    <div class="mb-4">
+                        <i class="fas fa-check-circle text-success" style="font-size: 80px;"></i>
+                    </div>
+                    
+                    <h2 class="mb-3 font-weight-bold text-success">धन्यवाद! / Thank You!</h2>
+                    
+                    <h4 class="mb-4 text-dark">
+                        भुगतान सफल रहा।<br>Payment Successful.
+                    </h4>
+                    
+                    <div class="alert alert-info" role="alert" style="font-size: 1.1rem; border-radius: 15px;">
+                        <p class="mb-0 font-weight-bold">
+                            "हमारी टीम आपका पंजीकरण करके आपको जल्द से जल्द संपर्क करेगी।"
+                        </p>
+                        <hr>
+                        <p class="mb-0 small text-muted">
+                            "Our team will complete your registration and contact you very soon."
+                        </p>
+                    </div>
+
+                    <p class="text-muted mt-4">
+                        किसी भी प्रश्न के लिए संपर्क करें / For any queries contact:<br>
+                        <strong>info@janhimachal.com</strong>
+                    </p>
+                    
+                    <a href="{% url 'nanhe_patrakar:landing' %}" class="btn btn-primary mt-4 px-5 rounded-pill">
+                        Back to Nanhe Patrakar / नन्हे पत्रकार पर वापस जाएं
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

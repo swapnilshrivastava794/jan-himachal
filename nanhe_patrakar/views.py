@@ -12,6 +12,10 @@ from django.urls import reverse
 from .forms import ParentRegistrationForm
 from .models import ParentProfile, ParticipationOrder, Program, ChildProfile, District
 import razorpay
+import json
+from django.http import HttpResponse, JsonResponse
+from django.views.decorators.http import require_POST
+from django.core.mail import send_mail
 from django_user_agents.utils import get_user_agent
 
 
@@ -88,31 +92,78 @@ class ParentRegistrationView(View):
             # =============================================
             mobile = form.cleaned_data['mobile']
             email = form.cleaned_data['email']
+            full_name = form.cleaned_data['full_name']
+            child_name = form.cleaned_data.get('child_name') # Optional, not saving yet
+            
+            # Split full name
+            name_parts = full_name.strip().split()
+            first_name = name_parts[0]
+            last_name = " ".join(name_parts[1:]) if len(name_parts) > 1 else ""
             
             # Use mobile number as username
             username = mobile
             
             # Check if mobile (username) already exists
-            if User.objects.filter(username=username).exists():
-                form.add_error('mobile', 'यह मोबाइल नंबर पहले से पंजीकृत है / This mobile number is already registered')
-                return render(request, self.template_name, {
-                    'form': form, 
-                    'program': program,
-                    'is_mobile': get_user_agent(request).is_mobile
-                })
-            
-            # Check if email already exists
-            if User.objects.filter(email=email).exists():
+            existing_user = User.objects.filter(username=username).first()
+            if existing_user:
+                try:
+                    parent_profile = existing_user.parent_profile
+                    if parent_profile.status != 'PAYMENT_COMPLETED':
+                        # Existing user with pending payment -> Trigger Payment
+                        login(request, existing_user)
+                        
+                        # Get or Create Order
+                        order, created = ParticipationOrder.objects.get_or_create(
+                            parent=parent_profile,
+                            payment_status='PENDING',
+                            defaults={
+                                'program': program,
+                                'amount': program.price
+                            }
+                        )
+                        
+                        # Generate Razorpay Order
+                        client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
+                        razorpay_order = client.order.create({
+                            'amount': int(order.amount * 100),
+                            'currency': settings.RAZORPAY_CURRENCY,
+                            'receipt': order.order_id,
+                            'payment_capture': 1
+                        })
+                        
+                        order.razorpay_order_id = razorpay_order['id']
+                        order.payment_status = 'PROCESSING'
+                        order.save()
+
+                        callback_url = request.build_absolute_uri(reverse('nanhe_patrakar:payment_verify'))
+
+                        messages.info(request, "आपका पंजीकरण पहले से मौजूद है। कृपया भुगतान पूरा करें। / You are already registered. Please complete payment.")
+                        
+                        return render(request, self.template_name, {
+                            'form': form, 
+                            'program': program,
+                            'is_mobile': get_user_agent(request).is_mobile,
+                            'trigger_payment': True,
+                            'razorpay_key_id': settings.RAZORPAY_KEY_ID,
+                            'razorpay_order_id': razorpay_order['id'],
+                            'amount': int(order.amount * 100),
+                            'currency': settings.RAZORPAY_CURRENCY,
+                            'callback_url': callback_url,
+                            'parent': parent_profile
+                        })
+                    else:
+                        form.add_error('mobile', 'आपका भुगतान पहले ही हो चुका है। कृपया लॉगिन करें। / Payment already completed. Please login.')
+                        return render(request, self.template_name, {
+                            'form': form, 
+                            'program': program,
+                            'is_mobile': get_user_agent(request).is_mobile
+                        })
+                except ParentProfile.DoesNotExist:
+                     # User exists but no parent profile (should rarely happen here)
+                     pass
+
+            if User.objects.filter(email=email).exclude(username=username).exists():
                 form.add_error('email', 'यह ईमेल पहले से पंजीकृत है / This email is already registered')
-                return render(request, self.template_name, {
-                    'form': form, 
-                    'program': program,
-                    'is_mobile': get_user_agent(request).is_mobile
-                })
-            
-            # Check if mobile already exists in ParentProfile (redundant but safe)
-            if ParentProfile.objects.filter(mobile=mobile).exists():
-                form.add_error('mobile', 'यह मोबाइल नंबर पहले से पंजीकृत है / This mobile number is already registered')
                 return render(request, self.template_name, {
                     'form': form, 
                     'program': program,
@@ -126,45 +177,81 @@ class ParentRegistrationView(View):
             
             try:
                 with transaction.atomic():
+                    # Generate Default Password
+                    generated_password = f"Jan@{mobile[-4:]}" # Example: Jan@4578
+
                     # Create user with mobile as username
                     user = User.objects.create_user(
                         username=username,  # Mobile number as username
                         email=email,
-                        first_name=form.cleaned_data['first_name'],
-                        last_name=form.cleaned_data['last_name'],
-                        password=form.cleaned_data['password']
+                        first_name=first_name,
+                        last_name=last_name,
+                        password=generated_password
                     )
 
-                    # Create parent profile (city and district are optional now)
+                    # Send Registration Email
+                    apk_url = request.build_absolute_uri('/static/apk/janhimachal.apk')
+                    subject = 'Nanhe Patrakar Registration Successful - Jan Himachal'
+                    email_body = f"""
+प्रिय {first_name} {last_name},
+
+नन्हे पत्रकार कार्यक्रम में आपका स्वागत है!
+
+आपका पंजीकरण सफल रहा है। आपके लॉगिन क्रेडenciales नीचे दिए गए हैं:
+
+Username (मोबाइल नंबर): {username}
+Password: {generated_password}
+
+आप नीचे दिए गए लिंक से जन हिमाचल ऐप डाउनलोड कर सकते हैं:
+{apk_url}
+
+महत्वपूर्ण: कृपया भुगतान पूरा करने के बाद ही ऐप में लॉगिन करें।
+
+धन्यवाद,
+जन हिमाचल टीम
+                    """
+                    try:
+                        print(f"DEBUG: Attempting to send registration email to {email}...")
+                        send_mail(
+                            subject,
+                            email_body,
+                            settings.DEFAULT_FROM_EMAIL,
+                            [email],
+                            fail_silently=False,
+                        )
+                        print("DEBUG: Email sent successfully.")
+                    except Exception as e:
+                        print(f"CRITICAL ERROR sending email: {str(e)}")
+
+                    # Create parent profile
                     parent_profile = ParentProfile.objects.create(
                         user=user,
                         program=program,
                         mobile=mobile,
-                        city=None,  # Will be updated later
-                        district=None,  # Will be updated later
                         status='PAYMENT_PENDING',
-                        id_proof=None,
                         terms_accepted=form.cleaned_data['terms_accepted'],
                         terms_accepted_at=timezone.now() if form.cleaned_data['terms_accepted'] else None
                     )
 
-                    # Create a placeholder/temporary Child Profile
-                    # This will be updated later by the parent with complete information
-                    ChildProfile.objects.create(
-                        parent=parent_profile,
-                        name="To be updated",  # Placeholder name
-                        gender=None,  # Will be updated later
-                        date_of_birth=None,  # Will be updated later
-                        age=None,  # Will be updated later
-                        school_name=None,  # Will be updated later
-                        district=None,  # Will be updated later
-                        photo=None,  # Will be updated later
-                        age_group='A',  # Default age group, will be updated later
-                        is_active=True
-                    )
+                    # Create Child Profile if name provided (or placeholder)
+                    if child_name:
+                        ChildProfile.objects.create(
+                            parent=parent_profile,
+                            name=child_name,
+                            age_group='A',  # Default to Group A
+                            is_active=True
+                        )
+                    else:
+                        # Placeholder if no name provided
+                        ChildProfile.objects.create(
+                            parent=parent_profile,
+                            name="To be updated",
+                            age_group='A',
+                            is_active=True
+                        )
 
                     # Create order
-                    ParticipationOrder.objects.create(
+                    order = ParticipationOrder.objects.create(
                         parent=parent_profile,
                         program=program,
                         amount=program.price,
@@ -174,14 +261,63 @@ class ParentRegistrationView(View):
                     # Auto-login user
                     login(request, user)
 
-                messages.success(
-                    request, 
-                    'पंजीकरण सफल! अब भुगतान के साथ आगे बढ़ें। भुगतान के बाद आप अपने बच्चे का पूरा विवरण अपडेट कर सकते हैं। / Registration successful! Please proceed with payment. After payment, you can update your child\'s complete details.'
-                )
-                return redirect('nanhe_patrakar:payment')
+                    # ---------------------------------------------------
+                    # GENERATE RAZORPAY ORDER IMMEDIATELY (No Redirect)
+                    # ---------------------------------------------------
+                    client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
+                    razorpay_order = client.order.create({
+                        'amount': int(order.amount * 100),  # Amount in paise
+                        'currency': settings.RAZORPAY_CURRENCY,
+                        'receipt': order.order_id,
+                        'payment_capture': 1
+                    })
+                    
+                    order.razorpay_order_id = razorpay_order['id']
+                    order.payment_status = 'PROCESSING'
+                    order.save()
+
+                    callback_url = request.build_absolute_uri(reverse('nanhe_patrakar:payment_verify'))
+
+                # =============================================
+                # STEP 3: RETURN RESPONSE
+                # =============================================
+                
+                # AJAX Support
+                if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+                    return JsonResponse({
+                        'success': True,
+                        'trigger_payment': True,
+                        'razorpay_key_id': settings.RAZORPAY_KEY_ID,
+                        'razorpay_order_id': razorpay_order['id'],
+                        'amount': int(order.amount * 100),
+                        'currency': settings.RAZORPAY_CURRENCY,
+                        'callback_url': callback_url,
+                        'prefill': {
+                            'name': user.get_full_name(),
+                            'email': user.email,
+                            'contact': parent_profile.mobile
+                        }
+                    })
+
+                # Render registration page again with Payment Context to trigger Modal (Fallback)
+                return render(request, self.template_name, {
+                    'form': form,
+                    'program': program,
+                    'is_mobile': get_user_agent(request).is_mobile,
+                    'trigger_payment': True,  # Flag to JS
+                    'razorpay_key_id': settings.RAZORPAY_KEY_ID,
+                    'razorpay_order_id': razorpay_order['id'],
+                    'amount': int(order.amount * 100),
+                    'currency': settings.RAZORPAY_CURRENCY,
+                    'callback_url': callback_url,
+                    'parent': parent_profile
+                })
 
             except Exception as e:
                 # Transaction will be rolled back automatically
+                if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+                    return JsonResponse({'success': False, 'errors': {'server': str(e)}}, status=500)
+
                 messages.error(request, f'पंजीकरण में त्रुटि / Registration error: {str(e)}')
                 return render(request, self.template_name, {
                     'form': form, 
@@ -190,6 +326,9 @@ class ParentRegistrationView(View):
                 })
 
         # Form is not valid
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            return JsonResponse({'success': False, 'errors': form.errors}, status=400)
+
         return render(request, self.template_name, {
             'form': form, 
             'program': program,
@@ -404,4 +543,139 @@ class DownloadAppView(LoginRequiredMixin, View):
         except ParentProfile.DoesNotExist:
             messages.error(request, 'कृपया पहले पंजीकरण करें / Please register first')
             return redirect('nanhe_patrakar:register')
+
+
+class PaymentSuccessView(View):
+    """
+    Static success page for Manual Registration flow.
+    Razorpay Hosted Page will redirect here.
+    """
+    template_name = 'nanhe_patrakar/payment_success.html'
+
+    def get(self, request):
+        return render(request, self.template_name)
+
+
+@csrf_exempt
+@require_POST
+def razorpay_webhook(request):
+    """
+    Handle Razorpay Webhooks
+    Updates order status, parent profile status, and sends success email
+    """
+    print("------- Razorpay Webhook Triggered -------")
+    
+    # Get webhook secret from settings
+    webhook_secret = settings.RAZORPAY_WEBHOOK_SECRET
+    
+    # Get signature from headers
+    webhook_signature = request.headers.get('X-Razorpay-Signature')
+    
+    if not webhook_signature:
+        print("Error: Missing X-Razorpay-Signature header")
+        return HttpResponse('Missing Signature', status=400)
+    
+    # Get request body
+    request_body = request.body.decode('utf-8')
+    
+    # Verify signature
+    client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
+    
+    try:
+        # Verify the webhook signature
+        client.utility.verify_webhook_signature(request_body, webhook_signature, webhook_secret)
+        print("Webhook Signature Verified Successfully")
+        
+        # Parse event data
+        event = json.loads(request_body)
+        event_type = event.get('event')
+        
+        print(f"Event Type: {event_type}")
+        
+        if event_type == 'payment.captured':
+            payment_entity = event['payload']['payment']['entity']
+            
+            razorpay_payment_id = payment_entity['id']
+            razorpay_order_id = payment_entity['order_id']
+            amount = payment_entity['amount'] / 100 # Convert to Rupees
+            
+            print(f"Payment Captured: Order ID {razorpay_order_id}, Payment ID {razorpay_payment_id}")
+            
+            try:
+                # Find the order
+                order = ParticipationOrder.objects.get(razorpay_order_id=razorpay_order_id)
+                
+                # Update order only if not already success
+                if order.payment_status != 'SUCCESS':
+                    order.razorpay_payment_id = razorpay_payment_id
+                    # order.razorpay_signature = webhook_signature # Webhooks don't return the checkout signature
+                    order.payment_status = 'SUCCESS'
+                    order.payment_date = timezone.now()
+                    order.save()
+                    
+                    # Update parent profile
+                    parent_profile = order.parent
+                    parent_profile.status = 'PAYMENT_COMPLETED'
+                    parent_profile.save()
+                    
+                    print(f"Order {order.order_id} and Parent {parent_profile.mobile} updated via Webhook")
+                    
+                    # -----------------------------------------------
+                    # SEND SUCCESS EMAIL
+                    # -----------------------------------------------
+                    try:
+                        subject = 'भुगतान सफल / Payment Successful - Nanhe Patrakar'
+                        message = f"""
+Dear Parent,
+
+We have successfully received your payment of Rs. {amount} for Nanhe Patrakar registration.
+
+Order ID: {order.order_id}
+Transaction ID: {razorpay_payment_id}
+
+Your login details:
+Username: {parent_profile.mobile}
+Password: (The password you set during registration)
+
+Please login to the app/website to complete your child's profile and start participating.
+
+Login here: https://janhimachal.com/nanhe-patrakar/login/
+
+Regards,
+Jan Himachal Team
+                        """
+                        
+                        send_mail(
+                            subject=subject,
+                            message=message,
+                            from_email=settings.DEFAULT_FROM_EMAIL,
+                            recipient_list=[parent_profile.user.email],
+                            fail_silently=True
+                        )
+                        print(f"Success Email sent to {parent_profile.user.email}")
+                        
+                    except Exception as e:
+                        print(f"Error sending email: {str(e)}")
+                    # -----------------------------------------------
+                    
+                else:
+                    print(f"Order {order.order_id} already marked as SUCCESS")
+                    
+            except ParticipationOrder.DoesNotExist:
+                print(f"Error: Order not found for Razorpay Order ID {razorpay_order_id}")
+                return HttpResponse('Order Not Found', status=404)
+        
+        elif event_type == 'order.paid':
+             # Note: logic for order.paid if needed
+             pass
+             
+        return HttpResponse('Webhook Received', status=200)
+        
+    except razorpay.errors.SignatureVerificationError:
+        print("!!! Webhook Signature Verification FAILED !!!")
+        return HttpResponse('Invalid Signature', status=400)
+        
+    except Exception as e:
+        print(f"Exception in Webhook: {str(e)}")
+        return HttpResponse('Internal Server Error', status=500)
         
