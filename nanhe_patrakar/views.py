@@ -635,7 +635,7 @@ Transaction ID: {razorpay_payment_id}
 
 Your login details:
 Username: {parent_profile.mobile}
-Password: (The password you set during registration)
+Password: Jan@{parent_profile.mobile[-4:]}
 
 Please login to the app/website to complete your child's profile and start participating.
 
